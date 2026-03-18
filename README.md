@@ -60,7 +60,7 @@ O T.G.I.F. transforma esse conhecimento geográfico num teste interativo fiel ao
 
 Acesse diretamente pelo navegador — não requer instalação.
 
-> 🔗 **[Jogar agora](#https://lhickk17.github.io/Papers-Please_quiz/)**
+> 🔗 **[Jogar agora](https://lhickk17.github.io/Papers-Please_quiz/)**
 
 Ou clone e rode localmente:
 
