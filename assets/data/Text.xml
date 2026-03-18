@@ -1,0 +1,248 @@
+<data><item id="language_code"><t>pt-BR</t></item>
+<item id="language_name"><t>PORTUGUÊS (BR)</t></item>
+<item id="language_author"><t>Jogabilida.de</t></item>
+<item id="wrap_hyphen"><t>-</t></item>
+<item id="created_by"><t>criado por Lucas Pope</t></item>
+<item id="papers_please"><t>Documentos, por favor.</t></item>
+<item id="protocol_violated"><t>Protocolo Violado.</t></item>
+<item id="unauth_confiscation"><t>Confisco não autorizado de passaporte</t></item>
+<item id="missing_reason"><t>Razão da recusa não informada</t></item>
+<item id="citation_warning"><t>AVISO EMITIDO - SEM PENALIDADE</t></item>
+<item id="citation_lastwarning"><t>ÚLTIMO AVISO - SEM PENALIDADE</t></item>
+<item id="citation_penalty"><t>PENALIDADE APLICADA - $0 CRÉDITOS</t></item>
+<item id="border_next"><t>PRÓXIMO!</t></item>
+<item id="border_bomber"><t>POR KOLECHIA!</t></item>
+<item id="border_comeback"><t>VOLTE AMANHÃ ÀS 6:00</t></item>
+<item id="border_announce0"><t>A ENTRADA NÃO É GARANTIDA</t></item>
+<item id="border_announce1"><t>ESTEJA COM OS DOCUMENTOS EM MÃOS</t></item>
+<item id="border_announce2"><t>ARSTOTZKA TE DÁ AS BOAS VINDAS</t></item>
+<item id="border_guardout"><t>FORA!</t></item>
+<item id="border_elisa"><t>ELISA!</t></item>
+<item id="family_son_budget"><t>FILHO</t></item>
+<item id="family_wife_budget"><t>ESPOSA</t></item>
+<item id="family_niece_budget"><t>SOBRINHA</t></item>
+<item id="family_uncle_budget"><t>TIO</t></item>
+<item id="family_mil_budget"><t>SOGRA</t></item>
+<item id="family_son_status"><t>Filho</t></item>
+<item id="family_wife_status"><t>Esposa</t></item>
+<item id="family_niece_status"><t>Sobrinha</t></item>
+<item id="family_uncle_status"><t>Tio</t></item>
+<item id="family_mil_status"><t>Sogra</t></item>
+<item id="family_son_message"><t>filho</t></item>
+<item id="family_wife_message"><t>esposa</t></item>
+<item id="family_niece_message"><t>sobrinha</t></item>
+<item id="family_uncle_message"><t>tio</t></item>
+<item id="family_mil_message"><t>sogra</t></item>
+<item id="night_endof"><t>FIM DO</t></item>
+<item id="night_day"><t>DIA $0</t></item>
+<item id="family_verysick_1"><t>[m]Seu[/m][f]Sua[/f] $0 morrerá caso não receba tratamento.</t></item>
+<item id="family_verysick_many"><t>Familiares muito doentes morrerão se não forem medicados.</t></item>
+<item id="family_sick_1"><t>[m]Seu[/m][f]Sua[/f] $0 está doente e precisa de remédios.</t></item>
+<item id="family_sick_many"><t>Sua família precisa de remédios.</t></item>
+<item id="family_died_1"><t>[m]Seu[/m][f]Sua[/f] $0 morreu.</t></item>
+<item id="family_died_2"><t>[m0]Seu[/m0][f0]Sua[/f0] $0 e $1 morreram.</t></item>
+<item id="family_died_3"><t>[m0]Seu[/m0][f0]Sua[/f0] $0, $1 e $2 morreram.</t></item>
+<item id="family_died_4"><t>[m0]Seu[/m0][f0]Sua[/f0] $0, $1, $2 e $3 morreram.</t></item>
+<item id="family_died_5"><t>[m0]Seu[/m0][f0]Sua[/f0] $0, $1, $2, $3 e $4 morreram.</t></item>
+<item id="family_escape_with_0"><t>Você abandona tudo.</t></item>
+<item id="family_escape_with_1"><t>Você busca [m]seu[/m][f]sua[/f] $0 e segue rumo à Obristão.</t></item>
+<item id="family_escape_with_2"><t>Você busca [m0]seu[/m0][f0]sua[/f0] $0 e $1 e segue rumo à Obristão.</t></item>
+<item id="family_escape_with_3"><t>Você busca [m0]seu[/m0][f0]sua[/f0] $0, $1 e $2 e segue rumo à Obristão.</t></item>
+<item id="family_escape_with_4"><t>Você busca [m0]seu[/m0][f0]sua[/f0] $0, $1, $2 e $3 e segue rumo à Obristão.</t></item>
+<item id="family_escape_with_5"><t>Você busca [m0]seu[/m0][f0]sua[/f0] $0, $1, $2, $3 e $4 e segue rumo à Obristão.</t></item>
+<item id="family_escape_without_1"><t>[m]Seu[/m][f]Sua[/f] $0 prepara-se para voltar à Nirsk.</t></item>
+<item id="family_escape_without_2"><t>[m0]Seu[/m0][f0]Sua[/f0] $0 e $1 preparam-se para voltar à Nirsk.</t></item>
+<item id="family_escape_without_3"><t>[m0]Seu[/m0][f0]Sua[/f0] $0, $1 e $2 preparam-se para voltar à Nirsk.</t></item>
+<item id="family_escape_without_4"><t>[m0]Seu[/m0][f0]Sua[/f0] $0, $1, $2 e $3 preparam-se para voltar à Nirsk.</t></item>
+<item id="family_escape_without_5"><t>[m0]Seu[/m0][f0]Sua[/f0] $0, $1, $2, $3 e $4 preparam-se para voltar à Nirsk.</t></item>
+<item id="family_flee_final_0"><t>Obristão Acima de Tudo</t></item>
+<item id="family_flee_final_1"><t>O bem-estar de [m0]seu[/m0][f0]sua[/f0] $0 é incerto.</t></item>
+<item id="family_flee_final_2"><t>O bem-estar de [m0]seu[/m0][f0]sua[/f0] $0 e $1 é incerto.</t></item>
+<item id="family_flee_final_3"><t>O bem-estar de [m0]seu[/m0][f0]sua[/f0] $0, $1 e $2 é incerto.</t></item>
+<item id="family_flee_final_4"><t>O bem-estar de [m0]seu[/m0][f0]sua[/f0] $0, $1, $2 e $3 é incerto.</t></item>
+<item id="family_flee_final_5"><t>O bem-estar de [m0]seu[/m0][f0]sua[/f0]  $0, $1, $2, $3 e $4 é incerto.</t></item>
+<item id="budget_savings"><t>ECONOMIAS</t></item>
+<item id="budget_salary"><t>SALÁRIO ($0)</t></item>
+<item id="budget_penalties"><t>PENALIDADES ($0)</t></item>
+<item id="budget_bribes"><t>PROPINA</t></item>
+<item id="budget_rent"><t>ALUGUEL</t></item>
+<item id="budget_food"><t>COMIDA</t></item>
+<item id="budget_heat"><t>AQUECIMENTO</t></item>
+<item id="budget_medicine"><t>REMÉDIO ($0)</t></item>
+<item id="budget_sleep"><t>DORMIR</t></item>
+<item id="budget_escape"><t>FUGIR</t></item>
+<item id="menu_back"><t>VOLTAR</t></item>
+<item id="confirm_ok"><t>OK</t></item>
+<item id="confirm_cancel"><t>CANCELAR</t></item>
+<item id="menu_mainmenu"><t>MENU PRINCIPAL</t></item>
+<item id="menu_resume"><t>CONTINUAR</t></item>
+<item id="menu_quit"><t>SAIR</t></item>
+<item id="menu_done"><t>PRONTO</t></item>
+<item id="menu_story"><t>HISTÓRIA</t></item>
+<item id="menu_endless"><t>INFINITO</t></item>
+<item id="menu_play"><t>JOGAR</t></item>
+<item id="menu_fullscreen"><t>Tela Cheia</t></item>
+<item id="menu_nudity"><t>Nudez</t></item>
+<item id="menu_easy"><t>Modo Fácil</t></item>
+<item id="menu_vibration"><t>Vibração</t></item>
+<item id="menu_music"><t>Música</t></item>
+<item id="menu_sound"><t>Som</t></item>
+<item id="menu_dateformat"><t>Formato da Data</t></item>
+<item id="menu_language"><t>Idioma</t></item>
+<item id="menu_device"><t>Dispositivo</t></item>
+<item id="menu_easytip"><t>+ 20 créditos por dia</t></item>
+<item id="menu_stats"><t>ESTATÍSTICAS</t></item>
+<item id="menu_next"><t>PRÓXIMO</t></item>
+<item id="menu_walktowork"><t>ANDAR ATÉ O POSTO</t></item>
+<item id="menu_paused"><t>PAUSADO</t></item>
+<item id="menu_settings"><t>CONFIGURAÇÕES</t></item>
+<item id="menu_credits"><t>CRÉDITOS</t></item>
+<item id="menu_checkforupdates"><t>VERIFICAR ATUALIZAÇÔES</t></item>
+<item id="stats_text"><t>Você jogou por $time
+$processed viajantes avaliados
+$approved aprovados
+$denied recusados
+$detained detidos
+$citations deméritos recebidos
+$stamps carimbos aplicados
+Final $endnum de $endtotal</t></item>
+<item id="steam_noinit"><t>FALHA NA CONEXÃO COM O STEAM
+
+Se o problema persisitir, reinstale o Steam.</t></item>
+<item id="steam_restartfailed"><t>FALHA NA REINICIALIZAÇÃO DO STEAM
+
+Se o problema persisitir, reinstale o Steam.</t></item>
+<item id="steam_noconnect"><t>FALHA NA CONEXÃO COM O STEAM
+
+O jogo tentará reiniciar através do Steam.</t></item>
+<item id="steam_restart"><t>REINICIAR</t></item>
+<item id="load_title"><t>Selecione um dia para continuar ou inicie um novo jogo</t></item>
+<item id="load_confirm_delete_single"><t>Deletar o jogo salvo no dia $0?
+
+Não será possível desfazer.</t></item>
+<item id="load_confirm_delete_multi"><t>Deletar esse bloco dia $0 ao dia $1?
+
+Não será possível desfazer.</t></item>
+<item id="load_delete"><t>DELETAR</t></item>
+<item id="load_confirm_full"><t>Espaços de salvamento lotados.
+
+Continue de um salvo à direita ou delete um bloco para liberar espaço.</t></item>
+<item id="load_summary"><t>Dia $day
+"$news"
+
+$savings créditos, $family familiares,
+$tokens ficha(s), apartamento $apt</t></item>
+<item id="load_continue"><t>CONTINUAR</t></item>
+<item id="emotion_happy"><t>FELIZ</t></item>
+<item id="emotion_ok"><t>BEM</t></item>
+<item id="emotion_sad"><t>TRISTE</t></item>
+<item id="emotion_cold"><t>COM FRIO</t></item>
+<item id="emotion_sick"><t>DOENTE</t></item>
+<item id="emotion_verysick"><t>BEM DOENTE</t></item>
+<item id="emotion_dead"><t>MORREU</t></item>
+<item id="emotion_hungry"><t>COM FOME</t></item>
+<item id="load_latest"><t>MAIS RECENTE</t></item>
+<item id="entry_approved"><t>ENTRADA PERMITIDA</t></item>
+<item id="entry_denied"><t>ENTRADA RECUSADA</t></item>
+<item id="stamp_approved"><t>APROVADO</t></item>
+<item id="stamp_denied"><t>RECUSADO</t></item>
+<item id="stamp_reason"><t>MOTIVO</t></item>
+<item id="booth_dragdocs"><t>ARRASTE DOCUMENTOS PARA CÁ</t></item>
+<item id="booth_highlight"><t>APONTE AS DISCREPÂNCIAS</t></item>
+<item id="booth_discrepancy"><t>DISCREPÂNCIA
+DETECTADA</t></item>
+<item id="booth_interrogate"><t>QUESTIONAR</t></item>
+<item id="booth_matching"><t>OS DADOS
+CONFEREM</t></item>
+<item id="booth_nocorrelation"><t>NÃO HÁ
+RELAÇÃO</t></item>
+<item id="booth_cleared"><t>DISCREPÂNCIA
+ESCLARECIDA</t></item>
+<item id="env_clearforentry"><t>Aplicante cumpria requisitos</t></item>
+<item id="env_lettermale"><t>M</t></item>
+<item id="env_letterfemale"><t>F</t></item>
+<item id="env_noalias"><t>Nenhum Nome Alternativo</t></item>
+<item id="env_typochars"><t>aeiou,iuy,pgq,lj,cksç,bh</t></item>
+<item id="carousel_give"><t>DEVOLVER</t></item>
+<item id="carousel_hang"><t>PENDURE NA PAREDE</t></item>
+<item id="carousel_confiscate"><t>CONFISCAR</t></item>
+<item id="endless_complete"><t>$style
+$course
+
+$time
+$score Pontos</t></item>
+<item id="endless_ranked"><t>Posição #$0</t></item>
+<item id="endless_unlock"><t>Finalize o modo história com seu emprego para liberar o modo infinito</t></item>
+<item id="endless_wrongcode"><t>E R R O U</t></item>
+<item id="date_verbose"><t>$day de $month de $year</t></item>
+<item id="month_1"><t>janeiro</t></item>
+<item id="month_2"><t>fevereiro</t></item>
+<item id="month_3"><t>março</t></item>
+<item id="month_4"><t>abril</t></item>
+<item id="month_5"><t>maio</t></item>
+<item id="month_6"><t>junho</t></item>
+<item id="month_7"><t>julho</t></item>
+<item id="month_8"><t>agosto</t></item>
+<item id="month_9"><t>setembro</t></item>
+<item id="month_10"><t>outubro</t></item>
+<item id="month_11"><t>novembro</t></item>
+<item id="month_12"><t>dezembro</t></item>
+<item id="day_1"><t>1º</t></item>
+<item id="day_2"><t>2</t></item>
+<item id="day_3"><t>3</t></item>
+<item id="day_4"><t>4</t></item>
+<item id="day_5"><t>5</t></item>
+<item id="day_6"><t>6</t></item>
+<item id="day_7"><t>7</t></item>
+<item id="day_8"><t>8</t></item>
+<item id="day_9"><t>9</t></item>
+<item id="day_10"><t>10</t></item>
+<item id="day_11"><t>11</t></item>
+<item id="day_12"><t>12</t></item>
+<item id="day_13"><t>13</t></item>
+<item id="day_14"><t>14</t></item>
+<item id="day_15"><t>15</t></item>
+<item id="day_16"><t>16</t></item>
+<item id="day_17"><t>17</t></item>
+<item id="day_18"><t>18</t></item>
+<item id="day_19"><t>19</t></item>
+<item id="day_20"><t>20</t></item>
+<item id="day_21"><t>21</t></item>
+<item id="day_22"><t>22</t></item>
+<item id="day_23"><t>23</t></item>
+<item id="day_24"><t>24</t></item>
+<item id="day_25"><t>25</t></item>
+<item id="day_26"><t>26</t></item>
+<item id="day_27"><t>27</t></item>
+<item id="day_28"><t>28</t></item>
+<item id="day_29"><t>29</t></item>
+<item id="day_30"><t>30</t></item>
+<item id="day_31"><t>31</t></item>
+<item id="bulletin_default"><t>Arstotzka
+Ministério da Admissão
+Boletim Oficial
+
+Inspetor,
+
+$content
+
+Glória à Arstotzka.</t></item>
+<item id="bulletin_notice"><t>Arstotzka
+Ministério da Admissão
+Boletim Oficial
+
+AVISO:
+
+$content
+
+Glória à Arstotzka.</t></item>
+<item id="bulletin_endless"><t>Arstotzka
+Ministério da Admissão
+Boletim Oficial
+
+$style
+
+$course
+
+Glória à Arstotzka.</t></item>
+</data>

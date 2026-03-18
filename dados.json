@@ -1,0 +1,58 @@
+[
+  {
+    "pais": "Antegria",
+    "cidades": [
+      { "nome": "São Marmero", "curiosidade": "Cidade administrativa de perfil estável. Viajantes de rotina, sem histórico de incidentes." },
+      { "nome": "Glorian", "curiosidade": "Centro urbano moderado. Ausência de conflitos registrados. Considerada zona de baixo risco." },
+      { "nome": "Perdiz", "curiosidade": "Cidade periférica. Ocorrências variadas, sem padrão definido. Mantém o perfil neutro do país." }
+    ]
+  },
+  {
+    "pais": "Arstotzka",
+    "cidades": [
+      { "nome": "Orvech Vonor", "curiosidade": "Centro administrativo. Núcleo político e militar do estado arstotziano." },
+      { "nome": "Grestin Leste", "curiosidade": "Cidade dividida. Lado oriental sob jurisdição de Arstotzka desde o armistício de 1979." },
+      { "nome": "Paradizna", "curiosidade": "Região de alta incidência criminal. Presença recorrente em boletins de suspeitos." }
+    ]
+  },
+  {
+    "pais": "Impor",
+    "cidades": [
+      { "nome": "Enkyo", "curiosidade": "Cidade secundária de Impor. Perfil consistente com o padrão nacional. Sem histórico de conflitos." },
+      { "nome": "Haihan", "curiosidade": "Cidade de perfil disciplinado. Documentação geralmente em ordem. Baixo índice de irregularidades." },
+      { "nome": "Tsunkeido", "curiosidade": "Centro urbano funcional. Sistema rígido e estável. Raramente associada a infrações." }
+    ]
+  },
+  {
+    "pais": "Kolechia",
+    "cidades": [
+      { "nome": "Yurkópolis", "curiosidade": "Principal centro urbano de Kolechia. Alta frequência de solicitações de entrada. Tensão histórica com Arstotzka." },
+      { "nome": "Vedor", "curiosidade": "Cidade marcada pela instabilidade regional. Associada a fluxos migratórios em contexto de crise." },
+      { "nome": "Grestin Oeste", "curiosidade": "Lado ocidental da cidade dividida. Território kolechiano desde o armistício de 1979. Espelho direto de Grestin Leste." }
+    ]
+  },
+  {
+    "pais": "Obristão",
+    "cidades": [
+      { "nome": "Skal", "curiosidade": "Cidade de alta emigração. Origem frequente de solicitantes recorrentes. Associada a contextos de necessidade econômica." },
+      { "nome": "Lorndaz", "curiosidade": "Centro urbano de perfil modesto. Fluxo migratório constante. Histórias de saída difícil." },
+      { "nome": "Mergerous", "curiosidade": "Cidade periférica de Obristão. Padrão de emigração forçada. Presença menor, mas consistente nos registros." }
+    ]
+  },
+  {
+    "pais": "Republia",
+    "cidades": [
+      { "nome": "Glorian Real", "curiosidade": "Capital de Republia. Nome de conotação nacionalista. Cidadãos geralmente documentados e sem ocorrências." },
+      { "nome": "Lesrenadi", "curiosidade": "Cidade estável. Presença consistente nos registros de entrada. Sem histórico de irregularidades." },
+      { "nome": "Bostan", "curiosidade": "Centro urbano de perfil confiável. Baixo índice de infrações. Contraste favorável com países vizinhos." }
+    ]
+  },
+  {
+    "pais": "Federação Unida",
+    "cidades": [
+      { "nome": "Grão Rapid", "curiosidade": "Principal centro urbano da Federação. Cidadãos bem documentados. Processo migratório de baixo risco." },
+      { "nome": "Shingleton", "curiosidade": "Cidade de padrão confiável. Ausência de ocorrências graves. Referência de normalidade nos registros." },
+      { "nome": "Koristópolis", "curiosidade": "Centro urbano de perfil variado. Reputação neutra mantida apesar de contextos diversos." }
+    ]
+  }
+]

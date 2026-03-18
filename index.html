@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Papers Please — T.G.I.F.</title>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+
+    <div id="abertura">
+      <img src="assets/intro/Arstotzka.png" id="logo-abertura" />
+      <div id="texto-abertura"></div>
+      <p id="instrucao-abertura"></p>
+    </div>
+
+    <div id="menu" style="display:none">
+      <div id="menu-mapa">
+        <img src="assets/papersplease-map.webp" id="mapa-bg" />
+      </div>
+      <img src="assets/intro/Arstotzka.png" alt="Arstotzka" id="logo" />
+      <h1>Teste Geográfico para Inspetores de Fronteira</h1>
+      <p id="menu-sub">Ministério da Admissão — Posto Fronteiriço de Grestin</p>
+      <div id="menu-botoes">
+        <button class="btn-modo" data-modo="facil">Fácil</button>
+        <button class="btn-modo" data-modo="normal">Normal</button>
+        <button class="btn-modo" data-modo="dificil">Difícil</button>
+      </div>
+      <div id="menu-regras">
+        <p class="regras-titulo">Regulamento de Pontuação</p>
+        <table class="regras-tabela">
+          <tr><td>Acerto</td><td>+100 pts</td></tr>
+          <tr><td>Streak acima de 3</td><td>+50 pts por acerto</td></tr>
+          <tr><td>Resposta em menos de 2s</td><td>+25 pts</td></tr>
+          <tr class="separador"><td colspan="2"></td></tr>
+          <tr><td>Erro (Difícil)</td><td>−50 pts</td></tr>
+          <tr><td>Demora acima de 3s (Difícil)</td><td>−25 pts</td></tr>
+        </table>
+        <div class="regras-modos">
+          <div class="regra-modo">
+            <span class="regra-label facil">Fácil</span>
+            <span>Sem tempo · Curiosidades · Aprendizado</span>
+          </div>
+          <div class="regra-modo">
+            <span class="regra-label normal">Normal</span>
+            <span>8s por pergunta · Streak · Tempo total</span>
+          </div>
+          <div class="regra-modo">
+            <span class="regra-label dificil">Difícil</span>
+            <span>5s por pergunta · Penalidades · Pressão total</span>
+          </div>
+        </div>
+      </div>
+      <footer id="menu-footer">
+        <img src="assets/intro/Intro1.png" alt="Loteria do Trabalho" id="selo" />
+        <div id="footer-texto">
+          <p>Papers, Please © 2013 Lucas Pope</p>
+          <p>Fan project — sem fins comerciais</p>
+          <p>Mapa por u/Alpha_Stalin</p>
+        </div>
+        <img src="assets/News.png" alt="A Verdade de Arstotzka" id="jornal" />
+      </footer>
+    </div>
+
+    <div id="campanha" style="display:none">
+      <div id="campanha-inner">
+        <p id="campanha-header">Ministério da Admissão — Avaliação Obrigatória</p>
+        <p id="campanha-pergunta">Carregando...</p>
+        <div id="campanha-opcoes"></div>
+        <div id="carimbo-container-campanha">
+          <img id="carimbo-img-campanha" src="" alt="" />
+        </div>
+        <p id="campanha-feedback"></p>
+        <p id="campanha-curiosidade"></p>
+        <button id="campanha-proxima">Próxima →</button>
+        <p id="campanha-progresso"></p>
+      </div>
+    </div>
+
+    <div id="resultado-campanha" style="display:none">
+      <div id="resultado-inner">
+        <img id="resultado-placa" src="" alt="resultado" />
+        <p id="resultado-vonel"></p>
+        <p id="resultado-placar"></p>
+        <div id="resultado-botoes"></div>
+      </div>
+    </div>
+
+    <div id="quiz" style="display:none">
+      <h1>Verificação Geográfica — Modo Livre</h1>
+      <p id="pergunta">Carregando...</p>
+      <div id="opcoes"></div>
+      <div id="carimbo-container">
+        <img id="carimbo-img" src="" alt="" />
+      </div>
+      <p id="feedback"></p>
+      <button id="proxima">Próxima →</button>
+      <p id="pontos">Pontos: 0</p>
+      <p id="timer"></p>
+      <p id="streak"></p>
+      <p id="curiosidade"></p>
+    </div>
+
+    <div id="filer-overlay" style="display:none">
+      <div id="filer-wrapper">
+        <div id="filer-fechado">
+          <img src="assets/Filer.png" id="filer-img" />
+          <p id="filer-instrucao">[ abrir relatório ]</p>
+        </div>
+        <div id="filer-aberto" style="display:none">
+          <div id="filer-conteudo">
+            <div id="filer-bulletin">
+              <img src="assets/papers/BulletinInnerCriminals.png" id="bulletin-bg" />
+              <div id="bulletin-conteudo">
+                <p id="bulletin-titulo">Erros Registrados</p>
+                <div id="bulletin-lista"></div>
+              </div>
+            </div>
+            <div id="filer-stats">
+              <p class="stats-titulo">Relatório de Desempenho</p>
+              <div id="stats-lista"></div>
+            </div>
+          </div>
+          <button id="filer-fechar">[ fechar pasta ]</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="quiz.js"></script>
+  </body>
+</html>
