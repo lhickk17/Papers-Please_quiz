@@ -84,3 +84,11 @@ Esta é a primeira fatia da reconstrução. Os testes e o build precisam ser exe
 ## Aviso legal
 
 Projeto de fã não oficial e sem fins comerciais. **Papers, Please** pertence a Lucas Pope / 3909 LLC. Os assets visuais e sonoros pertencem aos respectivos titulares.
+
+
+## Ajustes registrados após o primeiro teste local
+
+- Corrigido o mapeamento de placas da campanha para seguir a correspondência do protótipo original: 9–10 acertos = `PlaqueOneInner` (distinção); 7–8 = `PlaqueTwoInner` (aprovação); 0–6 = `CitationInner` (resultado insatisfatório).
+- Restaurada a abertura narrativa com texto digitado, atraso inicial, efeito sonoro de buzina e instrução para continuar por clique ou Enter.
+- Adicionado controle de alternativas por teclado: teclas `1` a `4` selecionam a opção correspondente e `Enter` confirma.
+- **Ideia de UI registrada para etapa futura:** permitir recolher o menu principal e revelar o mapa de fundo como área interativa. Países/áreas clicáveis poderão abrir informações, iniciar desafios temáticos e servir de hub para modos futuros (passaportes, emblemas, localização de cidades e outros). A mecânica ainda não foi implementada: primeiro será necessário definir pontos clicáveis com precisão sobre a imagem do mapa e o comportamento de cada região.
