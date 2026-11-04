@@ -110,3 +110,26 @@ Projeto de fã não oficial e sem fins comerciais. **Papers, Please** pertence a
 - A abertura usa animações discretas de entrada, textura/escurecimento e composição responsiva. O comunicado continua com texto digitado e avanço por clique ou Enter.
 - Foi adicionado o efeito de inspeção `34. Inspect Open.mp3` ao início do comunicado. O som ambiente da música foi reduzido nessa sequência.
 - A entrevista de admissão e as demais etapas narrativas continuam como próximas evoluções; esta alteração trata apenas da apresentação visual e sonora da abertura.
+
+
+## Campanha de admissão — fluxo expandido
+
+A campanha inicial agora segue uma sequência de integração antes de liberar o menu do posto:
+
+1. **Comunicado institucional:** abertura limpa, sem retrato da imigração obristana e sem imagem de fundo ampliada. O símbolo de Arstotzka foi reduzido a um selo tipográfico discreto; o fundo usa composição própria em tons escuros.
+2. **Entrevista com M. Vonel:** três perguntas narrativas de admissão. As respostas ficam associadas à ficha local e não alteram a pontuação geográfica.
+3. **Registro funcional:** formulário em formato de contrato. O único campo preenchido pelo jogador é o nome; o sistema emite um código fictício individual e apresenta cargo, posto, moradia funcional, endereço e data de admissão.
+4. **Boletim político e orientação:** notícia contextual sobre a situação regional e instruções para a avaliação.
+5. **Avaliação geográfica inicial:** dez questões, com o parecer calculado pelas faixas de desempenho já existentes.
+6. **Parecer e ordem de designação:** registro do resultado, identificação do supervisor e documento de lotação em Grestin.
+7. **Menu do posto:** acesso aos modos livres depois da conclusão da integração.
+
+O nome e o código são armazenados no navegador com `localStorage`. O código é fictício e serve como identificador local de referência para uma possível estrutura futura de placares. Ainda não existe autenticação, sincronização entre dispositivos ou placar online.
+
+### Áudio do arquivo
+
+A abertura e o fechamento do Filer agora usam, respectivamente, `26. Filer Open.mp3` e `25. Filer Close.mp3`. O efeito de virar página permanece reservado às transições de papel, não à gaveta de arquivo.
+
+### Observação de compatibilidade
+
+A campanha expandida utiliza novas chaves de armazenamento (`ppquiz.campaign.v3` e `ppquiz.campaign.result.v2`) para que instalações que já concluíram a versão anterior recebam o novo fluxo de admissão uma vez. O registro pessoal é salvo separadamente em `ppquiz.inspector.profile.v1`.
