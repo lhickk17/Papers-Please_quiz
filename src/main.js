@@ -351,7 +351,8 @@ function showSavedCampaignResult() {
 function reviewCampaign() {
   reviewingCampaign = true;
   navigate('opening');
-  startOpeningSequence();
+  document.body.classList.add('is-opening');
+startOpeningSequence();
 }
 $('#menu-review').addEventListener('click', reviewCampaign);
 $('#menu-reset').addEventListener('click', () => beginQuiz('facil'));
