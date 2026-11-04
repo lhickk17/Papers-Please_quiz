@@ -100,3 +100,13 @@ Projeto de fã não oficial e sem fins comerciais. **Papers, Please** pertence a
 - **Avaliação individual:** o botão dedicado inicia um turno livre de dez documentos no modo fácil; os cartões Fácil, Normal e Difícil continuam disponíveis para escolher a dificuldade.
 - **Teclado:** as teclas 1 a 4 selecionam uma alternativa; Enter confirma a resposta e, depois do feedback, um segundo Enter aciona o botão de próxima questão/relatório. Os botões continuam clicáveis com o mouse.
 - **Pasta de arquivo (Filer):** restaurada no fim dos turnos livres, com boletim de erros e estatísticas do modo, acertos, erros, sequência máxima e, conforme a dificuldade, pontuação, tempo e penalidades. A pasta abre e fecha sem substituir o relatório principal.
+
+
+## Campanha — primeira atualização visual
+
+- A abertura institucional foi separada visualmente do posto principal: durante o comunicado, o mapa, a barra superior e o rodapé do menu ficam ocultos.
+- A tela passa a representar a sala de admissão do Ministério, com cabeçalho institucional, classificação de documento, comunicado em papel, brasão e retrato do inspetor.
+- Foram reutilizados os assets existentes `assets/intro/Intro1.png`, `assets/intro/Obrinspector.png` e `assets/intro/Arstotzka.png`; nenhum arquivo de asset foi removido ou substituído.
+- A abertura usa animações discretas de entrada, textura/escurecimento e composição responsiva. O comunicado continua com texto digitado e avanço por clique ou Enter.
+- Foi adicionado o efeito de inspeção `34. Inspect Open.mp3` ao início do comunicado. O som ambiente da música foi reduzido nessa sequência.
+- A entrevista de admissão e as demais etapas narrativas continuam como próximas evoluções; esta alteração trata apenas da apresentação visual e sonora da abertura.
