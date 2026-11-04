@@ -193,7 +193,7 @@ function answerGame(answer) {
   game.streak = scored.streak;
   game.bestStreak = Math.max(game.bestStreak, game.streak);
   if (!correct) game.errors.push({ city: question.city, expected: question.country, answered: answer ?? 'tempo esgotado' });
-  renderOptions($('#game-options'), question, () => {}, answer);
+  renderOptions($('#game-options'), question, () => {}, answer ?? '__TIMEOUT__');
   keyboardOptions = null;
   $('#game-feedback').textContent = correct ? 'ENTRADA APROVADA' : `ENTRADA RECUSADA · ${question.country.toUpperCase()}`;
   $('#game-feedback').className = `feedback-row ${correct ? 'is-success' : 'is-error'}`;
