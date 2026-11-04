@@ -36,5 +36,16 @@
 <div class="button-row"><button id="game-report" class="button" type="button">Encerrar turno e gerar relatório</button><button id="game-menu" class="button" type="button">Voltar ao menu</button></div></div></section>
 <section id="report" class="screen" aria-hidden="true" inert><div class="screen-content"><p class="eyebrow">Filer · Documento arquivado</p><div class="section-heading"><h1 id="report-title">Relatório de desempenho</h1><span id="report-score" class="status-stamp">00000 PTS</span></div><p id="report-summary" class="lead"></p>
 <div class="report-grid"><div class="report-panel"><p class="eyebrow">Discrepâncias registradas</p><ul id="report-errors" class="error-list"></ul></div><div class="report-panel"><p class="eyebrow">Próximo procedimento</p><p class="body-copy">O relatório foi encerrado e arquivado. O Ministério agradece a sua cooperação, voluntária ou não.</p><div class="button-row"><button id="report-again" class="button button-primary" type="button">Novo turno</button><button id="report-menu" class="button" type="button">Menu principal</button></div></div></div>
+<div id="report-filer" class="filer-shell">
+  <p class="eyebrow">Arquivo de inspeção</p>
+  <button id="filer-open" class="filer-closed" type="button"><img src="./assets/Filer.png" alt=""><span>[ abrir pasta de relatório ]</span></button>
+  <div id="filer-expanded" class="filer-expanded" hidden>
+    <div class="filer-documents">
+      <section class="filer-bulletin"><img class="filer-bulletin-bg" src="./assets/papers/BulletinInnerCriminals.png" alt=""><div class="filer-bulletin-content"><p class="eyebrow">Erros registrados</p><ul id="report-filer-errors" class="filer-error-list"></ul></div></section>
+      <section class="filer-stats-panel"><p class="eyebrow">Relatório de desempenho</p><div id="report-filer-stats" class="filer-stats-list"></div></section>
+    </div>
+    <button id="filer-close" class="button" type="button">[ fechar pasta ]</button>
+  </div>
+</div>
 </div></section>
 </main><footer class="site-footer"><span>Papers, Please © 2013 Lucas Pope · Fan project sem fins comerciais</span><span>Glória a Arstotzka</span></footer></div></body></html>
