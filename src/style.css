@@ -98,3 +98,119 @@ body.is-opening .opening-screen{display:flex;align-items:stretch;justify-content
  .admission-masthead,.inspector-figure,.opening-document{animation:none}
  .inspector-figure img{opacity:.88}
 }
+
+
+/* Revisão da campanha: fluxo de admissão completo e documentos funcionais. */
+.opening-backdrop{
+  background-image:radial-gradient(ellipse at 50% 38%,rgba(80,75,48,.22),transparent 58%),linear-gradient(135deg,#101710 0%,#1b2117 52%,#0b100c 100%);
+  filter:none;
+}
+.opening-backdrop:after{
+  background:repeating-linear-gradient(0deg,transparent 0 3px,rgba(0,0,0,.13) 4px),radial-gradient(ellipse at 50% 45%,transparent 20%,rgba(0,0,0,.48) 100%);
+}
+.admission-seal{
+  width:46px;height:46px;flex-basis:46px;border-radius:50%;font-size:1.4rem;
+  color:#c8b89a;font-weight:bold;letter-spacing:0;border:1px solid rgba(200,184,154,.55);
+  box-shadow:inset 0 0 0 3px rgba(200,184,154,.08);
+}
+.opening-scene{display:flex;justify-content:center;align-items:center}
+.opening-document{justify-self:center;max-width:790px}
+.opening-text{min-height:225px}
+.admission-screen{max-width:900px}
+.interview-card{
+  display:grid;grid-template-columns:170px minmax(0,1fr);gap:2rem;align-items:start;
+  padding:clamp(1.2rem,3vw,2.2rem);border:1px solid var(--line);
+  background:linear-gradient(145deg,rgba(34,43,31,.94),rgba(17,24,17,.96));
+  box-shadow:0 22px 60px rgba(0,0,0,.24);
+}
+.vonel-portrait{
+  min-height:190px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.7rem;
+  color:#292418;background:linear-gradient(145deg,#c4a97d,#8d7955);
+  border:5px double rgba(50,39,23,.55);box-shadow:inset 0 0 0 5px rgba(255,255,255,.08);
+}
+.vonel-portrait span{font-size:3.2rem;letter-spacing:-.12em;font-weight:bold}
+.vonel-portrait small{font-size:.55rem;letter-spacing:.18em;border-top:1px solid rgba(41,36,24,.4);padding-top:.55rem}
+.interview-content h2{font-size:clamp(1.15rem,2.5vw,1.65rem);font-weight:400;line-height:1.5;color:var(--ink)}
+.interview-options{display:grid;gap:.65rem;margin:1.4rem 0}
+.interview-option{
+  width:100%;padding:.9rem 1rem;text-align:left;color:var(--ink);background:rgba(0,0,0,.18);
+  border:1px solid var(--line);cursor:pointer;line-height:1.6;transition:background .18s,border-color .18s;
+}
+.interview-option:hover:not(:disabled){background:rgba(196,169,125,.1);border-color:rgba(196,169,125,.55)}
+.interview-option:disabled{opacity:.58;cursor:default}
+.contract-document,.designation-document{
+  position:relative;padding:clamp(1.2rem,3.5vw,2.5rem);color:#292418;
+  background:linear-gradient(135deg,#d1bd96,#b69d70);border:1px solid #806a45;
+  box-shadow:0 22px 65px rgba(0,0,0,.3);
+}
+.contract-document:before,.designation-document:before{
+  content:'';position:absolute;inset:8px;border:1px solid rgba(53,39,20,.22);pointer-events:none;
+}
+.contract-heading{text-align:center;display:grid;gap:.35rem;padding-bottom:1.2rem;border-bottom:2px solid rgba(53,39,20,.42);color:#59482d}
+.contract-heading span,.contract-heading small{font-size:.58rem;letter-spacing:.18em}
+.contract-heading strong{font-size:1.05rem;letter-spacing:.13em}
+.contract-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;padding:1.5rem 0}
+.contract-field{display:grid;gap:.45rem;padding:.7rem .8rem;border:1px solid rgba(53,39,20,.24);min-width:0}
+.contract-field>span,.contract-field>strong,.contract-field label{font-size:.66rem;line-height:1.6;color:#5c4b31}
+.contract-field strong{font-size:.78rem;color:#292418;font-weight:600}
+.contract-field-wide{grid-column:1/-1}
+.contract-field input{
+  width:100%;padding:.7rem .2rem;border:0;border-bottom:1px solid #665334;background:rgba(255,255,255,.18);
+  color:#211e17;font:inherit;font-size:.9rem;outline-offset:3px;
+}
+.contract-field input::placeholder{color:rgba(41,36,24,.48)}
+.contract-terms{font-size:.68rem;line-height:1.9;color:#55452c;border-top:1px solid rgba(53,39,20,.25);padding-top:1rem}
+.contract-signature{display:flex;justify-content:space-between;gap:2rem;margin:2rem 0 1rem}
+.contract-signature span{width:48%;padding-top:.55rem;border-top:1px solid rgba(53,39,20,.55);font-size:.58rem;color:#665334}
+.contract-actions{position:relative}
+.contract-actions .feedback-row{color:#493b26}
+.orientation-layout{display:grid;grid-template-columns:1.05fr .95fr;gap:1rem;align-items:stretch}
+.news-sheet,.orientation-manual{
+  position:relative;padding:clamp(1.1rem,2.5vw,1.8rem);color:#2b261b;background:#c9b386;
+  border:1px solid #806a45;box-shadow:0 16px 38px rgba(0,0,0,.2);
+}
+.news-masthead{width:100%;height:52px;object-fit:contain;object-position:left center;filter:sepia(.35) contrast(1.1);opacity:.8}
+.news-rule{height:3px;background:#443821;margin:.7rem 0 1.2rem;border-top:1px solid rgba(255,255,255,.3)}
+.news-sheet .eyebrow,.orientation-manual .eyebrow{color:#685434}
+.news-sheet h2{font-family:Georgia,serif;font-size:1.45rem;line-height:1.15;letter-spacing:.01em}
+.news-sheet h3{font-family:Georgia,serif;font-size:.8rem;border-top:1px solid rgba(43,38,27,.35);padding-top:.8rem}
+.news-sheet p,.news-sheet li,.news-sheet small,.orientation-manual p,.orientation-manual li{font-family:Georgia,serif;font-size:.82rem;line-height:1.8}
+.news-sheet ul,.orientation-manual ol{padding-left:1.2rem}
+.orientation-manual{background:linear-gradient(145deg,#30392b,#1b241a);color:var(--ink);border-color:var(--line)}
+.orientation-manual .eyebrow{color:var(--dim)}
+.orientation-manual h2{font-size:1.25rem;font-weight:400}
+.orientation-manual p,.orientation-manual li{font-family:inherit;color:#b5a88d}
+.orientation-manual .button{margin-top:1rem}
+.result-evaluation-record,.designation-record{
+  display:grid;grid-template-columns:minmax(130px,.7fr) 1.3fr;gap:.65rem 1rem;
+  margin:1.2rem 0;padding:1rem;border:1px solid var(--line);font-size:.68rem;line-height:1.6;
+}
+.result-evaluation-record span{color:var(--dim);text-transform:uppercase;letter-spacing:.08em}
+.result-evaluation-record strong{font-weight:400;color:var(--ink)}
+.designation-document{max-width:760px;margin:0 auto}
+.designation-document h1{font-size:clamp(1.5rem,4vw,2.3rem);font-weight:400;max-width:520px}
+.designation-document>p:not(.eyebrow){font-family:Georgia,serif;font-size:.88rem;line-height:1.9;color:#4e4029;max-width:600px}
+.designation-stamp{
+  position:absolute;right:clamp(1.2rem,4vw,2.5rem);top:clamp(1.2rem,4vw,2.5rem);
+  padding:.65rem .85rem;border:3px double #8e2922;color:#8e2922;font-size:.65rem;
+  font-weight:bold;letter-spacing:.12em;text-align:center;transform:rotate(8deg);
+}
+.designation-record{border-color:rgba(53,39,20,.25);margin:1.5rem 0}
+.designation-record span{font-size:.62rem;text-transform:uppercase;color:#705b38}
+.designation-record strong{font-size:.76rem;color:#292418}
+.designation-warning{padding:1rem;border-left:3px solid #9b3028;background:rgba(125,37,29,.08);font-weight:bold}
+.designation-footer{display:flex;justify-content:space-between;gap:1rem;border-top:1px solid rgba(53,39,20,.3);padding-top:1rem;margin:1.5rem 0;color:#5d4b2e;font-size:.58rem;letter-spacing:.12em}
+.designation-document .button{color:#e2d2b3}
+@media(max-width:700px){
+ .interview-card{grid-template-columns:1fr;gap:1rem}
+ .vonel-portrait{min-height:110px;max-width:180px;margin:auto;width:100%}
+ .vonel-portrait span{font-size:2.2rem}
+ .orientation-layout{grid-template-columns:1fr}
+ .contract-grid{grid-template-columns:1fr}
+ .contract-field-wide{grid-column:auto}
+ .designation-stamp{position:static;display:inline-block;margin-bottom:1rem;transform:rotate(4deg)}
+ .result-evaluation-record,.designation-record{grid-template-columns:1fr;gap:.2rem}
+ .result-evaluation-record strong,.designation-record strong{margin-bottom:.55rem}
+ .contract-signature{gap:1rem}
+ .contract-signature span{font-size:.48rem}
+}
