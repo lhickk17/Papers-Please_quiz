@@ -96,7 +96,7 @@ Projeto de fã não oficial e sem fins comerciais. **Papers, Please** pertence a
 
 ## Correções após a rodada de testes de navegação
 
-- **Rever campanha:** agora abre o parecer já registrado, sem iniciar novamente as dez perguntas. A pontuação da campanha passa a ser salva localmente para permitir a revisão; instalações antigas que só possuem a marca de conclusão exibem um aviso de que a nota anterior não foi armazenada.
+- **Rever campanha:** agora reapresenta o comunicado institucional e, em seguida, abre o parecer já registrado, sem iniciar novamente as dez perguntas. A pontuação da campanha passa a ser salva localmente para permitir a revisão; instalações antigas que só possuem a marca de conclusão exibem um aviso de que a nota anterior não foi armazenada.
 - **Avaliação individual:** o botão dedicado inicia um turno livre de dez documentos no modo fácil; os cartões Fácil, Normal e Difícil continuam disponíveis para escolher a dificuldade.
 - **Teclado:** as teclas 1 a 4 selecionam uma alternativa; Enter confirma a resposta e, depois do feedback, um segundo Enter aciona o botão de próxima questão/relatório. Os botões continuam clicáveis com o mouse.
 - **Pasta de arquivo (Filer):** restaurada no fim dos turnos livres, com boletim de erros e estatísticas do modo, acertos, erros, sequência máxima e, conforme a dificuldade, pontuação, tempo e penalidades. A pasta abre e fecha sem substituir o relatório principal.
