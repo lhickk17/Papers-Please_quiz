@@ -1,4 +1,4 @@
-import sourceCountries from '../dados.json';
+import sourceCountries from '../dados.json' with { type: 'json' };
 
 export const CITIES = sourceCountries.flatMap(({ pais, cidades }) =>
   cidades.map(({ nome, curiosidade }) => ({ city: nome, country: pais, curiosity: curiosidade }))
