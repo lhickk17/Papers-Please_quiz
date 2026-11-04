@@ -40,3 +40,5 @@
 .filer-stat-value{color:var(--ink);text-align:right}
 .filer-expanded>.button{margin-top:1rem}
 @media(max-width:650px){.filer-documents{grid-template-columns:1fr}.filer-closed{min-height:90px}.filer-closed img{width:58px;height:58px}}
+
+.result-layout.is-legacy{grid-template-columns:minmax(0,1fr)}
