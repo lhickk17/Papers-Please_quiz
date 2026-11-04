@@ -11,6 +11,11 @@ let game = null;
 let questionStarted = 0;
 let timerId = null;
 let muted = false;
+let keyboardOptions = null;
+let keyboardSelection = -1;
+let openingReady = false;
+let openingTimer = null;
+let typingTimer = null;
 const audio = {};
 
 function navigate(id) {
@@ -37,6 +42,7 @@ function play(key, volume = 0.35) {
   if (muted) return;
   const sources = {
     theme: 'assets-sounds/01. Glory to Arstotzka (Main Theme).mp3',
+    foghorn: 'assets-sounds/09. Border Foghorn.mp3',
     stamp: 'assets-sounds/70. Stamp Down.mp3',
     page: 'assets-sounds/52. Paper Turnpage0.mp3',
     hover: 'assets-sounds/32. Inspect Highlight.mp3'
@@ -54,10 +60,14 @@ function play(key, volume = 0.35) {
 
 function renderOptions(container, question, onAnswer, answered = null) {
   container.replaceChildren();
+  keyboardOptions = container;
+  keyboardSelection = -1;
   question.options.forEach((option, index) => {
     const button = document.createElement('button');
     button.type = 'button';
     button.className = 'answer-option';
+    button.dataset.optionIndex = String(index);
+    button.setAttribute('aria-pressed', 'false');
     const key = document.createElement('span');
     key.className = 'option-key';
     key.textContent = String(index + 1).padStart(2, '0');
@@ -117,9 +127,14 @@ function renderCampaignQuestion() {
 function finishCampaign() {
   const outcome = campaignOutcome(campaignCorrect);
   try { localStorage.setItem(campaignKey, 'true'); } catch {}
-  const plaque = outcome === 'distinction' ? 'assets/papers/PlaqueTwoInner.png' : 'assets/papers/PlaqueOneInner.png';
+  const plaqueByOutcome = {
+    distinction: 'assets/papers/PlaqueOneInner.png',
+    pass: 'assets/papers/PlaqueTwoInner.png',
+    retry: 'assets/papers/CitationInner.png'
+  };
+  const plaque = plaqueByOutcome[outcome];
   $('#result-plaque').src = plaque;
-  $('#result-plaque').alt = outcome === 'distinction' ? 'Placa de distinção' : 'Placa de avaliação';
+  $('#result-plaque').alt = outcome === 'distinction' ? 'Placa de distinção' : outcome === 'pass' ? 'Placa de aprovação' : 'Citação por desempenho insatisfatório';
   $('#result-score').textContent = `${campaignCorrect} / 10 ACERTOS`;
   $('#result-heading').textContent = outcome === 'distinction' ? 'DISTINÇÃO CONCEDIDA' : outcome === 'pass' ? 'APROVADO COM RESSALVAS' : 'AVALIAÇÃO INSATISFATÓRIA';
   $('#result-message').textContent = outcome === 'distinction'
@@ -205,12 +220,52 @@ function finishQuiz() {
   navigate('report');
 }
 
-$('#opening-enter').addEventListener('click', () => {
+const openingText = `Ministério da Admissão — Circular Interna Nº 7
+
+Todo inspetor de fronteira deve demonstrar conhecimento geográfico básico antes de assumir o posto.
+
+Você foi designado ao Posto Fronteiriço de Grestin. Sua participação é compulsória — você foi selecionado pela Loteria do Trabalho de Outubro de 1982 e não pode recusar esta designação.
+
+Antes de assumir suas funções, deve provar noções aceitáveis dos países que fazem fronteira com Arstotzka.
+
+Este teste é obrigatório. Resultados serão arquivados.
+
+Glória a Arstotzka.`;
+
+function startOpeningSequence() {
+  const text = $('#opening-text');
+  const instruction = $('#opening-instruction');
+  text.textContent = '';
+  instruction.textContent = '';
+  openingReady = false;
+  window.clearTimeout(openingTimer);
+  window.clearInterval(typingTimer);
+  openingTimer = window.setTimeout(() => {
+    play('foghorn', 0.3);
+    let index = 0;
+    typingTimer = window.setInterval(() => {
+      text.textContent += openingText[index] ?? '';
+      index += 1;
+      if (index >= openingText.length) {
+        window.clearInterval(typingTimer);
+        openingReady = true;
+        instruction.textContent = '[ clique ou pressione ENTER para continuar ]';
+      }
+    }, 30);
+  }, 1000);
+}
+
+function continueFromOpening() {
+  if (!openingReady) return;
+  window.clearInterval(typingTimer);
+  play('page', 0.3);
   play('theme', 0.2);
   let completed = false;
   try { completed = localStorage.getItem(campaignKey) === 'true'; } catch {}
   completed ? navigate('menu') : beginCampaign();
-});
+}
+
+$('#opening').addEventListener('click', continueFromOpening);
 $('#campaign-next').addEventListener('click', () => { campaignIndex += 1; renderCampaignQuestion(); });
 $('#result-menu').addEventListener('click', () => navigate('menu'));
 $('#result-retry').addEventListener('click', beginCampaign);
@@ -230,7 +285,34 @@ $('#sound-toggle').addEventListener('click', () => {
   Object.values(audio).forEach((sound) => { sound.muted = muted; });
   $('#sound-toggle').textContent = muted ? 'ÁUDIO: MUDO' : 'ÁUDIO: ATIVO';
 });
-$('#opening-status').textContent = (() => {
-  try { return localStorage.getItem(campaignKey) === 'true' ? 'REGISTRO LOCAL ENCONTRADO · CAMPANHA JÁ CONCLUÍDA' : 'CIRCULAR INTERNA Nº 7 · LEITURA OBRIGATÓRIA'; }
-  catch { return 'CIRCULAR INTERNA Nº 7 · LEITURA OBRIGATÓRIA'; }
-})();
+startOpeningSequence();
+
+window.addEventListener('keydown', (event) => {
+  if (event.altKey || event.ctrlKey || event.metaKey || event.repeat) return;
+  if (!keyboardOptions || !['campaign', 'quiz'].some((id) => document.getElementById(id).classList.contains('is-active'))) return;
+  const buttons = [...keyboardOptions.querySelectorAll('.answer-option:not(:disabled)')];
+  if (!buttons.length) return;
+  if (/^[1-4]$/.test(event.key)) {
+    const index = Number(event.key) - 1;
+    if (!buttons[index]) return;
+    event.preventDefault();
+    keyboardSelection = index;
+    keyboardOptions.querySelectorAll('.answer-option').forEach((button, buttonIndex) => {
+      const selected = buttonIndex === index;
+      button.classList.toggle('is-keyboard-selected', selected);
+      button.setAttribute('aria-pressed', String(selected));
+    });
+  } else if (event.key === 'Enter' && keyboardSelection >= 0) {
+    const selected = keyboardOptions.querySelector(`.answer-option[data-option-index="${keyboardSelection}"]`);
+    if (selected && !selected.disabled) {
+      event.preventDefault();
+      selected.click();
+    }
+  }
+});
+
+window.addEventListener('beforeunload', () => {
+  window.clearTimeout(openingTimer);
+  window.clearInterval(typingTimer);
+  clearInterval(timerId);
+});
