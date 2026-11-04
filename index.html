@@ -1,132 +1,38 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Papers Please — T.G.I.F.</title>
-    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-
-    <div id="abertura">
-      <img src="assets/intro/Arstotzka.png" id="logo-abertura" />
-      <div id="texto-abertura"></div>
-      <p id="instrucao-abertura"></p>
-    </div>
-
-    <div id="menu" style="display:none">
-      <div id="menu-mapa">
-        <img src="assets/papersplease-map.webp" id="mapa-bg" />
-      </div>
-      <img src="assets/intro/Arstotzka.png" alt="Arstotzka" id="logo" />
-      <h1>Teste Geográfico para Inspetores de Fronteira</h1>
-      <p id="menu-sub">Ministério da Admissão — Posto Fronteiriço de Grestin</p>
-      <div id="menu-botoes">
-        <button class="btn-modo" data-modo="facil">Fácil</button>
-        <button class="btn-modo" data-modo="normal">Normal</button>
-        <button class="btn-modo" data-modo="dificil">Difícil</button>
-      </div>
-      <div id="menu-regras">
-        <p class="regras-titulo">Regulamento de Pontuação</p>
-        <table class="regras-tabela">
-          <tr><td>Acerto</td><td>+100 pts</td></tr>
-          <tr><td>Streak acima de 3</td><td>+50 pts por acerto</td></tr>
-          <tr><td>Resposta em menos de 2s</td><td>+25 pts</td></tr>
-          <tr class="separador"><td colspan="2"></td></tr>
-          <tr><td>Erro (Difícil)</td><td>−50 pts</td></tr>
-          <tr><td>Demora acima de 3s (Difícil)</td><td>−25 pts</td></tr>
-        </table>
-        <div class="regras-modos">
-          <div class="regra-modo">
-            <span class="regra-label facil">Fácil</span>
-            <span>Sem tempo · Curiosidades · Aprendizado</span>
-          </div>
-          <div class="regra-modo">
-            <span class="regra-label normal">Normal</span>
-            <span>8s por pergunta · Streak · Tempo total</span>
-          </div>
-          <div class="regra-modo">
-            <span class="regra-label dificil">Difícil</span>
-            <span>5s por pergunta · Penalidades · Pressão total</span>
-          </div>
-        </div>
-      </div>
-      <footer id="menu-footer">
-        <img src="assets/intro/Intro1.png" alt="Loteria do Trabalho" id="selo" />
-        <div id="footer-texto">
-          <p>Papers, Please © 2013 Lucas Pope</p>
-          <p>Fan project — sem fins comerciais</p>
-          <p>Mapa por u/Alpha_Stalin</p>
-        </div>
-        <img src="assets/News.png" alt="A Verdade de Arstotzka" id="jornal" />
-      </footer>
-    </div>
-
-    <div id="campanha" style="display:none">
-      <div id="campanha-inner">
-        <p id="campanha-header">Ministério da Admissão — Avaliação Obrigatória</p>
-        <p id="campanha-pergunta">Carregando...</p>
-        <div id="campanha-opcoes"></div>
-        <div id="carimbo-container-campanha">
-          <img id="carimbo-img-campanha" src="" alt="" />
-        </div>
-        <p id="campanha-feedback"></p>
-        <p id="campanha-curiosidade"></p>
-        <button id="campanha-proxima">Próxima →</button>
-        <p id="campanha-progresso"></p>
-      </div>
-    </div>
-
-    <div id="resultado-campanha" style="display:none">
-      <div id="resultado-inner">
-        <img id="resultado-placa" src="" alt="resultado" />
-        <p id="resultado-vonel"></p>
-        <p id="resultado-placar"></p>
-        <div id="resultado-botoes"></div>
-      </div>
-    </div>
-
-    <div id="quiz" style="display:none">
-      <h1>Verificação Geográfica — Modo Livre</h1>
-      <p id="pergunta">Carregando...</p>
-      <div id="opcoes"></div>
-      <div id="carimbo-container">
-        <img id="carimbo-img" src="" alt="" />
-      </div>
-      <p id="feedback"></p>
-      <button id="proxima">Próxima →</button>
-      <p id="pontos">Pontos: 0</p>
-      <p id="timer"></p>
-      <p id="streak"></p>
-      <p id="curiosidade"></p>
-    </div>
-
-    <div id="filer-overlay" style="display:none">
-      <div id="filer-wrapper">
-        <div id="filer-fechado">
-          <img src="assets/Filer.png" id="filer-img" />
-          <p id="filer-instrucao">[ abrir relatório ]</p>
-        </div>
-        <div id="filer-aberto" style="display:none">
-          <div id="filer-conteudo">
-            <div id="filer-bulletin">
-              <img src="assets/papers/BulletinInnerCriminals.png" id="bulletin-bg" />
-              <div id="bulletin-conteudo">
-                <p id="bulletin-titulo">Erros Registrados</p>
-                <div id="bulletin-lista"></div>
-              </div>
-            </div>
-            <div id="filer-stats">
-              <p class="stats-titulo">Relatório de Desempenho</p>
-              <div id="stats-lista"></div>
-            </div>
-          </div>
-          <button id="filer-fechar">[ fechar pasta ]</button>
-        </div>
-      </div>
-    </div>
-
-    <script src="quiz.js"></script>
-  </body>
-</html>
+<!doctype html>
+<html lang="pt-BR"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#111a11">
+<meta name="description" content="Avaliação geográfica de inspetores de fronteira no universo de Papers, Please.">
+<title>T.G.I.F. — Ministério da Admissão</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<script type="module" src="./src/main.js"></script></head><body><div class="app-shell">
+<div class="map-atmosphere" aria-hidden="true"><img src="./assets/papersplease-map.webp" alt=""></div>
+<header class="topbar"><div class="topbar-brand"><strong>T.G.I.F.</strong> / Ministério da Admissão</div><div class="topbar-actions"><button id="sound-toggle" class="button button-small" type="button">Áudio: ativo</button><span class="eyebrow">Posto de Grestin · 1982</span></div></header>
+<main>
+<section id="opening" class="screen is-active" aria-hidden="false"><div class="screen-content opening-layout"><div class="opening-copy">
+<p class="eyebrow">Circular interna nº 7 · Ministério da Admissão</p><img class="opening-logo" src="./assets/intro/Arstotzka.png" alt="Brasão de Arstotzka">
+<h1 class="question-title">Você foi designado.<br>A fronteira não espera.</h1><p class="lead">Todo inspetor deve demonstrar conhecimento geográfico antes de assumir o posto. Sua participação é compulsória: a Loteria do Trabalho de outubro de 1982 já decidiu por você.</p>
+<div class="button-row"><button id="opening-enter" class="button button-primary" type="button">Iniciar procedimento →</button></div><p id="opening-status" class="kicker" aria-live="polite"></p></div>
+<aside class="opening-aside"><p class="eyebrow">Aviso ao candidato</p><p class="body-copy">A avaliação inicial contém dez documentos. Cada resposta será arquivada. O resultado não cancela sua designação; a burocracia também sabe ser criativa.</p><div class="divider"></div><p class="kicker">Glória a Arstotzka.</p></aside></div></section>
+<section id="campaign" class="screen" aria-hidden="true" inert><div class="screen-content narrow">
+<div class="section-heading"><div><p class="eyebrow">Avaliação obrigatória</p><h1>Verificação de documentos</h1></div><span id="campaign-count" class="status-stamp">AVALIAÇÃO 01 / 10</span></div>
+<div class="progress-row"><span>Progresso do exame</span><span id="campaign-progress-label">1 de 10 documentos verificados</span></div><div id="campaign-progress" class="progress-track" style="--progress:0%"></div>
+<article id="campaign-panel" class="document-card question-panel"><div class="document-card-inner"><div class="document-header">Ministério da Admissão · Documento de viagem</div><p class="question-prompt">Identifique o país de emissão deste documento.</p><h2 class="question-title question-city">Carregando registro...</h2><div id="campaign-options" class="options-grid"></div><p id="campaign-feedback" class="feedback-row" aria-live="polite"></p><p id="campaign-curiosity" class="curiosity-note"></p><button id="campaign-next" class="button button-primary" type="button" hidden>Próximo documento →</button></div></article>
+</div></section>
+<section id="campaign-result" class="screen" aria-hidden="true" inert><div class="screen-content narrow"><p class="eyebrow">Parecer do supervisor · M. Vonel</p><div class="result-layout">
+<img id="result-plaque" class="result-plaque" src="./assets/papers/PlaqueOneInner.png" alt="Placa de avaliação"><div><span class="status-stamp">REGISTRO ARQUIVADO</span><h1 id="result-heading" class="question-title">Parecer final</h1><p id="result-score" class="kicker">0 / 10 acertos</p><p id="result-message" class="result-copy"></p><div class="button-row"><button id="result-menu" class="button button-primary" type="button">Acessar o posto →</button><button id="result-retry" class="button" type="button" hidden>Refazer avaliação</button></div></div>
+</div></div></section>
+<section id="menu" class="screen" aria-hidden="true" inert><div class="screen-content">
+<div class="section-heading"><div><p class="eyebrow">Posto fronteiriço de Grestin</p><h1>Teste geográfico para inspetores</h1></div><span class="status-stamp is-success">DESIGNAÇÃO ATIVA</span></div>
+<p class="lead">Selecione o nível de inspeção. Dez documentos, três procedimentos e nenhuma garantia de paz interior.</p>
+<div class="menu-modes"><button class="mode-card" type="button" data-difficulty="facil"><span class="mode-number">01 / TREINAMENTO</span><strong>Fácil</strong><span>Sem cronômetro. Aprendizado e curiosidades.</span></button><button class="mode-card" type="button" data-difficulty="normal"><span class="mode-number">02 / TURNO REGULAR</span><strong>Normal</strong><span>Oito segundos por documento, bônus e sequência.</span></button><button class="mode-card" type="button" data-difficulty="dificil"><span class="mode-number">03 / ALERTA</span><strong>Difícil</strong><span>Cinco segundos, penalidades e pressão.</span></button></div>
+<div class="report-grid"><div class="report-panel"><p class="eyebrow">Regulamento de pontuação</p><ul class="rule-list"><li>Acerto: +100 pontos</li><li>Sequência de três ou mais: bônus de +50</li><li>Resposta em menos de dois segundos: bônus de +25</li><li>Erro no modo difícil: −50 pontos</li></ul></div><div class="report-panel"><p class="eyebrow">Arquivo pessoal</p><p class="body-copy">A campanha fica concluída após a primeira avaliação, independentemente da nota. É possível revê-la pelo menu; você não precisa refazer dez perguntas a cada visita.</p><div class="button-row"><button id="menu-review" class="button" type="button">Rever campanha</button><button id="menu-reset" class="button button-danger" type="button">Reiniciar avaliação inicial</button></div></div></div>
+</div></section>
+<section id="quiz" class="screen" aria-hidden="true" inert><div class="screen-content"><div class="section-heading"><div><p class="eyebrow">Modo livre · Inspeção em andamento</p><h1>Verificação geográfica</h1></div><span id="game-count" class="status-stamp">DOCUMENTO 01 / 10</span></div>
+<div class="game-layout"><article id="game-panel" class="document-card question-panel"><div class="document-card-inner"><div class="document-header">Registro de entrada · Uso interno</div><p class="question-prompt">Identifique o país de emissão deste documento.</p><h2 class="question-title question-city">Carregando registro...</h2><div id="game-options" class="options-grid"></div><p id="game-feedback" class="feedback-row" aria-live="polite"></p><p class="question-curiosity curiosity-note"></p><button id="game-next" class="button button-primary" type="button" hidden>Próximo documento →</button></div></article>
+<aside class="game-sidebar"><div class="metric"><span class="metric-label">Pontuação</span><strong id="game-score" class="metric-value">00000</strong></div><div class="metric"><span class="metric-label">Sequência</span><strong id="game-streak" class="metric-value">0</strong></div><div class="metric"><span class="metric-label">Tempo restante</span><strong id="game-timer" class="metric-value">—</strong></div></aside></div>
+<div class="button-row"><button id="game-report" class="button" type="button">Encerrar turno e gerar relatório</button><button id="game-menu" class="button" type="button">Voltar ao menu</button></div></div></section>
+<section id="report" class="screen" aria-hidden="true" inert><div class="screen-content"><p class="eyebrow">Filer · Documento arquivado</p><div class="section-heading"><h1 id="report-title">Relatório de desempenho</h1><span id="report-score" class="status-stamp">00000 PTS</span></div><p id="report-summary" class="lead"></p>
+<div class="report-grid"><div class="report-panel"><p class="eyebrow">Discrepâncias registradas</p><ul id="report-errors" class="error-list"></ul></div><div class="report-panel"><p class="eyebrow">Próximo procedimento</p><p class="body-copy">O relatório foi encerrado e arquivado. O Ministério agradece a sua cooperação, voluntária ou não.</p><div class="button-row"><button id="report-again" class="button button-primary" type="button">Novo turno</button><button id="report-menu" class="button" type="button">Menu principal</button></div></div></div>
+</div></section>
+</main><footer class="site-footer"><span>Papers, Please © 2013 Lucas Pope · Fan project sem fins comerciais</span><span>Glória a Arstotzka</span></footer></div></body></html>
