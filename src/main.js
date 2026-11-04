@@ -136,6 +136,8 @@ function finishCampaign() {
 
 function showCampaignResult(correct, persist = false) {
   const outcome = campaignOutcome(correct);
+  $('#result-plaque').hidden = false;
+  $('.result-layout').classList.remove('is-legacy');
   if (persist) {
     try {
       localStorage.setItem(campaignKey, 'true');
@@ -328,8 +330,8 @@ function reviewCampaign() {
     showCampaignResult(saved.correct, false);
     return;
   }
-  $('#result-plaque').src = 'assets/papers/CitationInner.png';
-  $('#result-plaque').alt = 'Registro de campanha concluída';
+  $('#result-plaque').hidden = true;
+  $('.result-layout').classList.add('is-legacy');
   $('#result-score').textContent = 'RESULTADO ANTERIOR NÃO DISPONÍVEL';
   $('#result-heading').textContent = 'CAMPANHA CONCLUÍDA';
   $('#result-message').textContent = 'Esta instalação registra que a campanha foi concluída, mas a versão anterior não salvava a pontuação. O histórico detalhado não pode ser recuperado.';
