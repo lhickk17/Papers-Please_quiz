@@ -79,7 +79,7 @@ Ideias futuras não são consideradas concluídas até serem implementadas e ver
 
 ## Estado de validação
 
-Esta é a primeira fatia da reconstrução. Os testes e o build precisam ser executados depois de instalar as dependências; não se deve considerar qualquer validação aprovada antes de executá-la. Os assets e arquivos do protótipo original permanecem preservados na branch.
+Validação local realizada em 4 de novembro de 2026: `npm test` concluiu com **4/4 testes aprovados** e `npm run build` concluiu com sucesso usando Vite 7.3.7. O build gera os arquivos de produção em `dist/`, pasta ignorada pelo Git. Essa validação cobre as regras automatizadas e a compilação; não substitui testes manuais adicionais do fluxo completo em diferentes navegadores. Os assets e arquivos do protótipo original permanecem preservados na branch.
 
 ## Aviso legal
 
