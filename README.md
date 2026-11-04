@@ -102,14 +102,13 @@ Projeto de fã não oficial e sem fins comerciais. **Papers, Please** pertence a
 - **Pasta de arquivo (Filer):** restaurada no fim dos turnos livres, com boletim de erros e estatísticas do modo, acertos, erros, sequência máxima e, conforme a dificuldade, pontuação, tempo e penalidades. A pasta abre e fecha sem substituir o relatório principal.
 
 
-## Campanha — primeira atualização visual
+## Campanha — revisão da abertura e progressão
 
-- A abertura institucional foi separada visualmente do posto principal: durante o comunicado, o mapa, a barra superior e o rodapé do menu ficam ocultos.
-- A tela passa a representar a sala de admissão do Ministério, com cabeçalho institucional, classificação de documento, comunicado em papel, brasão e retrato do inspetor.
-- Foram reutilizados os assets existentes `assets/intro/Intro1.png`, `assets/intro/Obrinspector.png` e `assets/intro/Arstotzka.png`; nenhum arquivo de asset foi removido ou substituído.
-- A abertura usa animações discretas de entrada, textura/escurecimento e composição responsiva. O comunicado continua com texto digitado e avanço por clique ou Enter.
-- Foi adicionado o efeito de inspeção `34. Inspect Open.mp3` ao início do comunicado. O som ambiente da música foi reduzido nessa sequência.
-- A entrevista de admissão e as demais etapas narrativas continuam como próximas evoluções; esta alteração trata apenas da apresentação visual e sonora da abertura.
+- A abertura institucional fica isolada do posto principal, com o mapa, a barra superior e o rodapé ocultos.
+- A imagem de fundo ampliada e o retrato da imigração obristana foram retirados da abertura. O símbolo do Ministério foi reduzido a um selo tipográfico discreto; o fundo agora é uma composição própria em CSS.
+- O comunicado mantém o texto digitado, a buzina, o efeito de inspeção e o avanço por clique ou Enter.
+- A campanha completa agora inclui entrevista com M. Vonel, registro funcional, boletim político, orientação, avaliação geográfica, parecer e ordem de designação.
+- O retrato de M. Vonel é representado por um monograma visual porque o repositório não contém um asset de retrato identificável do supervisor.
 
 
 ## Campanha de admissão — fluxo expandido
