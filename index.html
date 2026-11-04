@@ -14,7 +14,7 @@
     <div class="opening-backdrop" aria-hidden="true"></div>
     <div class="opening-vignette">
       <header class="admission-masthead">
-        <div class="admission-seal"><img src="./assets/intro/Arstotzka.png" alt=""></div>
+        <div class="admission-seal" aria-hidden="true">A</div>
         <div class="admission-ident">
           <p class="eyebrow">República de Arstotzka</p>
           <h1>Ministério da Admissão</h1>
@@ -23,10 +23,6 @@
         <div class="admission-classification">USO INTERNO<br><strong>FORMULÁRIO 07-A</strong></div>
       </header>
       <div class="opening-scene">
-        <figure class="inspector-figure" aria-hidden="true">
-          <img src="./assets/intro/Obrinspector.png" alt="">
-          <figcaption>SETOR DE RECRUTAMENTO</figcaption>
-        </figure>
         <article class="opening-document">
           <div class="opening-document-top">
             <span>COMUNICADO OFICIAL</span>
@@ -48,6 +44,54 @@
     </div>
   </div>
 </section>
+<section id="interview" class="screen" aria-hidden="true" inert>
+<div class="screen-content narrow admission-screen">
+  <div class="section-heading"><div><p class="eyebrow">Diretoria de pessoal · Entrevista</p><h1>Entrevista de admissão</h1></div><span class="status-stamp">SALA 03</span></div>
+  <article class="interview-card">
+    <div class="vonel-portrait" aria-label="Identificação de M. Vonel"><span>M.V.</span><small>SUPERVISOR</small></div>
+    <div class="interview-content"><p class="eyebrow">M. Vonel · Supervisor de recrutamento</p><h2 id="interview-question">Sente-se. Vamos começar.</h2><p id="interview-context" class="body-copy">Responda com sinceridade. Suas respostas serão anexadas à ficha de admissão, mas não alteram a avaliação técnica.</p><div id="interview-options" class="interview-options"></div><p id="interview-feedback" class="feedback-row" aria-live="polite"></p><button id="interview-next" class="button button-primary" type="button" hidden>Continuar entrevista →</button></div>
+  </article>
+</div></section>
+<section id="registration" class="screen" aria-hidden="true" inert>
+<div class="screen-content narrow admission-screen">
+  <div class="section-heading"><div><p class="eyebrow">Departamento de pessoal · Formulário 07-B</p><h1>Registro funcional e termo de contratação</h1></div><span class="status-stamp">CONFIDENCIAL</span></div>
+  <article class="contract-document">
+    <div class="contract-heading"><span>REPÚBLICA DE ARSTOTZKA</span><strong>MINISTÉRIO DA ADMISSÃO</strong><small>TERMO DE DESIGNAÇÃO E REGISTRO DO SERVIDOR</small></div>
+    <div class="contract-grid">
+      <label class="contract-field contract-field-wide">Nome completo do contratado<input id="candidate-name" maxlength="32" autocomplete="off" placeholder="Digite seu nome" required></label>
+      <div class="contract-field"><span>Código de identificação</span><strong id="candidate-code">AR-82-000000</strong></div>
+      <div class="contract-field"><span>Unidade de lotação</span><strong>Posto Fronteiriço de Grestin</strong></div>
+      <div class="contract-field"><span>Endereço funcional</span><strong>Bloco habitacional 6 · Grestin Leste</strong></div>
+      <div class="contract-field"><span>Moradia</span><strong>Fornecida pelo Ministério</strong></div>
+      <div class="contract-field"><span>Cargo</span><strong>Inspetor de fronteira · Classe III</strong></div>
+      <div class="contract-field"><span>Data de admissão</span><strong>04 de outubro de 1982</strong></div>
+    </div>
+    <p class="contract-terms">O contratado declara ciência de que a designação é compulsória, que a residência funcional está vinculada ao exercício do cargo e que os registros de desempenho serão mantidos pelo Ministério. O número de identificação é fictício e exclusivo deste registro.</p>
+    <div class="contract-signature"><span>Assinatura do contratado</span><span>Departamento de pessoal</span></div>
+    <div class="contract-actions"><p id="registration-feedback" class="feedback-row" aria-live="polite"></p><button id="registration-submit" class="button button-primary" type="button">Assinar e registrar →</button></div>
+  </article>
+</div></section>
+<section id="orientation" class="screen" aria-hidden="true" inert>
+<div class="screen-content narrow admission-screen">
+  <div class="section-heading"><div><p class="eyebrow">Central de informação · 04/10/1982</p><h1>Boletim político e orientação</h1></div><span class="status-stamp">CIRCULAR 04</span></div>
+  <div class="orientation-layout">
+    <article class="news-sheet"><img src="./assets/News.png" alt="" class="news-masthead"><div class="news-rule"></div><p class="eyebrow">Noticiário nacional · Edição extraordinária</p><h2>ARSTOTZKA REFORÇA CONTROLE NAS FRONTEIRAS</h2><p>Após anos de tensão regional e o armistício de 1979, o governo mantém vigilância reforçada nos postos de entrada. Grestin permanece dividida entre jurisdições e é considerada área estratégica.</p><h3>DESTAQUES DO DIA</h3><ul><li>Inspeções de documentos serão obrigatórias para todos os viajantes.</li><li>Solicitações de entrada devem corresponder ao país e à cidade de emissão.</li><li>Relatórios de irregularidade serão encaminhados à supervisão.</li></ul><small>O Ministério recomenda atenção especial a documentos de países vizinhos.</small></article>
+    <article class="orientation-manual"><p class="eyebrow">Manual do inspetor · Instrução inicial</p><h2>Procedimento de avaliação</h2><ol><li>Leia o nome da cidade apresentado no documento.</li><li>Identifique corretamente o país correspondente.</li><li>Selecione uma das quatro alternativas disponíveis.</li><li>Respostas e discrepâncias serão registradas no arquivo funcional.</li></ol><p>Esta avaliação inicial verifica conhecimentos geográficos básicos. A aprovação formaliza sua capacidade de consulta, não garante promoção.</p><button id="orientation-start" class="button button-primary" type="button">Iniciar avaliação inicial →</button></article>
+  </div>
+</div></section>
+<section id="designation" class="screen" aria-hidden="true" inert>
+<div class="screen-content narrow admission-screen">
+  <p class="eyebrow">Ministério da Admissão · Ordem de serviço 1982/10-04</p>
+  <article class="designation-document">
+    <div class="designation-stamp">DESIGNAÇÃO<br>EFETIVADA</div>
+    <p class="eyebrow">República de Arstotzka · Diretoria de pessoal</p><h1>Ordem oficial de designação</h1>
+    <p>Por determinação do Ministério, fica formalizada a admissão do servidor abaixo identificado para exercício imediato de suas funções.</p>
+    <div class="designation-record"><span>Servidor</span><strong id="designation-name">Candidato registrado</strong><span>Identificação funcional</span><strong id="designation-code">AR-82-000000</strong><span>Posto de serviço</span><strong>Grestin · Setor de inspeção de entrada</strong><span>Residência funcional</span><strong>Bloco habitacional 6 · Grestin Leste</strong><span>Superior imediato</span><strong>M. Vonel · Supervisão de fronteira</strong></div>
+    <p class="designation-warning">Apresente-se ao posto no próximo turno. Ausências, recusas de serviço e abandono de função serão tratados conforme regulamento interno.</p>
+    <div class="designation-footer"><span>Glória a Arstotzka.</span><span>ARQUIVO FUNCIONAL · 1982</span></div>
+    <button id="designation-enter" class="button button-primary" type="button">Assumir posto em Grestin →</button>
+  </article>
+</div></section>
 <section id="campaign" class="screen" aria-hidden="true" inert><div class="screen-content narrow">
 <div class="section-heading"><div><p class="eyebrow">Avaliação obrigatória</p><h1>Verificação de documentos</h1></div><span id="campaign-count" class="status-stamp">AVALIAÇÃO 01 / 10</span></div>
 <div class="progress-row"><span>Progresso do exame</span><span id="campaign-progress-label">1 de 10 documentos verificados</span></div><div id="campaign-progress" class="progress-track" style="--progress:0%"></div>
