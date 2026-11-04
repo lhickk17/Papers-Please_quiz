@@ -75,7 +75,10 @@ function renderOptions(container, question, onAnswer, answered = null) {
     label.className = 'option-label';
     label.textContent = option;
     button.append(key, label);
-    button.addEventListener('click', () => onAnswer(option));
+    button.addEventListener('click', () => {
+      keyboardSelection = -1;
+      onAnswer(option);
+    });
     if (answered !== null) {
       button.disabled = true;
       if (option === question.country) button.classList.add('is-correct');
@@ -113,6 +116,7 @@ function renderCampaignQuestion() {
     const correct = answer === question.country;
     campaignCorrect += Number(correct);
     renderOptions($('#campaign-options'), question, () => {}, answer);
+    keyboardOptions = null;
     $('#campaign-feedback').textContent = correct
       ? 'DOCUMENTO CONFERIDO. PROCEDIMENTO CORRETO.'
       : `DISCREPÂNCIA REGISTRADA. PAÍS CORRETO: ${question.country.toUpperCase()}.`;
@@ -190,6 +194,7 @@ function answerGame(answer) {
   game.bestStreak = Math.max(game.bestStreak, game.streak);
   if (!correct) game.errors.push({ city: question.city, expected: question.country, answered: answer ?? 'tempo esgotado' });
   renderOptions($('#game-options'), question, () => {}, answer);
+  keyboardOptions = null;
   $('#game-feedback').textContent = correct ? 'ENTRADA APROVADA' : `ENTRADA RECUSADA · ${question.country.toUpperCase()}`;
   $('#game-feedback').className = `feedback-row ${correct ? 'is-success' : 'is-error'}`;
   $('#game-curiosity').textContent = question.curiosity;
@@ -289,6 +294,11 @@ startOpeningSequence();
 
 window.addEventListener('keydown', (event) => {
   if (event.altKey || event.ctrlKey || event.metaKey || event.repeat) return;
+  if (event.key === 'Enter' && $('#opening').classList.contains('is-active')) {
+    event.preventDefault();
+    continueFromOpening();
+    return;
+  }
   if (!keyboardOptions || !['campaign', 'quiz'].some((id) => document.getElementById(id).classList.contains('is-active'))) return;
   const buttons = [...keyboardOptions.querySelectorAll('.answer-option:not(:disabled)')];
   if (!buttons.length) return;
