@@ -23,6 +23,7 @@ const audio = {};
 
 function navigate(id) {
   const previous = document.querySelector('.screen.is-active');
+  document.body.classList.toggle('is-opening', id === 'opening');
   const show = () => screenIds.forEach((key) => {
     const screen = document.getElementById(key);
     const active = key === id;
@@ -48,7 +49,8 @@ function play(key, volume = 0.35) {
     foghorn: 'assets-sounds/09. Border Foghorn.mp3',
     stamp: 'assets-sounds/70. Stamp Down.mp3',
     page: 'assets-sounds/52. Paper Turnpage0.mp3',
-    hover: 'assets-sounds/32. Inspect Highlight.mp3'
+    hover: 'assets-sounds/32. Inspect Highlight.mp3',
+    inspectOpen: 'assets-sounds/34. Inspect Open.mp3'
   };
   if (!audio[key]) {
     if (!sources[key]) return;
@@ -297,6 +299,7 @@ function startOpeningSequence() {
   window.clearInterval(typingTimer);
   openingTimer = window.setTimeout(() => {
     play('foghorn', 0.3);
+    play('inspectOpen', 0.22);
     let index = 0;
     typingTimer = window.setInterval(() => {
       text.textContent += openingText[index] ?? '';
@@ -313,8 +316,8 @@ function startOpeningSequence() {
 function continueFromOpening() {
   if (!openingReady) return;
   window.clearInterval(typingTimer);
-  play('page', 0.3);
-  play('theme', 0.2);
+  play('page', 0.24);
+  play('theme', 0.14);
   if (reviewingCampaign) {
     reviewingCampaign = false;
     showSavedCampaignResult();
