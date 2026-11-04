@@ -365,12 +365,12 @@ $('#report-again').addEventListener('click', () => beginQuiz(game?.difficulty ??
 $('#filer-open').addEventListener('click', () => {
   $('#filer-open').hidden = true;
   $('#filer-expanded').hidden = false;
-  play('page', 0.25);
+  play('filerOpen', 0.32);
 });
 $('#filer-close').addEventListener('click', () => {
   $('#filer-expanded').hidden = true;
   $('#filer-open').hidden = false;
-  play('page', 0.25);
+  play('filerClose', 0.32);
 });
 $('#sound-toggle').addEventListener('click', () => {
   muted = !muted;
