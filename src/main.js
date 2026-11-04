@@ -2,7 +2,7 @@ import './style.css';
 import { createRound, campaignOutcome, scoreAnswer } from './core.js';
 
 const $ = (selector) => document.querySelector(selector);
-const screenIds = ['opening', 'campaign', 'campaign-result', 'menu', 'quiz', 'report'];
+const screenIds = ['opening', 'interview', 'registration', 'orientation', 'campaign', 'campaign-result', 'designation', 'menu', 'quiz', 'report'];
 const campaignKey = 'ppquiz.campaign.v3';
 const campaignResultKey = 'ppquiz.campaign.result.v2';
 let roundStartedAt = 0;
@@ -50,7 +50,9 @@ function play(key, volume = 0.35) {
     stamp: 'assets-sounds/70. Stamp Down.mp3',
     page: 'assets-sounds/52. Paper Turnpage0.mp3',
     hover: 'assets-sounds/32. Inspect Highlight.mp3',
-    inspectOpen: 'assets-sounds/34. Inspect Open.mp3'
+    inspectOpen: 'assets-sounds/34. Inspect Open.mp3',
+    filerOpen: 'assets-sounds/26. Filer Open.mp3',
+    filerClose: 'assets-sounds/25. Filer Close.mp3'
   };
   if (!audio[key]) {
     if (!sources[key]) return;
@@ -98,6 +100,85 @@ function renderQuestion(panel, question, options, callback) {
   panel.querySelector('.question-prompt').textContent = 'Identifique o país de emissão deste documento.';
   panel.querySelector('.question-curiosity, #campaign-curiosity').textContent = question.curiosity || 'Registro complementar indisponível.';
   renderOptions(options, question, callback);
+}
+
+const interviewQuestions = [
+  { question: 'Por que acredita estar apto a servir no posto de Grestin?', context: 'O Ministério procura candidatos capazes de seguir procedimentos sob pressão.', options: ['Tenho facilidade em seguir regulamentos.', 'Considero o serviço uma obrigação do Estado.', 'Preciso de estabilidade e moradia.'], feedback: ['Uma resposta objetiva. O cumprimento de normas será observado.', 'O dever cívico foi devidamente registrado.', 'O Ministério oferece alojamento funcional aos servidores designados.'] },
+  { question: 'Como reagiria diante de um documento cuja procedência desconhece?', context: 'A fronteira exige atenção, disciplina e consulta aos registros oficiais.', options: ['Consultaria o manual e os registros disponíveis.', 'Decidiria com base na experiência pessoal.', 'Solicitaria orientação ao supervisor.'], feedback: ['Procedimento adequado. A consulta é preferível à suposição.', 'A experiência não substitui os regulamentos oficiais.', 'A supervisão está disponível para casos excepcionais.'] },
+  { question: 'Compreende que a designação para Grestin é compulsória?', context: 'A loteria de trabalho determina a alocação inicial dos servidores.', options: ['Compreendo. Cumprirei a designação.', 'Tenho reservas, mas compreendo.', 'Solicito que a decisão seja reconsiderada.'], feedback: ['Declaração registrada. Prossigamos com o cadastro.', 'As reservas foram anotadas sem efeito sobre a designação.', 'O pedido será arquivado. A designação permanece vigente.'] }
+];
+
+function beginInterview() {
+  interviewIndex = 0;
+  interviewAnswers = [];
+  renderInterviewQuestion();
+  navigate('interview');
+}
+
+function renderInterviewQuestion() {
+  const item = interviewQuestions[interviewIndex];
+  $('#interview-question').textContent = item.question;
+  $('#interview-context').textContent = item.context;
+  $('#interview-feedback').textContent = '';
+  $('#interview-next').hidden = true;
+  const options = $('#interview-options');
+  options.replaceChildren();
+  item.options.forEach((option, index) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'interview-option';
+    button.textContent = option;
+    button.addEventListener('click', () => {
+      [...options.children].forEach((entry) => { entry.disabled = true; });
+      interviewAnswers.push(index);
+      $('#interview-feedback').textContent = item.feedback[index];
+      $('#interview-next').hidden = false;
+      $('#interview-next').textContent = interviewIndex === interviewQuestions.length - 1 ? 'Concluir entrevista →' : 'Próxima pergunta →';
+      play('inspectOpen', 0.18);
+    });
+    options.append(button);
+  });
+}
+
+function createInspectorProfile() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(profileKey) || 'null');
+    if (saved?.code) return saved;
+  } catch {}
+  const serial = Math.floor(100000 + Math.random() * 900000);
+  return { name: '', code: `AR-82-${serial}`, createdAt: '1982-10-04', interview: [] };
+}
+
+function prepareRegistration() {
+  inspectorProfile = createInspectorProfile();
+  $('#candidate-code').textContent = inspectorProfile.code;
+  $('#candidate-name').value = inspectorProfile.name || '';
+  $('#registration-feedback').textContent = '';
+  navigate('registration');
+}
+
+function saveRegistration() {
+  const name = $('#candidate-name').value.trim().replace(/\s+/g, ' ');
+  if (name.length < 2) {
+    $('#registration-feedback').textContent = 'INFORME UM NOME COM PELO MENOS DOIS CARACTERES.';
+    $('#registration-feedback').className = 'feedback-row is-error';
+    $('#candidate-name').focus();
+    return;
+  }
+  inspectorProfile = { ...inspectorProfile, name, interview: interviewAnswers };
+  try { localStorage.setItem(profileKey, JSON.stringify(inspectorProfile)); } catch {}
+  $('#registration-feedback').textContent = 'REGISTRO ACEITO. IDENTIFICAÇÃO FUNCIONAL EMITIDA.';
+  $('#registration-feedback').className = 'feedback-row is-success';
+  $('#designation-name').textContent = name;
+  $('#designation-code').textContent = inspectorProfile.code;
+  window.setTimeout(() => navigate('orientation'), 350);
+}
+
+function showDesignation() {
+  try { inspectorProfile = JSON.parse(localStorage.getItem(profileKey) || 'null'); } catch {}
+  $('#designation-name').textContent = inspectorProfile?.name || 'Servidor não identificado';
+  $('#designation-code').textContent = inspectorProfile?.code || 'AR-82-PENDENTE';
+  navigate('designation');
 }
 
 function beginCampaign() {
@@ -161,8 +242,9 @@ function showCampaignResult(correct, persist = false) {
     ? 'O supervisor Vonel reconhece seu desempenho excepcional. Mantenha esse padrão de conformidade.'
     : outcome === 'pass'
       ? 'Sua avaliação atende ao mínimo exigido. O Ministério espera maior precisão no próximo turno.'
-      : 'Seu desempenho ficou abaixo do padrão. A designação permanece válida. Consulte o manual e tente novamente quando desejar.';
-  $('#result-retry').hidden = outcome !== 'retry';
+      : 'Seu desempenho ficou abaixo do padrão. A supervisão registrou ressalvas. Consulte o manual e aguarde as instruções de M. Vonel.';
+  $('#result-retry').hidden = true;
+  $('#result-menu').textContent = 'Consultar ordem de designação →';
   navigate('campaign-result');
 }
 
@@ -325,12 +407,17 @@ function continueFromOpening() {
   }
   let completed = false;
   try { completed = localStorage.getItem(campaignKey) === 'true'; } catch {}
-  completed ? navigate('menu') : beginCampaign();
+  completed ? navigate('menu') : beginInterview();
 }
 
 $('#opening').addEventListener('click', continueFromOpening);
+$('#interview-next').addEventListener('click', () => { interviewIndex += 1; if (interviewIndex < interviewQuestions.length) renderInterviewQuestion(); else prepareRegistration(); });
+$('#registration-submit').addEventListener('click', saveRegistration);
+$('#candidate-name').addEventListener('keydown', (event) => { if (event.key === 'Enter') saveRegistration(); });
+$('#orientation-start').addEventListener('click', beginCampaign);
+$('#designation-enter').addEventListener('click', () => navigate('menu'));
 $('#campaign-next').addEventListener('click', () => { campaignIndex += 1; renderCampaignQuestion(); });
-$('#result-menu').addEventListener('click', () => navigate('menu'));
+$('#result-menu').addEventListener('click', () => showDesignation());
 $('#result-retry').addEventListener('click', beginCampaign);
 function showSavedCampaignResult() {
   let saved = null;
@@ -386,6 +473,7 @@ window.addEventListener('keydown', (event) => {
     continueFromOpening();
     return;
   }
+  if (event.key === 'Enter' && $('#interview').classList.contains('is-active')) { const next = $('#interview-next'); if (!next.hidden) next.click(); return; }
   const campaignActive = $('#campaign').classList.contains('is-active');
   const quizActive = $('#quiz').classList.contains('is-active');
   if (!campaignActive && !quizActive) return;
