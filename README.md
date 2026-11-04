@@ -132,3 +132,12 @@ A abertura e o fechamento do Filer agora usam, respectivamente, `26. Filer Open.
 ### Observação de compatibilidade
 
 A campanha expandida utiliza novas chaves de armazenamento (`ppquiz.campaign.v3` e `ppquiz.campaign.result.v2`) para que instalações que já concluíram a versão anterior recebam o novo fluxo de admissão uma vez. O registro pessoal é salvo separadamente em `ppquiz.inspector.profile.v1`.
+
+
+## Divulgação e aviso de fan game
+
+- O menu mantém um aviso de que T.G.I.F. é um projeto independente de fãs, inspirado em *Papers, Please*, sem vínculo oficial com Lucas Pope ou 3909 LLC.
+- O rodapé inclui um direcionamento para a página oficial de *Papers, Please* na Steam.
+- A tela de encerramento da campanha oferece um atalho para conhecer/comprar o jogo original.
+- A ordem de designação também contém o aviso de caráter não oficial do projeto.
+- O projeto não utiliza a marcação de produto oficial nem sugere endosso dos titulares.
