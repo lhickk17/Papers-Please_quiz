@@ -16,6 +16,7 @@ let muted = false;
 let keyboardOptions = null;
 let keyboardSelection = -1;
 let openingReady = false;
+let reviewingCampaign = false;
 let openingTimer = null;
 let typingTimer = null;
 const audio = {};
@@ -314,6 +315,11 @@ function continueFromOpening() {
   window.clearInterval(typingTimer);
   play('page', 0.3);
   play('theme', 0.2);
+  if (reviewingCampaign) {
+    reviewingCampaign = false;
+    showSavedCampaignResult();
+    return;
+  }
   let completed = false;
   try { completed = localStorage.getItem(campaignKey) === 'true'; } catch {}
   completed ? navigate('menu') : beginCampaign();
@@ -323,7 +329,7 @@ $('#opening').addEventListener('click', continueFromOpening);
 $('#campaign-next').addEventListener('click', () => { campaignIndex += 1; renderCampaignQuestion(); });
 $('#result-menu').addEventListener('click', () => navigate('menu'));
 $('#result-retry').addEventListener('click', beginCampaign);
-function reviewCampaign() {
+function showSavedCampaignResult() {
   let saved = null;
   try { saved = JSON.parse(localStorage.getItem(campaignResultKey) || 'null'); } catch {}
   if (saved && Number.isInteger(saved.correct)) {
@@ -337,6 +343,12 @@ function reviewCampaign() {
   $('#result-message').textContent = 'Esta instalação registra que a campanha foi concluída, mas a versão anterior não salvava a pontuação. O histórico detalhado não pode ser recuperado.';
   $('#result-retry').hidden = true;
   navigate('campaign-result');
+}
+
+function reviewCampaign() {
+  reviewingCampaign = true;
+  navigate('opening');
+  startOpeningSequence();
 }
 $('#menu-review').addEventListener('click', reviewCampaign);
 $('#menu-reset').addEventListener('click', () => beginQuiz('facil'));
