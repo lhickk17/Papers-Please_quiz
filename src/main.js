@@ -3,8 +3,8 @@ import { createRound, campaignOutcome, scoreAnswer } from './core.js';
 
 const $ = (selector) => document.querySelector(selector);
 const screenIds = ['opening', 'campaign', 'campaign-result', 'menu', 'quiz', 'report'];
-const campaignKey = 'ppquiz.campaign.v2';
-const campaignResultKey = 'ppquiz.campaign.result.v1';
+const campaignKey = 'ppquiz.campaign.v3';
+const campaignResultKey = 'ppquiz.campaign.result.v2';
 let roundStartedAt = 0;
 let campaign = [];
 let campaignIndex = 0;
