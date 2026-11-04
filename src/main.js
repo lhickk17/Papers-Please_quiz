@@ -337,10 +337,7 @@ function reviewCampaign() {
   navigate('campaign-result');
 }
 $('#menu-review').addEventListener('click', reviewCampaign);
-$('#menu-reset').addEventListener('click', () => {
-  try { localStorage.removeItem(campaignKey); localStorage.removeItem(campaignResultKey); } catch {}
-  beginCampaign();
-});
+$('#menu-reset').addEventListener('click', () => beginQuiz('facil'));
 document.querySelectorAll('[data-difficulty]').forEach((button) => button.addEventListener('click', () => beginQuiz(button.dataset.difficulty)));
 $('#game-next').addEventListener('click', () => { game.index += 1; game.answered = false; renderGameQuestion(); });
 $('#game-report').addEventListener('click', finishQuiz);
