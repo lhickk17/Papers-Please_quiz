@@ -214,3 +214,15 @@ body.is-opening .opening-screen{display:flex;align-items:stretch;justify-content
  .contract-signature{gap:1rem}
  .contract-signature span{font-size:.48rem}
 }
+
+
+/* Aviso de fan game e acesso à página oficial de Papers, Please. */
+.site-footer{align-items:center;flex-wrap:wrap;line-height:1.8}
+.footer-disclaimer{max-width:650px}
+.footer-steam-link{color:#b69b70;text-decoration:none;border-bottom:1px solid rgba(182,155,112,.45);padding-bottom:2px}
+.footer-steam-link:hover{color:#e2d2b3;border-color:#e2d2b3}
+.fan-disclaimer{font-size:.62rem;line-height:1.8;letter-spacing:.035em;color:#5c4b31}
+.designation-disclaimer{padding-top:.85rem;border-top:1px solid rgba(53,39,20,.22);max-width:650px}
+.steam-button{border-color:rgba(182,155,112,.55);color:#c7ae84}
+.steam-button:hover{border-color:#d7c39b;color:#fff4d9}
+@media(max-width:520px){.site-footer{align-items:flex-start}.footer-disclaimer{max-width:none}}
