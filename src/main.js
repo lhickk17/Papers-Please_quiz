@@ -14,6 +14,7 @@ let muted = false;
 const audio = {};
 
 function navigate(id) {
+  const previous = document.querySelector('.screen.is-active');
   const show = () => screenIds.forEach((key) => {
     const screen = document.getElementById(key);
     const active = key === id;
@@ -26,7 +27,7 @@ function navigate(id) {
     document.querySelector('.screen.is-active')?.classList.add('is-leaving');
     window.setTimeout(() => {
       show();
-      document.querySelector('.screen.is-active')?.classList.remove('is-leaving');
+      previous?.classList.remove('is-leaving');
     }, 80);
   }
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -77,7 +78,7 @@ function renderOptions(container, question, onAnswer, answered = null) {
 function renderQuestion(panel, question, options, callback) {
   panel.querySelector('.question-city').textContent = question.city;
   panel.querySelector('.question-prompt').textContent = 'Identifique o país de emissão deste documento.';
-  panel.querySelector('.question-curiosity').textContent = question.curiosity || 'Registro complementar indisponível.';
+  panel.querySelector('.question-curiosity, #campaign-curiosity').textContent = question.curiosity || 'Registro complementar indisponível.';
   renderOptions(options, question, callback);
 }
 
