@@ -4,6 +4,8 @@ import { createRound, campaignOutcome, scoreAnswer } from './core.js';
 const $ = (selector) => document.querySelector(selector);
 const screenIds = ['opening', 'campaign', 'campaign-result', 'menu', 'quiz', 'report'];
 const campaignKey = 'ppquiz.campaign.v2';
+const campaignResultKey = 'ppquiz.campaign.result.v1';
+let roundStartedAt = 0;
 let campaign = [];
 let campaignIndex = 0;
 let campaignCorrect = 0;
@@ -129,8 +131,17 @@ function renderCampaignQuestion() {
 }
 
 function finishCampaign() {
-  const outcome = campaignOutcome(campaignCorrect);
-  try { localStorage.setItem(campaignKey, 'true'); } catch {}
+  showCampaignResult(campaignCorrect, true);
+}
+
+function showCampaignResult(correct, persist = false) {
+  const outcome = campaignOutcome(correct);
+  if (persist) {
+    try {
+      localStorage.setItem(campaignKey, 'true');
+      localStorage.setItem(campaignResultKey, JSON.stringify({ correct, outcome }));
+    } catch {}
+  }
   const plaqueByOutcome = {
     distinction: 'assets/papers/PlaqueOneInner.png',
     pass: 'assets/papers/PlaqueTwoInner.png',
@@ -139,7 +150,7 @@ function finishCampaign() {
   const plaque = plaqueByOutcome[outcome];
   $('#result-plaque').src = plaque;
   $('#result-plaque').alt = outcome === 'distinction' ? 'Placa de distinção' : outcome === 'pass' ? 'Placa de aprovação' : 'Citação por desempenho insatisfatório';
-  $('#result-score').textContent = `${campaignCorrect} / 10 ACERTOS`;
+  $('#result-score').textContent = `${correct} / 10 ACERTOS`;
   $('#result-heading').textContent = outcome === 'distinction' ? 'DISTINÇÃO CONCEDIDA' : outcome === 'pass' ? 'APROVADO COM RESSALVAS' : 'AVALIAÇÃO INSATISFATÓRIA';
   $('#result-message').textContent = outcome === 'distinction'
     ? 'O supervisor Vonel reconhece seu desempenho excepcional. Mantenha esse padrão de conformidade.'
@@ -152,6 +163,7 @@ function finishCampaign() {
 
 function beginQuiz(difficulty) {
   clearInterval(timerId);
+  roundStartedAt = performance.now();
   game = { difficulty, questions: createRound(10), index: 0, correct: 0, points: 0, streak: 0, bestStreak: 0, errors: [], answered: false };
   renderGameQuestion();
   navigate('quiz');
@@ -207,21 +219,56 @@ function answerGame(answer) {
 
 function finishQuiz() {
   clearInterval(timerId);
+  const elapsedSeconds = Math.max(0, Math.floor((performance.now() - roundStartedAt) / 1000));
+  const elapsedMinutes = Math.floor(elapsedSeconds / 60);
+  const elapsedRemainder = elapsedSeconds % 60;
   $('#report-score').textContent = `${game.points} PTS`;
   $('#report-summary').textContent = `${game.correct} acertos em 10 documentos · melhor sequência: ${game.bestStreak}`;
   const list = $('#report-errors');
   list.replaceChildren();
-  if (!game.errors.length) {
-    const item = document.createElement('li');
-    item.textContent = 'Nenhuma discrepância registrada. O Ministério agradece sua precisão.';
-    list.append(item);
-  } else {
-    game.errors.forEach((error) => {
+  const filerErrors = $('#report-filer-errors');
+  [list, filerErrors].forEach((target) => {
+    target.replaceChildren();
+    if (!game.errors.length) {
       const item = document.createElement('li');
-      item.textContent = `${error.city}: ${error.answered} · correto: ${error.expected}`;
-      list.append(item);
-    });
+      item.textContent = 'Nenhuma discrepância registrada. O Ministério agradece sua precisão.';
+      target.append(item);
+    } else {
+      game.errors.forEach((error) => {
+        const item = document.createElement('li');
+        item.textContent = error.city + ': ' + error.answered + ' · correto: ' + error.expected;
+        target.append(item);
+      });
+    }
+  });
+
+  const stats = [
+    ['Modo', game.difficulty.toUpperCase()],
+    ['Acertos', game.correct + ' / 10'],
+    ['Erros', game.errors.length],
+    ['Streak máximo', game.bestStreak]
+  ];
+  if (game.difficulty !== 'facil') {
+    stats.push(['Pontuação final', game.points]);
+    stats.push(['Tempo total', elapsedMinutes + 'm ' + String(elapsedRemainder).padStart(2, '0') + 's']);
   }
+  if (game.difficulty === 'dificil') stats.push(['Penalidades', '-' + (game.errors.length * 50) + ' pts']);
+  const statsList = $('#report-filer-stats');
+  statsList.replaceChildren();
+  stats.forEach(([label, value]) => {
+    const item = document.createElement('div');
+    item.className = 'filer-stat';
+    const name = document.createElement('span');
+    name.className = 'filer-stat-label';
+    name.textContent = label;
+    const result = document.createElement('strong');
+    result.className = 'filer-stat-value';
+    result.textContent = String(value);
+    item.append(name, result);
+    statsList.append(item);
+  });
+  $('#filer-open').hidden = false;
+  $('#filer-expanded').hidden = true;
   navigate('report');
 }
 
@@ -274,9 +321,24 @@ $('#opening').addEventListener('click', continueFromOpening);
 $('#campaign-next').addEventListener('click', () => { campaignIndex += 1; renderCampaignQuestion(); });
 $('#result-menu').addEventListener('click', () => navigate('menu'));
 $('#result-retry').addEventListener('click', beginCampaign);
-$('#menu-review').addEventListener('click', beginCampaign);
+function reviewCampaign() {
+  let saved = null;
+  try { saved = JSON.parse(localStorage.getItem(campaignResultKey) || 'null'); } catch {}
+  if (saved && Number.isInteger(saved.correct)) {
+    showCampaignResult(saved.correct, false);
+    return;
+  }
+  $('#result-plaque').src = 'assets/papers/CitationInner.png';
+  $('#result-plaque').alt = 'Registro de campanha concluída';
+  $('#result-score').textContent = 'RESULTADO ANTERIOR NÃO DISPONÍVEL';
+  $('#result-heading').textContent = 'CAMPANHA CONCLUÍDA';
+  $('#result-message').textContent = 'Esta instalação registra que a campanha foi concluída, mas a versão anterior não salvava a pontuação. O histórico detalhado não pode ser recuperado.';
+  $('#result-retry').hidden = true;
+  navigate('campaign-result');
+}
+$('#menu-review').addEventListener('click', reviewCampaign);
 $('#menu-reset').addEventListener('click', () => {
-  try { localStorage.removeItem(campaignKey); } catch {}
+  try { localStorage.removeItem(campaignKey); localStorage.removeItem(campaignResultKey); } catch {}
   beginCampaign();
 });
 document.querySelectorAll('[data-difficulty]').forEach((button) => button.addEventListener('click', () => beginQuiz(button.dataset.difficulty)));
@@ -285,6 +347,16 @@ $('#game-report').addEventListener('click', finishQuiz);
 $('#game-menu').addEventListener('click', () => { clearInterval(timerId); navigate('menu'); });
 $('#report-menu').addEventListener('click', () => navigate('menu'));
 $('#report-again').addEventListener('click', () => beginQuiz(game?.difficulty ?? 'facil'));
+$('#filer-open').addEventListener('click', () => {
+  $('#filer-open').hidden = true;
+  $('#filer-expanded').hidden = false;
+  play('page', 0.25);
+});
+$('#filer-close').addEventListener('click', () => {
+  $('#filer-expanded').hidden = true;
+  $('#filer-open').hidden = false;
+  play('page', 0.25);
+});
 $('#sound-toggle').addEventListener('click', () => {
   muted = !muted;
   Object.values(audio).forEach((sound) => { sound.muted = muted; });
@@ -299,7 +371,18 @@ window.addEventListener('keydown', (event) => {
     continueFromOpening();
     return;
   }
-  if (!keyboardOptions || !['campaign', 'quiz'].some((id) => document.getElementById(id).classList.contains('is-active'))) return;
+  const campaignActive = $('#campaign').classList.contains('is-active');
+  const quizActive = $('#quiz').classList.contains('is-active');
+  if (!campaignActive && !quizActive) return;
+  if (event.key === 'Enter' && !keyboardOptions) {
+    const next = campaignActive ? $('#campaign-next') : $('#game-next');
+    if (!next.hidden && !next.disabled) {
+      event.preventDefault();
+      next.click();
+    }
+    return;
+  }
+  if (!keyboardOptions) return;
   const buttons = [...keyboardOptions.querySelectorAll('.answer-option:not(:disabled)')];
   if (!buttons.length) return;
   if (/^[1-4]$/.test(event.key)) {
