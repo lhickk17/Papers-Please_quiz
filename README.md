@@ -1,113 +1,86 @@
 # T.G.I.F. — Teste Geográfico para Inspetores de Fronteira
 
-> *"Você foi selecionado pela Loteria do Trabalho de Outubro de 1982. Sua participação é compulsória."*
+Fan project inspirado no universo de **Papers, Please** (© 2013 Lucas Pope), transformando a geografia dos países e cidades do jogo em um quiz com campanha, modo livre, pontuação e relatórios.
 
-Fan project baseado no universo de **Papers, Please** (© 2013 Lucas Pope). Um quiz interativo que testa seu conhecimento sobre as cidades e países do jogo — desenvolvido como projeto de portfólio do zero, sem frameworks.
+## Reconstrução 2.0
 
----
+A branch `rebuild/vite-architecture` inicia uma reconstrução estrutural sem apagar os protótipos anteriores. A implementação usa JavaScript modular com Vite e mantém HTML/CSS próprios, sem framework de interface.
 
-## Sobre o Projeto
+### Decisões implementadas nesta primeira fatia
 
-Em Papers, Please, você é um inspetor de fronteira em Arstotzka. Documentos chegam com cidades de emissão que precisam corresponder ao país certo — errar significa deixar passar um impostor ou deter um cidadão inocente.
+- **Vite + JavaScript ES modules:** servidor de desenvolvimento e build de produção.
+- **Campanha de 10 questões:** mensagem institucional, dez documentos e parecer final.
+- **Progressão sem bloqueio:** nota baixa não impede o acesso ao menu. A campanha fica concluída após a primeira avaliação, independentemente da nota, e pode ser revista no menu.
+- **Faixas da campanha:** 0–6 acertos = avaliação insatisfatória; 7–8 = aprovação com ressalvas; 9–10 = distinção.
+- **Modo livre:** três dificuldades, pontuação, bônus, cronômetro e relatório de erros.
+- **Transições:** animações curtas com View Transitions API quando disponível e fallback CSS.
+- **Acessibilidade básica:** foco visível, regiões de feedback com `aria-live`, controles nativos e suporte a `prefers-reduced-motion`.
+- **Testes automatizados:** geração de perguntas, opções, cidades únicas e limites da campanha.
 
-O T.G.I.F. transforma esse conhecimento geográfico num teste interativo fiel ao universo do jogo: visual burocrático, sons originais, carimbos de aprovação e negação, e uma narrativa que coloca você como recruta sendo avaliado antes de assumir o posto.
+## Direção visual
 
----
+A identidade continua inspirada no jogo original: paleta verde-escura, papel envelhecido, vermelho de carimbo, fonte Share Tech Mono, mapa e brasão. A composição foi ampliada para aproveitar telas largas, criar hierarquia entre conteúdo e indicadores e adaptar a interface a dispositivos menores.
 
-## Funcionalidades
+## Como executar
 
-### Modo Campanha
-- Teste obrigatório no estilo do jogo — você foi designado, não pode recusar
-- 21 questões no modo fácil com curiosidades sobre cada cidade
-- Sistema de aprovação com três finais possíveis baseados nos acertos
-- Avaliação do Supervisor M. Vonel com placa de reconhecimento ou demérito
-- Link para o jogo original na Steam ao ser aprovado
-- Progresso salvo via `localStorage` — não precisa refazer a campanha a cada visita
-
-### Modo Livre
-- Três dificuldades com mecânicas distintas:
-  - **Fácil** — sem tempo, com curiosidades de lore, ideal para aprender
-  - **Normal** — 8 segundos por pergunta, streak com bônus, tempo total registrado
-  - **Difícil** — 5 segundos por pergunta, penalidades por erro e demora, pressão total
-- Sistema de pontuação com bônus por velocidade e streak
-- Carimbo animado de ENTRADA APROVADA / ENTRADA RECUSADA a cada resposta
-
-### Relatório Final (Filer)
-- Ao terminar uma run, uma pasta desliza da base da tela
-- Ao abrir, exibe o boletim de erros registrados e estatísticas completas da sessão
-- Streak máximo, penalidades, tempo total, acertos e erros
-
-### Identidade Visual e Sonora
-- Assets visuais originais do jogo (carimbos, emblemas, passaportes, placas)
-- Trilha sonora e efeitos sonoros originais
-- Fonte Share Tech Mono para fidelidade visual
-- Mapa dos países como plano de fundo do menu
-- Animação de texto digitado na tela de abertura
-
----
-
-## Tecnologias
-
-- HTML5, CSS3 e JavaScript puro — sem frameworks ou dependências externas
-- `localStorage` para persistência de progresso
-- Web Audio API nativa do navegador
-- Assets visuais e sonoros: Papers, Please © 2013 Lucas Pope
-- Mapa fan-made por u/Alpha_Stalin (Reddit)
-
----
-
-## Como Jogar
-
-Acesse diretamente pelo navegador — não requer instalação.
-
-> 🔗 **[Jogar agora](https://lhickk17.github.io/Papers-Please_quiz/)**
-
-Ou clone e rode localmente:
+Requer Node.js 20.19+ ou 22.12+ conforme a versão atual do Vite.
 
 ```bash
-git clone https://github.com/lhickk17/Papers-Please_quiz.git
-cd Papers-Please_quiz
+npm install
+npm run dev
 ```
 
-Abra o `index.html` com qualquer servidor local (ex: Live Server no VSCode).
+Para validar build e testes:
 
----
-
-## Estrutura do Projeto
-
-```
-papers-please-quiz/
-├── index.html
-├── style.css
-├── quiz.js
-├── dados.json
-├── assets/
-│   ├── intro/
-│   ├── papers/
-│   └── ...
-└── assets-sounds/
-    └── *.mp3
+```bash
+npm test
+npm run build
+npm run preview
 ```
 
----
+O servidor de desenvolvimento exibirá o endereço local no terminal. O build de produção é gerado em `dist/`.
 
-## Aviso Legal
+## Estrutura
 
-Este é um fan project não oficial, sem fins comerciais.
-**Papers, Please** é propriedade de Lucas Pope / 3909 LLC.
-Todos os assets visuais e sonoros pertencem aos seus respectivos criadores.
+```
+index.html
+package.json
+vite.config.js
+dados.json                 # Banco de cidades existente, preservado
+assets/                    # Assets visuais existentes, preservados
+assets-sounds/             # Áudios existentes, preservados
+src/
+  core.js                  # Banco, geração de perguntas e pontuação
+  main.js                  # Campanha, modo livre e navegação
+  style.css                # Layout, componentes e animações
+tests/
+  core.test.js              # Testes de regras e geração de perguntas
+quiz.js                    # Protótipo anterior preservado
+style.css                  # Estilos anteriores preservados
+```
 
----
+## Inventário e ideias futuras para assets
 
-## Desenvolvimento
+Nenhum asset existente deve ser removido apenas por não estar em uso na versão atual. A pasta visual contém materiais para expandir o projeto:
 
-Projeto desenvolvido do zero como primeiro projeto pessoal, explorando:
-- Manipulação de DOM com JavaScript puro
-- Gerenciamento de estado sem framework
-- Animações CSS e integração com Web Audio API
-- Estruturação de dados em JSON
-- Versionamento com Git e GitHub
+- **Passaportes:** identificar país, brasão ou tipo de documento.
+- **Mapa e emblemas:** modo de localização por país/cidade.
+- **Páginas do manual:** guia de regras com abas.
+- **Jornais e boletins:** manchetes e relatórios variáveis ao fim de cada turno.
+- **Citações, vistos e fichas:** registro visual de erros e histórico do inspetor.
+- **Placas e upgrades:** progressão, conquistas e modificadores desbloqueáveis.
+- **Carimbos:** decisões de aprovar/negar com feedback visual.
+- **Retratos e reações:** respostas contextuais do supervisor.
+- **Persianas e telas de dia:** transições diegéticas entre telas.
+- **Fotografias, desenhos e canções:** colecionáveis narrativos.
+- **Loc.csv e Text.xml**, quando disponíveis no acervo, podem ajudar a revisar nomes e conteúdo.
 
----
+Ideias futuras não são consideradas concluídas até serem implementadas e verificadas.
 
-*Glória a Arstotzka.*
+## Estado de validação
+
+Esta é a primeira fatia da reconstrução. Os testes e o build precisam ser executados depois de instalar as dependências; não se deve considerar qualquer validação aprovada antes de executá-la. Os assets e arquivos do protótipo original permanecem preservados na branch.
+
+## Aviso legal
+
+Projeto de fã não oficial e sem fins comerciais. **Papers, Please** pertence a Lucas Pope / 3909 LLC. Os assets visuais e sonoros pertencem aos respectivos titulares.
