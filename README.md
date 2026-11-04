@@ -1,113 +1,143 @@
 # T.G.I.F. — Teste Geográfico para Inspetores de Fronteira
 
-> *"Você foi selecionado pela Loteria do Trabalho de Outubro de 1982. Sua participação é compulsória."*
+Fan project inspirado no universo de **Papers, Please** (© 2013 Lucas Pope), transformando a geografia dos países e cidades do jogo em um quiz com campanha, modo livre, pontuação e relatórios.
 
-Fan project baseado no universo de **Papers, Please** (© 2013 Lucas Pope). Um quiz interativo que testa seu conhecimento sobre as cidades e países do jogo — desenvolvido como projeto de portfólio do zero, sem frameworks.
+## Reconstrução 2.0
 
----
+A branch `rebuild/vite-architecture` inicia uma reconstrução estrutural sem apagar os protótipos anteriores. A implementação usa JavaScript modular com Vite e mantém HTML/CSS próprios, sem framework de interface.
 
-## Sobre o Projeto
+### Decisões implementadas nesta primeira fatia
 
-Em Papers, Please, você é um inspetor de fronteira em Arstotzka. Documentos chegam com cidades de emissão que precisam corresponder ao país certo — errar significa deixar passar um impostor ou deter um cidadão inocente.
+- **Vite + JavaScript ES modules:** servidor de desenvolvimento e build de produção.
+- **Campanha de 10 questões:** mensagem institucional, dez documentos e parecer final.
+- **Progressão sem bloqueio:** nota baixa não impede o acesso ao menu. A campanha fica concluída após a primeira avaliação, independentemente da nota, e pode ser revista no menu.
+- **Faixas da campanha:** 0–6 acertos = avaliação insatisfatória; 7–8 = aprovação com ressalvas; 9–10 = distinção.
+- **Modo livre:** três dificuldades, pontuação, bônus, cronômetro e relatório de erros.
+- **Transições:** animações curtas com View Transitions API quando disponível e fallback CSS.
+- **Acessibilidade básica:** foco visível, regiões de feedback com `aria-live`, controles nativos e suporte a `prefers-reduced-motion`.
+- **Testes automatizados:** geração de perguntas, opções, cidades únicas e limites da campanha.
 
-O T.G.I.F. transforma esse conhecimento geográfico num teste interativo fiel ao universo do jogo: visual burocrático, sons originais, carimbos de aprovação e negação, e uma narrativa que coloca você como recruta sendo avaliado antes de assumir o posto.
+## Direção visual
 
----
+A identidade continua inspirada no jogo original: paleta verde-escura, papel envelhecido, vermelho de carimbo, fonte Share Tech Mono, mapa e brasão. A composição foi ampliada para aproveitar telas largas, criar hierarquia entre conteúdo e indicadores e adaptar a interface a dispositivos menores.
 
-## Funcionalidades
+## Como executar
 
-### Modo Campanha
-- Teste obrigatório no estilo do jogo — você foi designado, não pode recusar
-- 21 questões no modo fácil com curiosidades sobre cada cidade
-- Sistema de aprovação com três finais possíveis baseados nos acertos
-- Avaliação do Supervisor M. Vonel com placa de reconhecimento ou demérito
-- Link para o jogo original na Steam ao ser aprovado
-- Progresso salvo via `localStorage` — não precisa refazer a campanha a cada visita
-
-### Modo Livre
-- Três dificuldades com mecânicas distintas:
-  - **Fácil** — sem tempo, com curiosidades de lore, ideal para aprender
-  - **Normal** — 8 segundos por pergunta, streak com bônus, tempo total registrado
-  - **Difícil** — 5 segundos por pergunta, penalidades por erro e demora, pressão total
-- Sistema de pontuação com bônus por velocidade e streak
-- Carimbo animado de ENTRADA APROVADA / ENTRADA RECUSADA a cada resposta
-
-### Relatório Final (Filer)
-- Ao terminar uma run, uma pasta desliza da base da tela
-- Ao abrir, exibe o boletim de erros registrados e estatísticas completas da sessão
-- Streak máximo, penalidades, tempo total, acertos e erros
-
-### Identidade Visual e Sonora
-- Assets visuais originais do jogo (carimbos, emblemas, passaportes, placas)
-- Trilha sonora e efeitos sonoros originais
-- Fonte Share Tech Mono para fidelidade visual
-- Mapa dos países como plano de fundo do menu
-- Animação de texto digitado na tela de abertura
-
----
-
-## Tecnologias
-
-- HTML5, CSS3 e JavaScript puro — sem frameworks ou dependências externas
-- `localStorage` para persistência de progresso
-- Web Audio API nativa do navegador
-- Assets visuais e sonoros: Papers, Please © 2013 Lucas Pope
-- Mapa fan-made por u/Alpha_Stalin (Reddit)
-
----
-
-## Como Jogar
-
-Acesse diretamente pelo navegador — não requer instalação.
-
-> 🔗 **[Jogar agora](https://lhickk17.github.io/Papers-Please_quiz/)**
-
-Ou clone e rode localmente:
+Requer Node.js 20.19+ ou 22.12+ conforme a versão atual do Vite.
 
 ```bash
-git clone https://github.com/lhickk17/Papers-Please_quiz.git
-cd Papers-Please_quiz
+npm install
+npm run dev
 ```
 
-Abra o `index.html` com qualquer servidor local (ex: Live Server no VSCode).
+Para validar build e testes:
 
----
-
-## Estrutura do Projeto
-
-```
-papers-please-quiz/
-├── index.html
-├── style.css
-├── quiz.js
-├── dados.json
-├── assets/
-│   ├── intro/
-│   ├── papers/
-│   └── ...
-└── assets-sounds/
-    └── *.mp3
+```bash
+npm test
+npm run build
+npm run preview
 ```
 
----
+O servidor de desenvolvimento exibirá o endereço local no terminal. O build de produção é gerado em `dist/`.
 
-## Aviso Legal
+## Estrutura
 
-Este é um fan project não oficial, sem fins comerciais.
-**Papers, Please** é propriedade de Lucas Pope / 3909 LLC.
-Todos os assets visuais e sonoros pertencem aos seus respectivos criadores.
+```
+index.html
+package.json
+vite.config.js
+dados.json                 # Banco de cidades existente, preservado
+assets/                    # Assets visuais existentes, preservados
+assets-sounds/             # Áudios existentes, preservados
+src/
+  core.js                  # Banco, geração de perguntas e pontuação
+  main.js                  # Campanha, modo livre e navegação
+  style.css                # Layout, componentes e animações
+tests/
+  core.test.js              # Testes de regras e geração de perguntas
+quiz.js                    # Protótipo anterior preservado
+style.css                  # Estilos anteriores preservados
+```
 
----
+## Inventário e ideias futuras para assets
 
-## Desenvolvimento
+Nenhum asset existente deve ser removido apenas por não estar em uso na versão atual. A pasta visual contém materiais para expandir o projeto:
 
-Projeto desenvolvido do zero como primeiro projeto pessoal, explorando:
-- Manipulação de DOM com JavaScript puro
-- Gerenciamento de estado sem framework
-- Animações CSS e integração com Web Audio API
-- Estruturação de dados em JSON
-- Versionamento com Git e GitHub
+- **Passaportes:** identificar país, brasão ou tipo de documento.
+- **Mapa e emblemas:** modo de localização por país/cidade.
+- **Páginas do manual:** guia de regras com abas.
+- **Jornais e boletins:** manchetes e relatórios variáveis ao fim de cada turno.
+- **Citações, vistos e fichas:** registro visual de erros e histórico do inspetor.
+- **Placas e upgrades:** progressão, conquistas e modificadores desbloqueáveis.
+- **Carimbos:** decisões de aprovar/negar com feedback visual.
+- **Retratos e reações:** respostas contextuais do supervisor.
+- **Persianas e telas de dia:** transições diegéticas entre telas.
+- **Fotografias, desenhos e canções:** colecionáveis narrativos.
+- **Loc.csv e Text.xml**, quando disponíveis no acervo, podem ajudar a revisar nomes e conteúdo.
 
----
+Ideias futuras não são consideradas concluídas até serem implementadas e verificadas.
 
-*Glória a Arstotzka.*
+## Estado de validação
+
+Validação local realizada em 4 de novembro de 2026: `npm test` concluiu com **4/4 testes aprovados** e `npm run build` concluiu com sucesso usando Vite 7.3.7. O build gera os arquivos de produção em `dist/`, pasta ignorada pelo Git. Essa validação cobre as regras automatizadas e a compilação; não substitui testes manuais adicionais do fluxo completo em diferentes navegadores. Os assets e arquivos do protótipo original permanecem preservados na branch.
+
+## Aviso legal
+
+Projeto de fã não oficial e sem fins comerciais. **Papers, Please** pertence a Lucas Pope / 3909 LLC. Os assets visuais e sonoros pertencem aos respectivos titulares.
+
+
+## Ajustes registrados após o primeiro teste local
+
+- Corrigido o mapeamento de placas da campanha para seguir a correspondência do protótipo original: 9–10 acertos = `PlaqueOneInner` (distinção); 7–8 = `PlaqueTwoInner` (aprovação); 0–6 = `CitationInner` (resultado insatisfatório).
+- Restaurada a abertura narrativa com texto digitado, atraso inicial, efeito sonoro de buzina e instrução para continuar por clique ou Enter.
+- Adicionado controle de alternativas por teclado: teclas `1` a `4` selecionam a opção correspondente e `Enter` confirma.
+- **Ideia de UI registrada para etapa futura:** permitir recolher o menu principal e revelar o mapa de fundo como área interativa. Países/áreas clicáveis poderão abrir informações, iniciar desafios temáticos e servir de hub para modos futuros (passaportes, emblemas, localização de cidades e outros). A mecânica ainda não foi implementada: primeiro será necessário definir pontos clicáveis com precisão sobre a imagem do mapa e o comportamento de cada região.
+
+
+## Correções após a rodada de testes de navegação
+
+- **Rever campanha:** agora reapresenta o comunicado institucional e, em seguida, abre o parecer já registrado, sem iniciar novamente as dez perguntas. A pontuação da campanha passa a ser salva localmente para permitir a revisão; instalações antigas que só possuem a marca de conclusão exibem um aviso de que a nota anterior não foi armazenada.
+- **Avaliação individual:** o botão dedicado inicia um turno livre de dez documentos no modo fácil; os cartões Fácil, Normal e Difícil continuam disponíveis para escolher a dificuldade.
+- **Teclado:** as teclas 1 a 4 selecionam uma alternativa; Enter confirma a resposta e, depois do feedback, um segundo Enter aciona o botão de próxima questão/relatório. Os botões continuam clicáveis com o mouse.
+- **Pasta de arquivo (Filer):** restaurada no fim dos turnos livres, com boletim de erros e estatísticas do modo, acertos, erros, sequência máxima e, conforme a dificuldade, pontuação, tempo e penalidades. A pasta abre e fecha sem substituir o relatório principal.
+
+
+## Campanha — revisão da abertura e progressão
+
+- A abertura institucional fica isolada do posto principal, com o mapa, a barra superior e o rodapé ocultos.
+- A imagem de fundo ampliada e o retrato da imigração obristana foram retirados da abertura. O símbolo do Ministério foi reduzido a um selo tipográfico discreto; o fundo agora é uma composição própria em CSS.
+- O comunicado mantém o texto digitado, a buzina, o efeito de inspeção e o avanço por clique ou Enter.
+- A campanha completa agora inclui entrevista com M. Vonel, registro funcional, boletim político, orientação, avaliação geográfica, parecer e ordem de designação.
+- O retrato de M. Vonel é representado por um monograma visual porque o repositório não contém um asset de retrato identificável do supervisor.
+
+
+## Campanha de admissão — fluxo expandido
+
+A campanha inicial agora segue uma sequência de integração antes de liberar o menu do posto:
+
+1. **Comunicado institucional:** abertura limpa, sem retrato da imigração obristana e sem imagem de fundo ampliada. O símbolo de Arstotzka foi reduzido a um selo tipográfico discreto; o fundo usa composição própria em tons escuros.
+2. **Entrevista com M. Vonel:** três perguntas narrativas de admissão. As respostas ficam associadas à ficha local e não alteram a pontuação geográfica.
+3. **Registro funcional:** formulário em formato de contrato. O único campo preenchido pelo jogador é o nome; o sistema emite um código fictício individual e apresenta cargo, posto, moradia funcional, endereço e data de admissão.
+4. **Boletim político e orientação:** notícia contextual sobre a situação regional e instruções para a avaliação.
+5. **Avaliação geográfica inicial:** dez questões, com o parecer calculado pelas faixas de desempenho já existentes.
+6. **Parecer e ordem de designação:** registro do resultado, identificação do supervisor e documento de lotação em Grestin.
+7. **Menu do posto:** acesso aos modos livres depois da conclusão da integração.
+
+O nome e o código são armazenados no navegador com `localStorage`. O código é fictício e serve como identificador local de referência para uma possível estrutura futura de placares. Ainda não existe autenticação, sincronização entre dispositivos ou placar online.
+
+### Áudio do arquivo
+
+A abertura e o fechamento do Filer agora usam, respectivamente, `26. Filer Open.mp3` e `25. Filer Close.mp3`. O efeito de virar página permanece reservado às transições de papel, não à gaveta de arquivo.
+
+### Observação de compatibilidade
+
+A campanha expandida utiliza novas chaves de armazenamento (`ppquiz.campaign.v3` e `ppquiz.campaign.result.v2`) para que instalações que já concluíram a versão anterior recebam o novo fluxo de admissão uma vez. O registro pessoal é salvo separadamente em `ppquiz.inspector.profile.v1`.
+
+
+## Divulgação e aviso de fan game
+
+- O menu mantém um aviso de que T.G.I.F. é um projeto independente de fãs, inspirado em *Papers, Please*, sem vínculo oficial com Lucas Pope ou 3909 LLC.
+- O rodapé inclui um direcionamento para a página oficial de *Papers, Please* na Steam.
+- A tela de encerramento da campanha oferece um atalho para conhecer/comprar o jogo original.
+- A ordem de designação também contém o aviso de caráter não oficial do projeto.
+- O projeto não utiliza a marcação de produto oficial nem sugere endosso dos titulares.
