@@ -81,13 +81,14 @@ export function scoreAnswer({
 export function classifyScore(points, difficulty = 'facil') {
   const maximumScores = { facil: 1200, normal: 1440, dificil: 1440 };
   const maximum = maximumScores[difficulty] ?? maximumScores.facil;
-  const scoreRate = Math.max(0, Math.min(100, Math.round((points / maximum) * 100)));
+  const normalizedScore = Math.max(0, Math.min(100, (points / maximum) * 100));
+  const scoreRate = Math.round(normalizedScore);
   const levels = [
     { min: 95, stamp: 'DISTINÇÃO', className: 'is-distinction' },
     { min: 80, stamp: 'CONFORME', className: 'is-approved' },
     { min: 60, stamp: 'RESSALVAS', className: 'is-warning' },
     { min: 0, stamp: 'INSATISFATÓRIO', className: 'is-rejected' }
   ];
-  const level = levels.find(({ min }) => scoreRate >= min);
+  const level = levels.find(({ min }) => normalizedScore >= min);
   return { ...level, scoreRate, maximum };
 }
