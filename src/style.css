@@ -420,3 +420,33 @@ body.is-shift-intro{overflow:hidden}
   .shift-intro-progress span{transition:none}
 }
 
+
+
+/* Feedback visual de pontuação por documento, inspirado em floating combat text. */
+.score-metric{position:relative}
+.score-popups{
+  position:absolute;z-index:5;top:-.35rem;right:0;
+  display:grid;justify-items:end;gap:.2rem;
+  width:max-content;max-width:100%;pointer-events:none;
+}
+.score-popup{
+  display:flex;align-items:baseline;gap:.45rem;
+  padding:.2rem .35rem;background:rgba(12,16,11,.9);
+  border:1px solid rgba(200,184,154,.25);
+  box-shadow:0 2px 8px rgba(0,0,0,.35);
+  white-space:nowrap;animation:score-popup-float 1.35s ease-out both;
+}
+.score-popup strong{font-size:.78rem;letter-spacing:.04em}
+.score-popup span{font-size:.53rem;letter-spacing:.09em}
+.score-popup.is-positive{color:#b9d59a}
+.score-popup.is-negative{color:#e18b7c}
+.score-popup.is-neutral{color:#c9b487}
+@keyframes score-popup-float{
+  0%{opacity:0;transform:translateY(12px) scale(.96)}
+  12%{opacity:1;transform:translateY(0) scale(1)}
+  72%{opacity:1}
+  100%{opacity:0;transform:translateY(-34px) scale(.98)}
+}
+@media(prefers-reduced-motion:reduce){
+  .score-popup{animation:none;opacity:1}
+}
