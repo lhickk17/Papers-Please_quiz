@@ -43,6 +43,15 @@ test('speed bonus decreases continuously and linearly within each timed regime',
   assert.equal(scoreAnswer({ correct: true, elapsed: 1, difficulty: 'facil' }).speedBonus, 0);
 });
 
+test('speed bonus and question score are rounded to two decimal places', () => {
+  const result = scoreAnswer({ correct: true, elapsed: 1, difficulty: 'normal' });
+  assert.equal(result.speedBonus, 35);
+  assert.equal(result.points, 135);
+  const fractional = scoreAnswer({ correct: true, elapsed: 1.111, difficulty: 'normal' });
+  assert.equal(fractional.speedBonus, 34.45);
+  assert.equal(fractional.points, 134.45);
+});
+
 test('streak bonus applies to every correct answer within its reached band', () => {
   assert.equal(scoreAnswer({ correct: true, streak: 1, difficulty: 'normal' }).streakBonus, 0);
   assert.equal(scoreAnswer({ correct: true, streak: 2, difficulty: 'normal' }).streakBonus, 10);
