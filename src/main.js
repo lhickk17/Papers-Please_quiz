@@ -502,13 +502,16 @@ $('#sound-toggle').addEventListener('click', () => {
   audioSettings.muted = !audioSettings.muted;
   persistAudioSettings();
   updateAudioSettingsUI();
+  if (!audioSettings.muted && audioSettings.musicEnabled && !audio.theme && !$('#opening').classList.contains('is-active')) {
+    play('theme', 0.14);
+  }
 });
 $('#music-enabled').addEventListener('change', (event) => {
   audioSettings.musicEnabled = event.target.checked;
   persistAudioSettings();
   updateAudioSettingsUI();
-  if (audioSettings.musicEnabled && audio.theme?.paused && !audioSettings.muted) {
-    play('theme', audio.theme.baseVolume ?? 0.14);
+  if (audioSettings.musicEnabled && !audioSettings.muted && !$('#opening').classList.contains('is-active')) {
+    play('theme', audio.theme?.baseVolume ?? 0.14);
   }
 });
 $('#effects-enabled').addEventListener('change', (event) => {
