@@ -633,6 +633,7 @@ $('#opening').addEventListener('click', continueFromOpening);
 $('#interview-next').addEventListener('click', () => { interviewIndex += 1; if (interviewIndex < interviewQuestions.length) renderInterviewQuestion(); else prepareRegistration(); });
 $('#registration-submit').addEventListener('click', saveRegistration);
 $('#candidate-name').addEventListener('keydown', (event) => { if (event.key === 'Enter') saveRegistration(); });
+$('#shift-intro-skip').addEventListener('click', finishShiftIntro);
 $('#orientation-start').addEventListener('click', beginCampaign);
 $('#designation-enter').addEventListener('click', () => navigate('menu'));
 $('#campaign-next').addEventListener('click', () => { campaignIndex += 1; renderCampaignQuestion(); });
