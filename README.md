@@ -193,6 +193,11 @@ A campanha expandida utiliza novas chaves de armazenamento (`ppquiz.campaign.v3`
 - Durante a partida, cada resposta exibe feedback flutuante junto ao placar, discriminando pontos-base por acerto, bônus de velocidade, bônus de sequência ou penalidade por erro/timeout.
 
 
-### Regulamento exibido no menu
+### Regulamento interativo no menu
 
-O menu principal apresenta o regulamento atualizado por regime: acerto-base, bônus de velocidade, progressão da sequência, penalidades por erro e timeout, piso zero e faixas de classificação. A precisão permanece somente como estatística.
+- O regulamento foi reorganizado em três seletores clicáveis, um para cada regime. Cada painel apresenta as regras próprias, o contexto de dificuldade e as diferenças em relação aos outros regimes.
+- O Treinamento não possui cronômetro, não penaliza erros e não concede bônus de sequência; mantém apenas o bônus de velocidade.
+- O Serviço Regular combina limite de 8 segundos, penalidades moderadas e bônus progressivo de sequência.
+- O Regime de Exceção reduz o limite para 5 segundos e amplia as penalidades, mantendo a mesma progressão de sequência do Serviço Regular.
+- A classificação e o piso zero são explicados em uma nota comum aos três regimes. A precisão continua somente como estatística.
+- No Filer, o campo de índice percentual do máximo teórico não é exibido; o relatório mantém pontuação final e precisão como informação direta.
