@@ -150,3 +150,5 @@ A campanha expandida utiliza novas chaves de armazenamento (`ppquiz.campaign.v3`
 - A música e os efeitos da abertura aguardam uma interação do jogador para respeitar as políticas de reprodução automática dos navegadores. Falhas de reprodução passam a ser registradas no console com a identificação do efeito e do arquivo.
 - O comunicado inicial descreve a avaliação como um exame de geografia dos países e cidades da região, compatível com o banco de questões atual.
 - A validação automatizada em Pull Requests executa `npm ci`, `npm test` e `npm run build`. A publicação no GitHub Pages continua restrita à branch `main`.
+
+- Os relatórios dos modos livres recebem protocolo sequencial persistido no navegador, data diegética (04 OUT 1982), número do turno, identificação do inspetor e unidade de serviço.
