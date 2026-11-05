@@ -144,14 +144,16 @@ test('incorrect answers and timeouts never receive speed bonus', () => {
 
 test('free-mode classification uses normalized score only', () => {
   assert.equal(classifyScore(1200, 'facil').stamp, 'DISTINÇÃO');
-  assert.equal(classifyScore(1152, 'normal').stamp, 'DISTINÇÃO');
-  assert.equal(classifyScore(1151, 'normal').stamp, 'CONFORME');
+  assert.equal(classifyScore(1368, 'normal').stamp, 'DISTINÇÃO');
+  assert.equal(classifyScore(1367, 'normal').stamp, 'CONFORME');
+  assert.equal(classifyScore(1152, 'normal').stamp, 'CONFORME');
   assert.equal(classifyScore(864, 'normal').stamp, 'RESSALVAS');
+  assert.equal(classifyScore(863, 'normal').stamp, 'INSATISFATÓRIO');
   assert.equal(classifyScore(-50, 'normal').scoreRate, 0);
   assert.equal(classifyScore(-50, 'normal').stamp, 'INSATISFATÓRIO');
   assert.equal(classifyScore(1440, 'dificil').scoreRate, 100);
 });
 
 test('classification helper does not accept or depend on precision', () => {
-  assert.equal(classifyScore(1000, 'normal').stamp, 'CONFORME');
+  assert.equal(classifyScore(1000, 'normal').stamp, 'RESSALVAS');
 });
