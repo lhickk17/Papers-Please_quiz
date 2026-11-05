@@ -2,12 +2,13 @@
 <html lang="pt-BR"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#111a11">
 <meta name="description" content="Avaliação geográfica de inspetores de fronteira no universo de Papers, Please.">
+<link rel="icon" type="image/png" href="./assets/intro/Intro1.png">
 <title>T.G.I.F. — Ministério da Admissão</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <script type="module" src="./src/main.js"></script></head><body><div class="app-shell">
 <div class="map-atmosphere" aria-hidden="true"><img src="./assets/papersplease-map.webp" alt=""></div>
-<header class="topbar"><div class="topbar-brand"><strong>T.G.I.F.</strong> / Ministério da Admissão</div><div class="topbar-actions"><button id="sound-toggle" class="button button-small" type="button">Áudio: ativo</button><span class="eyebrow">Posto de Grestin · 1982</span></div></header>
+<header class="topbar"><div class="topbar-brand"><strong>T.G.I.F.</strong> / Ministério da Admissão</div><div class="topbar-actions"><details class="audio-settings"><summary class="button button-small">CONFIGURAR ÁUDIO</summary><div class="audio-panel"><label class="audio-setting-toggle"><input id="music-enabled" type="checkbox" checked> Música</label><label for="music-volume">Volume da música</label><input id="music-volume" type="range" min="0" max="1" step="0.05" value="0.8"><label class="audio-setting-toggle"><input id="effects-enabled" type="checkbox" checked> Efeitos sonoros</label><label for="effects-volume">Volume dos efeitos</label><input id="effects-volume" type="range" min="0" max="1" step="0.05" value="1"></div></details><button id="sound-toggle" class="button button-small" type="button" aria-pressed="false">ÁUDIO: ATIVO</button><span class="eyebrow">Posto de Grestin · 1982</span></div></header>
 <main>
 <section id="opening" class="screen is-active opening-screen" aria-hidden="false">
   <div class="opening-stage">
