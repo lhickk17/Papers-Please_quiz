@@ -281,3 +281,21 @@ body.is-opening .opening-screen{display:flex;align-items:stretch;justify-content
   .filer-identification>div:nth-last-child(-n+2){border-bottom:1px solid var(--line)}
   .filer-identification>div:last-child{border-bottom:0}
 }
+
+
+/* Carimbo de classificação do parecer da supervisão. */
+.filer-document-stamps{
+  display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:.65rem;
+}
+.classification-stamp{
+  display:inline-block;padding:.45rem .7rem;border:3px double currentColor;
+  color:#b69b70;font-size:.62rem;font-weight:700;letter-spacing:.13em;
+  text-align:center;transform:rotate(2deg);white-space:nowrap;
+}
+.classification-stamp.is-distinction{color:#b69b70}
+.classification-stamp.is-approved{color:#9caa82}
+.classification-stamp.is-warning{color:#c29a57}
+.classification-stamp.is-rejected{color:#b65e52}
+@media(max-width:520px){
+  .filer-document-stamps{justify-content:flex-start}
+}
