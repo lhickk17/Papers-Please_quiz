@@ -518,11 +518,20 @@ Este teste é obrigatório. Resultados serão arquivados.
 
 Glória a Arstotzka.`
 
+function revealOpeningText() {
+  if (openingReady) return;
+  window.clearTimeout(openingTimer);
+  window.clearInterval(typingTimer);
+  $('#opening-text').textContent = openingText;
+  openingReady = true;
+  $('#opening-instruction').textContent = '[ clique ou pressione ENTER / ESPAÇO para continuar ]';
+}
+
 function startOpeningSequence() {
   const text = $('#opening-text');
   const instruction = $('#opening-instruction');
   text.textContent = '';
-  instruction.textContent = '';
+  instruction.textContent = '[ clique para revelar o comunicado ]';
   openingReady = false;
   window.clearTimeout(openingTimer);
   window.clearInterval(typingTimer);
@@ -532,17 +541,16 @@ function startOpeningSequence() {
     typingTimer = window.setInterval(() => {
       text.textContent += openingText[index] ?? '';
       index += 1;
-      if (index >= openingText.length) {
-        window.clearInterval(typingTimer);
-        openingReady = true;
-        instruction.textContent = '[ clique ou pressione ENTER para continuar ]';
-      }
+      if (index >= openingText.length) revealOpeningText();
     }, 30);
   }, 1000);
 }
 
 function continueFromOpening() {
-  if (!openingReady) return;
+  if (!openingReady) {
+    revealOpeningText();
+    return;
+  }
   window.clearInterval(typingTimer);
   play('foghorn', 0.3);
   play('page', 0.24);
@@ -642,7 +650,7 @@ startOpeningSequence();
 
 window.addEventListener('keydown', (event) => {
   if (event.altKey || event.ctrlKey || event.metaKey || event.repeat) return;
-  if (event.key === 'Enter' && $('#opening').classList.contains('is-active')) {
+  if ((event.key === 'Enter' || event.code === 'Space') && $('#opening').classList.contains('is-active')) {
     event.preventDefault();
     continueFromOpening();
     return;
