@@ -334,23 +334,3 @@ body.is-opening .opening-screen{display:flex;align-items:stretch;justify-content
 }
 @media(prefers-reduced-motion:reduce){.ministry-bulletin{animation:none}}
 
-
-/* Transições de navegação entre telas, limitadas ao painel ativo. */
-.screen.is-active{animation:screen-enter .28s cubic-bezier(.2,.75,.25,1) both}
-.screen.is-leaving{animation:screen-exit .15s ease-in both}
-@keyframes screen-enter{
-  from{opacity:0;transform:translateX(12px)}
-  to{opacity:1;transform:translateX(0)}
-}
-@keyframes screen-exit{
-  from{opacity:1;transform:translateX(0)}
-  to{opacity:0;transform:translateX(-8px)}
-}
-::view-transition-old(screen-panel){animation:screen-exit .15s ease-in both}
-::view-transition-new(screen-panel){animation:screen-enter .28s cubic-bezier(.2,.75,.25,1) both}
-@media(prefers-reduced-motion:reduce){
-  .screen.is-active,.screen.is-leaving,
-  ::view-transition-old(screen-panel),::view-transition-new(screen-panel){
-    animation:none!important
-  }
-}
