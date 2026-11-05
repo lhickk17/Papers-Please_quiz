@@ -389,14 +389,54 @@ function finishQuiz() {
   }
 
   const accuracy = game.correct / game.questions.length;
-  const assessment = accuracy === 1
-    ? 'Precisão integral. O desempenho será encaminhado à supervisão como referência de conformidade. O Ministério espera que esse padrão seja mantido nos próximos turnos.'
-    : accuracy >= 0.8
-      ? 'Desempenho satisfatório. As divergências registradas não comprometem a aptidão operacional, mas deverão ser revistas antes do próximo turno.'
-      : accuracy >= 0.5
-        ? 'Foram identificadas inconsistências relevantes. Recomenda-se revisar o manual geográfico e redobrar a atenção aos registros de origem.'
-        : 'O resultado está abaixo do padrão esperado para o posto. A supervisão recomenda revisão imediata dos procedimentos e poderá solicitar nova avaliação.';
+  const assessmentByLevel = [
+    {
+      min: 1,
+      stamp: 'DISTINÇÃO',
+      className: 'is-distinction',
+      messages: [
+        'Precisão integral. Seu desempenho será encaminhado à supervisão como referência de conformidade. O Ministério espera que esse padrão seja mantido.',
+        'Nenhuma falha foi registrada. A supervisão reconhece a execução exemplar dos procedimentos. Não confunda reconhecimento com autorização para relaxar a vigilância.',
+        'Resultado impecável. Seu nome será incluído no registro de excelência operacional. A administração espera que não tenha sido um acidente.'
+      ]
+    },
+    {
+      min: 0.8,
+      stamp: 'CONFORME',
+      className: 'is-approved',
+      messages: [
+        'Desempenho satisfatório. As divergências registradas não comprometem sua aptidão operacional, mas deverão ser revistas antes do próximo turno.',
+        'A avaliação atende aos padrões mínimos de precisão. A supervisão recomenda atenção redobrada aos registros que apresentaram inconsistências.',
+        'Procedimento considerado adequado. O Ministério registra sua contribuição e espera uma execução mais rigorosa na próxima jornada.'
+      ]
+    },
+    {
+      min: 0.5,
+      stamp: 'RESSALVAS',
+      className: 'is-warning',
+      messages: [
+        'Foram identificadas inconsistências relevantes. Revise o manual geográfico e redobre a atenção aos registros de origem.',
+        'Seu desempenho exige acompanhamento. A supervisão recomenda cautela adicional e espera uma redução imediata das falhas.',
+        'A quantidade de divergências registradas não passou despercebida. Uma nova ocorrência poderá resultar em medidas administrativas.'
+      ]
+    },
+    {
+      min: 0,
+      stamp: 'INSATISFATÓRIO',
+      className: 'is-rejected',
+      messages: [
+        'O resultado está abaixo do padrão esperado para o posto. A supervisão recomenda revisão imediata dos procedimentos.',
+        'A avaliação revela falhas incompatíveis com o nível de atenção exigido em Grestin. Sua permanência no posto poderá ser reavaliada.',
+        'O Ministério considera o desempenho insatisfatório. A administração espera uma correção urgente. A próxima avaliação não será tratada como mera formalidade.'
+      ]
+    }
+  ];
+  const assessmentLevel = assessmentByLevel.find((level) => accuracy >= level.min);
+  const assessment = assessmentLevel.messages[Math.floor(Math.random() * assessmentLevel.messages.length)];
   $('#report-assessment').textContent = assessment;
+  const classification = $('#report-classification');
+  classification.textContent = assessmentLevel.stamp;
+  classification.className = `classification-stamp ${assessmentLevel.className}`;
 
   const stats = [
     ['Modo', game.difficulty.toUpperCase()],
