@@ -7,6 +7,7 @@ const campaignKey = 'ppquiz.campaign.v3';
 const campaignResultKey = 'ppquiz.campaign.result.v2';
 const profileKey = 'ppquiz.inspector.profile.v1';
 const audioSettingsKey = 'ppquiz.audio.settings.v1';
+const reportSequenceKey = 'ppquiz.report.sequence.v1';
 let interviewIndex = 0;
 let interviewAnswers = [];
 let inspectorProfile = null;
@@ -343,8 +344,31 @@ function answerGame(answer) {
   play('stamp');
 }
 
+function populateReportIdentification() {
+  let sequence = 1;
+  try {
+    sequence = Number(localStorage.getItem(reportSequenceKey) || 0) + 1;
+    localStorage.setItem(reportSequenceKey, String(sequence));
+  } catch {
+    sequence = Math.floor(Date.now() / 1000) % 999999 + 1;
+  }
+
+  let profile = null;
+  try { profile = JSON.parse(localStorage.getItem(profileKey) || 'null'); } catch {}
+  const serial = String(sequence).padStart(6, '0');
+  const inspector = profile?.name
+    ? `${profile.name} · ${profile.code || 'SEM MATRÍCULA'}`
+    : profile?.code || 'NÃO IDENTIFICADO';
+
+  $('#report-protocol').textContent = `GRE-821004-${serial}`;
+  $('#report-date').textContent = '04 OUT 1982';
+  $('#report-shift').textContent = serial;
+  $('#report-inspector').textContent = inspector;
+}
+
 function finishQuiz() {
   clearInterval(timerId);
+  populateReportIdentification();
   const elapsedSeconds = Math.max(0, Math.floor((performance.now() - roundStartedAt) / 1000));
   const elapsedMinutes = Math.floor(elapsedSeconds / 60);
   const elapsedRemainder = elapsedSeconds % 60;
