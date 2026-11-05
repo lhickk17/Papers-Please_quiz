@@ -339,16 +339,20 @@ body.is-shift-intro{overflow:hidden}
 .shift-intro{
   position:fixed;z-index:1000;inset:0;display:grid;place-items:center;
   padding:1.25rem;background:#050906;
-  backdrop-filter:none;
+  backdrop-filter:none;opacity:1;
+  transition:opacity .32s ease;
 }
 .shift-intro[hidden]{display:none!important}
+.shift-intro.is-closing{opacity:0;pointer-events:none}
 .shift-intro-panel{
   position:relative;width:min(590px,100%);padding:clamp(1.35rem,4vw,2.5rem);
   color:var(--ink);background:linear-gradient(145deg,#20291f,#111811);
   border:1px solid rgba(200,184,154,.35);
   box-shadow:0 28px 90px rgba(0,0,0,.62);
   text-align:center;animation:shift-panel-arrive .38s ease-out both;
+  transition:opacity .32s ease,transform .32s ease;
 }
+.shift-intro.is-closing .shift-intro-panel{opacity:0;transform:translateY(-8px) scale(.99)}
 .shift-intro-panel:before{
   content:'';position:absolute;inset:7px;border:1px solid rgba(200,184,154,.1);
   pointer-events:none;
@@ -410,6 +414,7 @@ body.is-shift-intro{overflow:hidden}
   .shift-intro-footer .button{width:100%}
 }
 @media(prefers-reduced-motion:reduce){
+  .shift-intro,.shift-intro-panel{transition:none!important}
   .shift-intro-panel,.shift-intro[data-step] .shift-intro-seal,
   .shift-intro[data-step="3"] .shift-intro-document{animation:none!important}
   .shift-intro-progress span{transition:none}
