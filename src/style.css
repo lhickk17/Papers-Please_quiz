@@ -226,3 +226,17 @@ body.is-opening .opening-screen{display:flex;align-items:stretch;justify-content
 .steam-button{border-color:rgba(182,155,112,.55);color:#c7ae84}
 .steam-button:hover{border-color:#d7c39b;color:#fff4d9}
 @media(max-width:520px){.site-footer{align-items:flex-start}.footer-disclaimer{max-width:none}}
+
+
+/* Painel de configurações de áudio. */
+.audio-settings{position:relative}
+.audio-settings>summary{list-style:none;cursor:pointer}
+.audio-settings>summary::-webkit-details-marker{display:none}
+.audio-settings[open]>summary{border-color:#b69b70;color:#e2d2b3}
+.audio-panel{position:absolute;z-index:30;top:calc(100% + .65rem);right:0;width:min(290px,calc(100vw - 2rem));display:grid;gap:.65rem;padding:1rem;background:#182018;border:1px solid var(--line);box-shadow:0 16px 38px rgba(0,0,0,.45);color:var(--ink)}
+.audio-panel label{font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--dim)}
+.audio-panel input[type=range]{width:100%;accent-color:#b69b70;cursor:pointer}
+.audio-panel .audio-setting-toggle{display:flex;align-items:center;gap:.65rem;color:var(--ink);cursor:pointer}
+.audio-panel input[type=checkbox]{accent-color:#b69b70;width:1rem;height:1rem}
+.audio-settings>summary:focus-visible,.audio-panel input:focus-visible{outline:2px solid #d7c39b;outline-offset:3px}
+@media(max-width:520px){.audio-panel{right:-3rem}.topbar-actions{gap:.45rem}.topbar-actions>.eyebrow{display:none}}
