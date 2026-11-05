@@ -9,6 +9,19 @@
 <script type="module" src="./src/main.js"></script></head><body><div class="app-shell">
 <div class="map-atmosphere" aria-hidden="true"><img src="./assets/papersplease-map.webp" alt=""></div>
 <header class="topbar"><div class="topbar-brand"><strong>T.G.I.F.</strong> / Ministério da Admissão</div><div class="topbar-actions"><details class="audio-settings"><summary class="button button-small">CONFIGURAR ÁUDIO</summary><div class="audio-panel"><label class="audio-setting-toggle"><input id="music-enabled" type="checkbox" checked> Música</label><label for="music-volume">Volume da música</label><input id="music-volume" type="range" min="0" max="1" step="0.05" value="0.8"><label class="audio-setting-toggle"><input id="effects-enabled" type="checkbox" checked> Efeitos sonoros</label><label for="effects-volume">Volume dos efeitos</label><input id="effects-volume" type="range" min="0" max="1" step="0.05" value="1"></div></details><button id="sound-toggle" class="button button-small" type="button" aria-pressed="false">ÁUDIO: ATIVO</button><span class="eyebrow">Posto de Grestin · 1982</span></div></header>
+<div id="shift-intro" class="shift-intro" hidden role="dialog" aria-modal="true" aria-labelledby="shift-intro-title" aria-describedby="shift-intro-detail">
+  <section class="shift-intro-panel">
+    <div class="shift-intro-heading"><span>MINISTÉRIO DA ADMISSÃO</span><span id="shift-intro-status">ETAPA 01 / 04</span></div>
+    <div class="shift-intro-scene" aria-hidden="true">
+      <div class="shift-intro-seal">A</div>
+      <div class="shift-intro-document"><span>REGISTRO DE ENTRADA</span><i></i><i></i><i></i></div>
+    </div>
+    <h2 id="shift-intro-title" aria-live="polite">Preparação do posto</h2>
+    <p id="shift-intro-detail">Verificando equipamentos, iluminação e canais de comunicação.</p>
+    <div id="shift-intro-progress" class="shift-intro-progress" aria-hidden="true"><span class="is-current"></span><span></span><span></span><span></span></div>
+    <div class="shift-intro-footer"><span>POSTO FRONTEIRIÇO DE GRESTIN · 1982</span><button id="shift-intro-skip" class="button button-small" type="button">Pular apresentação →</button></div>
+  </section>
+</div>
 <main>
 <section id="opening" class="screen is-active opening-screen" aria-hidden="false">
   <div class="opening-stage">
