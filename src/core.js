@@ -92,3 +92,8 @@ export function classifyScore(points, difficulty = 'facil') {
   const level = levels.find(({ min }) => scoreRate >= min);
   return { ...level, scoreRate, maximum };
 }
+
+
+export function applyScoreDelta(currentPoints, pointsDelta) {
+  return Math.max(0, currentPoints + pointsDelta);
+}
