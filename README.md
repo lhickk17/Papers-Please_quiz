@@ -179,7 +179,7 @@ A campanha expandida utiliza novas chaves de armazenamento (`ppquiz.campaign.v3`
 - O bônus de velocidade concede **+20 pontos** por acerto dentro do alvo: até 5 segundos no Treinamento, 4 segundos no Serviço Regular e 2,5 segundos no Regime de Exceção. No Treinamento, o alvo existe mesmo sem cronômetro de expiração.
 - O bônus de velocidade acumula com o bônus de sequência. Ambos são inteiros e independentes.
 - A sequência concede bônus progressivo no Serviço Regular e no Regime de Exceção: 3º acerto consecutivo = +10; 4º e 5º = +20; 6º e 7º = +30; 8º e 9º = +40; 10º em diante = +50 por acerto. O Treinamento registra a sequência, mas não concede esse bônus.
-- Erros e timeouts quebram a sequência e não concedem bônus de velocidade. As penalidades permanecem: Treinamento 0; Serviço Regular −25 por erro e −50 por timeout; Regime de Exceção −50 por erro e −75 por timeout.
+- Erros e timeouts quebram a sequência e não concedem bônus de velocidade. As penalidades são: Treinamento 0; Serviço Regular −25 por erro e −50 por timeout; Regime de Exceção −50 por erro e −75 por timeout. A pontuação acumulada tem piso zero: uma penalidade nunca deixa o placar negativo.
 - O Filer discrimina penalidades, bônus de sequência e bônus de velocidade.
 - A campanha de admissão não utiliza nem é afetada por essas regras.
 
@@ -187,6 +187,12 @@ A campanha expandida utiliza novas chaves de armazenamento (`ppquiz.campaign.v3`
 ## Classificação e feedback de pontuação — atualização
 
 - A precisão percentual permanece no Filer como estatística descritiva. Ela não participa da classificação nem altera qualquer regra ou resultado.
-- A classificação dos turnos livres considera exclusivamente a pontuação final, normalizada pelo máximo teórico do regime: 1.200 pontos no Treinamento e 1.440 no Serviço Regular e no Regime de Exceção.
-- Faixas do índice de pontuação: 95–100 Distinção; 80–94 Conforme; 60–79 Ressalvas; abaixo de 60 Insatisfatório.
+- A classificação dos turnos livres considera exclusivamente a pontuação final, normalizada internamente pelo máximo teórico do regime: 1.200 pontos no Treinamento e 1.440 no Serviço Regular e no Regime de Exceção. Esse índice interno não é exibido como estatística no Filer.
+- Faixas de classificação: 95–100 Distinção; 80–94 Conforme; 60–79 Ressalvas; abaixo de 60 Insatisfatório.
+- O placar tem piso zero. Penalidades continuam registradas no relatório, mas não podem produzir pontuação negativa.
 - Durante a partida, cada resposta exibe feedback flutuante junto ao placar, discriminando pontos-base por acerto, bônus de velocidade, bônus de sequência ou penalidade por erro/timeout.
+
+
+### Regulamento exibido no menu
+
+O menu principal apresenta o regulamento atualizado por regime: acerto-base, bônus de velocidade, progressão da sequência, penalidades por erro e timeout, piso zero e faixas de classificação. A precisão permanece somente como estatística.
