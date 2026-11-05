@@ -182,3 +182,11 @@ A campanha expandida utiliza novas chaves de armazenamento (`ppquiz.campaign.v3`
 - Erros e timeouts quebram a sequência e não concedem bônus de velocidade. As penalidades permanecem: Treinamento 0; Serviço Regular −25 por erro e −50 por timeout; Regime de Exceção −50 por erro e −75 por timeout.
 - O Filer discrimina penalidades, bônus de sequência e bônus de velocidade.
 - A campanha de admissão não utiliza nem é afetada por essas regras.
+
+
+## Classificação e feedback de pontuação — atualização
+
+- A precisão percentual permanece no Filer como estatística descritiva. Ela não participa da classificação nem altera qualquer regra ou resultado.
+- A classificação dos turnos livres considera exclusivamente a pontuação final, normalizada pelo máximo teórico do regime: 1.200 pontos no Treinamento e 1.440 no Serviço Regular e no Regime de Exceção.
+- Faixas do índice de pontuação: 95–100 Distinção; 80–94 Conforme; 60–79 Ressalvas; abaixo de 60 Insatisfatório.
+- Durante a partida, cada resposta exibe feedback flutuante junto ao placar, discriminando pontos-base por acerto, bônus de velocidade, bônus de sequência ou penalidade por erro/timeout.
