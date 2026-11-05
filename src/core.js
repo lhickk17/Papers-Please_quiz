@@ -30,35 +30,19 @@ export function campaignOutcome(correct) {
   return 'retry';
 }
 
-export function scoreAnswer({ correct, timedOut = false, elapsed = 0, streak = 0, difficulty = 'facil' }) {
-  const limits = { facil: 0, normal: 8, dificil: 5 };
+export function scoreAnswer({ correct, timedOut = false, streak = 0, difficulty = 'facil' }) {
   const penalties = {
     facil: { error: 0, timeout: 0 },
     normal: { error: -25, timeout: -50 },
     dificil: { error: -50, timeout: -75 }
   };
-  const limit = limits[difficulty] ?? 0;
   const isCorrect = Boolean(correct) && !timedOut;
 
   if (!isCorrect) {
     const penalty = penalties[difficulty]?.[timedOut ? 'timeout' : 'error'] ?? 0;
-    return {
-      points: penalty,
-      basePoints: 0,
-      speedBonus: 0,
-      streakBonus: 0,
-      penalty,
-      streak: 0,
-      timedOut
-    };
+    return { points: penalty, streak: 0, streakBonus: 0, penalty, timedOut };
   }
 
-  const safeElapsed = Math.max(0, Number(elapsed) || 0);
-  const rawSpeedBonus = limit
-    ? 40 * Math.max(0, Math.min(1, 1 - safeElapsed / limit))
-    : 0;
-  // Mantém a fórmula linear, mas limita a pontuação a duas casas decimais.
-  const speedBonus = Math.round((rawSpeedBonus + Number.EPSILON) * 100) / 100;
   const nextStreak = streak + 1;
   const streakBonus = difficulty === 'facil'
     ? 0
@@ -70,12 +54,10 @@ export function scoreAnswer({ correct, timedOut = false, elapsed = 0, streak = 0
               : 0;
 
   return {
-    points: Math.round((100 + speedBonus + streakBonus + Number.EPSILON) * 100) / 100,
-    basePoints: 100,
-    speedBonus,
+    points: 100 + streakBonus,
+    streak: nextStreak,
     streakBonus,
     penalty: 0,
-    streak: nextStreak,
     timedOut: false
   };
 }
