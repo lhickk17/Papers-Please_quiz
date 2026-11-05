@@ -42,8 +42,21 @@ const ministryBulletins = [
   { number: 'CIRCULAR 037/82', title: 'LEALDADE INSTITUCIONAL', text: 'Funcionários devem comunicar à supervisão qualquer abordagem não autorizada que envolva documentos internos, rotas de serviço ou procedimentos de fronteira.' },
   { number: 'BOLETIM 041/82', title: 'RUMORES NA FRONTEIRA', text: 'Relatos não confirmados mencionam movimentações de grupos clandestinos nas proximidades. O Ministério solicita discrição e recomenda que nenhum funcionário conduza investigações por iniciativa própria.' },
   { number: 'AVISO 046/82', title: 'RECONHECIMENTO DE SERVIÇO', text: 'A Diretoria informa que sequências consistentes de inspeções corretas serão consideradas nos registros de desempenho. A excelência individual fortalece a República.' },
-  { number: 'MEMORANDO 052/82', title: 'REVISÃO DE PROCEDIMENTOS', text: 'Inspetores devem consultar periodicamente o regulamento vigente. Alegar desconhecimento de uma instrução publicada não constitui justificativa administrativa.' }
-];
+  { number: 'MEMORANDO 052/82', title: 'REVISÃO DE PROCEDIMENTOS', text: 'Inspetores devem consultar periodicamente o regulamento vigente. Alegar desconhecimento de uma instrução publicada não constitui justificativa administrativa.' },
+  { number: 'CIRCULAR 058/82', title: 'REGISTRO DE IRREGULARIDADES', text: 'Toda divergência documental deverá ser registrada antes do encerramento do atendimento. A omissão de ocorrências será considerada falha funcional.' },
+  { number: 'MEMORANDO 063/82', title: 'DEVER CÍVICO', text: 'O compromisso com a República não termina ao final do expediente. A vigilância constitui responsabilidade compartilhada por todos os cidadãos.' },
+  { number: 'AVISO 067/82', title: 'CONSERVAÇÃO DO POSTO', text: 'Equipamentos, mobiliário e materiais de consulta devem permanecer em condições adequadas de uso. Danos deverão ser comunicados imediatamente à supervisão.' },
+  { number: 'BOLETIM 071/82', title: 'SEGURANÇA INTERNA', text: 'Foram recebidos relatos de atividades não autorizadas nas proximidades da fronteira. Inspetores devem comunicar comportamentos suspeitos pelos canais oficiais.' },
+  { number: 'CIRCULAR 076/82', title: 'RELAÇÕES EXTERIORES', text: 'A administração acompanha com atenção os recentes acontecimentos envolvendo nações vizinhas. Os procedimentos de inspeção permanecem inalterados até nova determinação.' },
+  { number: 'MEMORANDO 082/82', title: 'PRODUTIVIDADE FUNCIONAL', text: 'O desempenho dos postos será submetido a revisão periódica. A eficiência individual contribui diretamente para a estabilidade nacional.' },
+  { number: 'AVISO 089/82', title: 'IDENTIFICAÇÃO OBRIGATÓRIA', text: 'Todos os funcionários devem portar sua identificação funcional durante o expediente. O acesso a áreas administrativas poderá ser negado na ausência do registro.' },
+  { number: 'CIRCULAR 094/82', title: 'COMUNICAÇÃO COM A SUPERVISÃO', text: 'Dúvidas sobre procedimentos devem ser encaminhadas ao superior responsável. Iniciativas individuais que contrariem as instruções vigentes poderão resultar em advertência.' },
+  { number: 'BOLETIM 101/82', title: 'CONTROLE DE MOVIMENTAÇÃO', text: 'A circulação de pessoas nas áreas restritas do posto será acompanhada com maior rigor. Visitantes deverão apresentar autorização antes de ultrapassar os limites demarcados.' },
+  { number: 'MEMORANDO 108/82', title: 'ARQUIVAMENTO DE DOCUMENTOS', text: 'Registros de inspeção devem ser organizados ao término de cada turno. Documentos extraviados ou armazenados incorretamente deverão ser comunicados.' },
+  { number: 'AVISO 113/82', title: 'ATENÇÃO AOS PROCEDIMENTOS', text: 'A pressa não constitui justificativa para a conferência incompleta. Verifique todos os campos exigidos antes de concluir uma inspeção.' },
+  { number: 'CIRCULAR 119/82', title: 'ESTABILIDADE NACIONAL', text: 'A manutenção da ordem nas fronteiras depende da cooperação entre os setores. O Ministério espera disciplina, discrição e cumprimento integral das determinações.' },
+  { number: 'BOLETIM 124/82', title: 'INFORMAÇÕES NÃO CONFIRMADAS', text: 'A circulação de rumores sobre alterações nas regras de entrada tem provocado dúvidas entre funcionários. Somente comunicados oficiais possuem validade administrativa.' }
+];;
 
 function showMinistryBulletin() {
   const bulletin = $('#ministry-bulletin');
