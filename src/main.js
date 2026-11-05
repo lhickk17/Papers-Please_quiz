@@ -6,6 +6,7 @@ const screenIds = ['opening', 'interview', 'registration', 'orientation', 'campa
 const campaignKey = 'ppquiz.campaign.v3';
 const campaignResultKey = 'ppquiz.campaign.result.v2';
 const profileKey = 'ppquiz.inspector.profile.v1';
+const audioSettingsKey = 'ppquiz.audio.settings.v1';
 let interviewIndex = 0;
 let interviewAnswers = [];
 let inspectorProfile = null;
@@ -16,7 +17,15 @@ let campaignCorrect = 0;
 let game = null;
 let questionStarted = 0;
 let timerId = null;
-let muted = false;
+const defaultAudioSettings = { muted: false, musicEnabled: true, effectsEnabled: true, musicVolume: 0.8, effectsVolume: 1 };
+let audioSettings = (() => {
+  try {
+    const saved = JSON.parse(localStorage.getItem(audioSettingsKey) || 'null');
+    return saved && typeof saved === 'object' ? { ...defaultAudioSettings, ...saved } : { ...defaultAudioSettings };
+  } catch {
+    return { ...defaultAudioSettings };
+  }
+})();
 let keyboardOptions = null;
 let keyboardSelection = -1;
 let openingReady = false;
@@ -46,8 +55,28 @@ function navigate(id) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+function persistAudioSettings() {
+  try { localStorage.setItem(audioSettingsKey, JSON.stringify(audioSettings)); } catch {}
+}
+
+function updateAudioSettingsUI() {
+  $('#sound-toggle').textContent = audioSettings.muted ? 'ÁUDIO: MUDO' : 'ÁUDIO: ATIVO';
+  $('#sound-toggle').setAttribute('aria-pressed', String(audioSettings.muted));
+  $('#music-enabled').checked = audioSettings.musicEnabled;
+  $('#effects-enabled').checked = audioSettings.effectsEnabled;
+  $('#music-volume').value = String(audioSettings.musicVolume);
+  $('#effects-volume').value = String(audioSettings.effectsVolume);
+  Object.entries(audio).forEach(([key, sound]) => {
+    sound.muted = audioSettings.muted;
+    const factor = key === 'theme' ? audioSettings.musicVolume : audioSettings.effectsVolume;
+    sound.volume = (sound.baseVolume ?? 0.35) * factor;
+    if (key === 'theme' && !audioSettings.musicEnabled) sound.pause();
+  });
+}
+
 function play(key, volume = 0.35) {
-  if (muted) return;
+  if (audioSettings.muted) return;
+  if (key === 'theme' ? !audioSettings.musicEnabled : !audioSettings.effectsEnabled) return;
   const sources = {
     theme: 'assets-sounds/01. Glory to Arstotzka (Main Theme).mp3',
     foghorn: 'assets-sounds/09. Border Foghorn.mp3',
@@ -63,10 +92,15 @@ function play(key, volume = 0.35) {
     audio[key] = new Audio(sources[key]);
   }
   const sound = audio[key];
-  sound.volume = volume;
+  sound.baseVolume = volume;
+  const factor = key === 'theme' ? audioSettings.musicVolume : audioSettings.effectsVolume;
+  sound.volume = volume * factor;
+  sound.muted = false;
   sound.loop = key === 'theme';
   sound.currentTime = 0;
-  sound.play().catch(() => {});
+  sound.play().catch((error) => {
+    console.warn(`[T.G.I.F. áudio] Falha ao reproduzir "${key}" (${sources[key]}).`, error);
+  });
 }
 
 function renderOptions(container, question, onAnswer, answered = null) {
@@ -369,11 +403,11 @@ Todo inspetor de fronteira deve demonstrar conhecimento geográfico básico ante
 
 Você foi designado ao Posto Fronteiriço de Grestin. Sua participação é compulsória — você foi selecionado pela Loteria do Trabalho de Outubro de 1982 e não pode recusar esta designação.
 
-Antes de assumir suas funções, deve provar noções aceitáveis dos países que fazem fronteira com Arstotzka.
+Antes de assumir suas funções, deve demonstrar conhecimentos geográficos básicos sobre os países e as cidades da região.
 
 Este teste é obrigatório. Resultados serão arquivados.
 
-Glória a Arstotzka.`;
+Glória a Arstotzka.`
 
 function startOpeningSequence() {
   const text = $('#opening-text');
@@ -384,8 +418,7 @@ function startOpeningSequence() {
   window.clearTimeout(openingTimer);
   window.clearInterval(typingTimer);
   openingTimer = window.setTimeout(() => {
-    play('foghorn', 0.3);
-    play('inspectOpen', 0.22);
+    // A abertura aguarda a primeira interação para evitar bloqueios de autoplay.
     let index = 0;
     typingTimer = window.setInterval(() => {
       text.textContent += openingText[index] ?? '';
@@ -464,10 +497,33 @@ $('#filer-close').addEventListener('click', () => {
   play('filerClose', 0.32);
 });
 $('#sound-toggle').addEventListener('click', () => {
-  muted = !muted;
-  Object.values(audio).forEach((sound) => { sound.muted = muted; });
-  $('#sound-toggle').textContent = muted ? 'ÁUDIO: MUDO' : 'ÁUDIO: ATIVO';
+  audioSettings.muted = !audioSettings.muted;
+  persistAudioSettings();
+  updateAudioSettingsUI();
 });
+$('#music-enabled').addEventListener('change', (event) => {
+  audioSettings.musicEnabled = event.target.checked;
+  persistAudioSettings();
+  updateAudioSettingsUI();
+  if (audioSettings.musicEnabled && audio.theme?.paused && !audioSettings.muted) {
+    play('theme', audio.theme.baseVolume ?? 0.14);
+  }
+});
+$('#effects-enabled').addEventListener('change', (event) => {
+  audioSettings.effectsEnabled = event.target.checked;
+  persistAudioSettings();
+});
+$('#music-volume').addEventListener('input', (event) => {
+  audioSettings.musicVolume = Number(event.target.value);
+  persistAudioSettings();
+  updateAudioSettingsUI();
+});
+$('#effects-volume').addEventListener('input', (event) => {
+  audioSettings.effectsVolume = Number(event.target.value);
+  persistAudioSettings();
+  updateAudioSettingsUI();
+});
+updateAudioSettingsUI();
 startOpeningSequence();
 
 window.addEventListener('keydown', (event) => {
