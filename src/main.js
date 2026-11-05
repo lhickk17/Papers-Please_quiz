@@ -71,6 +71,7 @@ function updateAudioSettingsUI() {
     const factor = key === 'theme' ? audioSettings.musicVolume : audioSettings.effectsVolume;
     sound.volume = (sound.baseVolume ?? 0.35) * factor;
     if (key === 'theme' && !audioSettings.musicEnabled) sound.pause();
+    if (key !== 'theme' && !audioSettings.effectsEnabled) sound.pause();
   });
 }
 
@@ -435,6 +436,7 @@ function startOpeningSequence() {
 function continueFromOpening() {
   if (!openingReady) return;
   window.clearInterval(typingTimer);
+  play('foghorn', 0.3);
   play('page', 0.24);
   play('theme', 0.14);
   if (reviewingCampaign) {
@@ -512,6 +514,7 @@ $('#music-enabled').addEventListener('change', (event) => {
 $('#effects-enabled').addEventListener('change', (event) => {
   audioSettings.effectsEnabled = event.target.checked;
   persistAudioSettings();
+  updateAudioSettingsUI();
 });
 $('#music-volume').addEventListener('input', (event) => {
   audioSettings.musicVolume = Number(event.target.value);
