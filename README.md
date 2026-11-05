@@ -171,3 +171,14 @@ A campanha expandida utiliza novas chaves de armazenamento (`ppquiz.campaign.v3`
 - A apresentação pode ser pulada a qualquer momento; o cronômetro do modo livre só começa quando a inspeção é liberada.
 - A preferência de movimento reduzido desativa as animações decorativas da apresentação.
 
+
+
+## Pontuação dos regimes livres — MVP 0.6
+
+- Cada acerto concede **100 pontos-base**.
+- O bônus de velocidade concede **+20 pontos** por acerto dentro do alvo: até 5 segundos no Treinamento, 4 segundos no Serviço Regular e 2,5 segundos no Regime de Exceção. No Treinamento, o alvo existe mesmo sem cronômetro de expiração.
+- O bônus de velocidade acumula com o bônus de sequência. Ambos são inteiros e independentes.
+- A sequência concede bônus progressivo no Serviço Regular e no Regime de Exceção: 3º acerto consecutivo = +10; 4º e 5º = +20; 6º e 7º = +30; 8º e 9º = +40; 10º em diante = +50 por acerto. O Treinamento registra a sequência, mas não concede esse bônus.
+- Erros e timeouts quebram a sequência e não concedem bônus de velocidade. As penalidades permanecem: Treinamento 0; Serviço Regular −25 por erro e −50 por timeout; Regime de Exceção −50 por erro e −75 por timeout.
+- O Filer discrimina penalidades, bônus de sequência e bônus de velocidade.
+- A campanha de admissão não utiliza nem é afetada por essas regras.
