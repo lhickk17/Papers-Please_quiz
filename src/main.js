@@ -94,10 +94,10 @@ function navigate(id) {
 }
 
 const shiftIntroStages = [
-  { status: 'ETAPA 01 / 04', title: 'Preparação do posto', detail: 'Verificando equipamentos, iluminação e canais de comunicação.', duration: 650 },
-  { status: 'ETAPA 02 / 04', title: 'Identificação confirmada', detail: 'Posto fronteiriço de Grestin · República de Arstotzka · 04 OUT 1982.', duration: 650 },
-  { status: 'ETAPA 03 / 04', title: 'Primeiro documento recebido', detail: 'Um novo registro foi encaminhado à mesa de inspeção.', duration: 750 },
-  { status: 'ETAPA 04 / 04', title: 'Posto em operação', detail: 'Estação pronta. A inspeção será iniciada.', duration: 850 }
+  { status: 'ETAPA 01 / 04', title: 'Preparação do posto', detail: 'Verificando equipamentos, iluminação e canais de comunicação.', duration: 2000 },
+  { status: 'ETAPA 02 / 04', title: 'Identificação confirmada', detail: 'Posto fronteiriço de Grestin · República de Arstotzka · 04 OUT 1982.', duration: 2000 },
+  { status: 'ETAPA 03 / 04', title: 'Primeiro documento recebido', detail: 'Um novo registro foi encaminhado à mesa de inspeção.', duration: 2000 },
+  { status: 'ETAPA 04 / 04', title: 'Posto em operação', detail: 'Estação pronta. A inspeção será iniciada.', duration: 2000 }
 ];
 
 function renderShiftIntroStage() {
