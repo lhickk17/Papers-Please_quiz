@@ -35,7 +35,32 @@ let openingTimer = null;
 let typingTimer = null;
 const audio = {};
 
+const ministryBulletins = [
+  { number: 'CIRCULAR 014/82', title: 'PONTUALIDADE É OBRIGAÇÃO', text: 'A administração recorda que o horário de apresentação ao posto deve ser rigorosamente observado. Justificativas pessoais não serão consideradas em caso de atraso.' },
+  { number: 'AVISO 022/82', title: 'DOCUMENTOS EM ORDEM', text: 'Foram identificadas tentativas de ingresso com registros incompletos em postos da região. Reforce a conferência de nomes, cidades e países de emissão.' },
+  { number: 'MEMORANDO 031/82', title: 'ECONOMIA DE RECURSOS', text: 'O consumo de papel, tinta e material de escritório será monitorado. Formulários inutilizados deverão ser justificados à supervisão.' },
+  { number: 'CIRCULAR 037/82', title: 'LEALDADE INSTITUCIONAL', text: 'Funcionários devem comunicar à supervisão qualquer abordagem não autorizada que envolva documentos internos, rotas de serviço ou procedimentos de fronteira.' },
+  { number: 'BOLETIM 041/82', title: 'RUMORES NA FRONTEIRA', text: 'Relatos não confirmados mencionam movimentações de grupos clandestinos nas proximidades. O Ministério solicita discrição e recomenda que nenhum funcionário conduza investigações por iniciativa própria.' },
+  { number: 'AVISO 046/82', title: 'RECONHECIMENTO DE SERVIÇO', text: 'A Diretoria informa que sequências consistentes de inspeções corretas serão consideradas nos registros de desempenho. A excelência individual fortalece a República.' },
+  { number: 'MEMORANDO 052/82', title: 'REVISÃO DE PROCEDIMENTOS', text: 'Inspetores devem consultar periodicamente o regulamento vigente. Alegar desconhecimento de uma instrução publicada não constitui justificativa administrativa.' }
+];
+
+function showMinistryBulletin() {
+  const bulletin = $('#ministry-bulletin');
+  if (!bulletin) return;
+  let previous = -1;
+  try { previous = Number(sessionStorage.getItem('ppquiz.last.bulletin') ?? -1); } catch {}
+  let index = Math.floor(Math.random() * ministryBulletins.length);
+  if (ministryBulletins.length > 1 && index === previous) index = (index + 1 + Math.floor(Math.random() * (ministryBulletins.length - 1))) % ministryBulletins.length;
+  const item = ministryBulletins[index];
+  try { sessionStorage.setItem('ppquiz.last.bulletin', String(index)); } catch {}
+  $('#menu-bulletin-number').textContent = item.number;
+  $('#menu-bulletin-title').textContent = item.title;
+  $('#menu-bulletin-text').textContent = item.text;
+}
+
 function navigate(id) {
+  if (id === 'menu') showMinistryBulletin();
   const previous = document.querySelector('.screen.is-active');
   document.body.classList.toggle('is-opening', id === 'opening');
   const show = () => screenIds.forEach((key) => {
