@@ -118,7 +118,17 @@
   <p class="eyebrow">Arquivo de inspeção</p>
   <button id="filer-open" class="filer-closed" type="button"><img src="./assets/Filer.png" alt=""><span>[ abrir pasta de relatório ]</span></button>
   <div id="filer-expanded" class="filer-expanded" hidden>
-    <div class="filer-document-heading"><div><p class="eyebrow">Resultado do turno</p><p id="report-summary" class="filer-document-summary"></p></div><span id="report-score" class="status-stamp">00000 PTS</span></div>
+    <header class="filer-document-heading">
+      <div class="filer-document-title"><p class="eyebrow">Resultado do turno</p><p id="report-summary" class="filer-document-summary"></p></div>
+      <span id="report-score" class="status-stamp">00000 PTS</span>
+    </header>
+    <dl class="filer-identification" aria-label="Identificação do relatório">
+      <div><dt>Protocolo</dt><dd id="report-protocol">GRE-821004-000001</dd></div>
+      <div><dt>Emissão</dt><dd id="report-date">04 OUT 1982</dd></div>
+      <div><dt>Turno</dt><dd id="report-shift">000001</dd></div>
+      <div><dt>Inspetor</dt><dd id="report-inspector">NÃO IDENTIFICADO</dd></div>
+      <div><dt>Unidade</dt><dd>Grestin · Inspeção de entrada</dd></div>
+    </dl>
     <div class="filer-documents">
       <section class="filer-bulletin"><img class="filer-bulletin-bg" src="./assets/papers/BulletinInnerCriminals.png" alt=""><div class="filer-bulletin-content"><p class="eyebrow">Erros registrados</p><ul id="report-filer-errors" class="filer-error-list"></ul></div></section>
       <section class="filer-stats-panel"><p class="eyebrow">Relatório de desempenho</p><div id="report-filer-stats" class="filer-stats-list"></div></section>
