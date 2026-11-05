@@ -156,3 +156,11 @@ A campanha expandida utiliza novas chaves de armazenamento (`ppquiz.campaign.v3`
 - Os relatórios de desempenho recebem carimbos de classificação por faixa de acertos e mensagens variáveis da supervisão, selecionadas conforme o resultado.
 
 - O menu apresenta comunicados rotativos do Ministério, com circulares, avisos operacionais e referências discretas a movimentações clandestinas. A seleção evita repetir o comunicado imediatamente anterior durante a mesma sessão.
+
+
+## Menu do posto — revisão editorial
+
+- A orientação do menu apresenta os três regimes de inspeção e informa que os resultados serão acompanhados pela administração.
+- Os modos foram renomeados para **Adaptação**, **Protocolo padrão** e **Inspeção rigorosa**, mantendo os identificadores de treinamento, serviço regular e regime de exceção.
+- A central de comunicados do Ministério conta agora com 20 mensagens rotativas sobre disciplina, procedimentos, propaganda institucional, segurança de fronteira, administração e relações exteriores.
+- O texto do Arquivo pessoal foi mantido nesta revisão para preservar espaço destinado a avisos e orientações futuras.
