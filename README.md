@@ -13,7 +13,6 @@ A branch `rebuild/vite-architecture` inicia uma reconstrução estrutural sem ap
 - **Progressão sem bloqueio:** nota baixa não impede o acesso ao menu. A campanha fica concluída após a primeira avaliação, independentemente da nota, e pode ser revista no menu.
 - **Faixas da campanha:** 0–6 acertos = avaliação insatisfatória; 7–8 = aprovação com ressalvas; 9–10 = distinção.
 - **Modo livre:** três dificuldades, pontuação, bônus, cronômetro e relatório de erros.
-- **Transições:** animações curtas com View Transitions API quando disponível e fallback CSS.
 - **Acessibilidade básica:** foco visível, regiões de feedback com `aria-live`, controles nativos e suporte a `prefers-reduced-motion`.
 - **Testes automatizados:** geração de perguntas, opções, cidades únicas e limites da campanha.
 
@@ -106,7 +105,7 @@ Projeto de fã não oficial e sem fins comerciais. **Papers, Please** pertence a
 
 - A abertura institucional fica isolada do posto principal, com o mapa, a barra superior e o rodapé ocultos.
 - A imagem de fundo ampliada e o retrato da imigração obristana foram retirados da abertura. O símbolo do Ministério foi reduzido a um selo tipográfico discreto; o fundo agora é uma composição própria em CSS.
-- O comunicado mantém o texto digitado, a buzina, o efeito de inspeção e o avanço por clique ou Enter.
+- O comunicado mantém o texto digitado e os efeitos sonoros; durante a digitação, clique, Enter ou Espaço revelam o texto completo. Uma nova interação avança para a próxima etapa.
 - A campanha completa agora inclui entrevista com M. Vonel, registro funcional, boletim político, orientação, avaliação geográfica, parecer e ordem de designação.
 - O retrato de M. Vonel é representado por um monograma visual porque o repositório não contém um asset de retrato identificável do supervisor.
 
@@ -141,3 +140,69 @@ A campanha expandida utiliza novas chaves de armazenamento (`ppquiz.campaign.v3`
 - A tela de encerramento da campanha oferece um atalho para conhecer/comprar o jogo original.
 - A ordem de designação também contém o aviso de caráter não oficial do projeto.
 - O projeto não utiliza a marcação de produto oficial nem sugere endosso dos titulares.
+
+
+## Revisão de estabilidade 2.0
+
+- O favicon do navegador utiliza a arte `assets/intro/Intro1.png`, associada à Loteria do Trabalho.
+- O painel de áudio permite ativar/desativar música e efeitos separadamente, ajustar os dois volumes e silenciar o conjunto. As preferências são persistidas no navegador em `ppquiz.audio.settings.v1`.
+- A música e os efeitos da abertura aguardam uma interação do jogador para respeitar as políticas de reprodução automática dos navegadores. Falhas de reprodução passam a ser registradas no console com a identificação do efeito e do arquivo.
+- O comunicado inicial descreve a avaliação como um exame de geografia dos países e cidades da região, compatível com o banco de questões atual.
+- A validação automatizada em Pull Requests executa `npm ci`, `npm test` e `npm run build`. A publicação no GitHub Pages continua restrita à branch `main`.
+
+- Os relatórios dos modos livres recebem protocolo sequencial persistido no navegador, data diegética (04 OUT 1982), número do turno, identificação do inspetor e unidade de serviço.
+
+- Os relatórios de desempenho recebem carimbos de classificação por faixa de acertos e mensagens variáveis da supervisão, selecionadas conforme o resultado.
+
+- O menu apresenta comunicados rotativos do Ministério, com circulares, avisos operacionais e referências discretas a movimentações clandestinas. A seleção evita repetir o comunicado imediatamente anterior durante a mesma sessão.
+
+
+## Menu do posto — revisão editorial
+
+- A orientação do menu apresenta os três regimes de inspeção e informa que os resultados serão acompanhados pela administração.
+- Os modos foram renomeados para **Adaptação**, **Protocolo padrão** e **Inspeção rigorosa**, mantendo os identificadores de treinamento, serviço regular e regime de exceção.
+- A central de comunicados do Ministério conta agora com 20 mensagens rotativas sobre disciplina, procedimentos, propaganda institucional, segurança de fronteira, administração e relações exteriores.
+- O texto do Arquivo pessoal foi mantido nesta revisão para preservar espaço destinado a avisos e orientações futuras.
+
+## Preparação de início de turno
+
+- A campanha obrigatória e os turnos do modo livre apresentam uma sequência institucional curta antes do primeiro documento.
+- A sequência percorre preparação do posto, identificação de Grestin, recebimento do primeiro documento e liberação da estação.
+- A apresentação pode ser pulada a qualquer momento; o cronômetro do modo livre só começa quando a inspeção é liberada.
+- A preferência de movimento reduzido desativa as animações decorativas da apresentação.
+
+
+
+## Pontuação dos regimes livres — MVP 0.6
+
+- Cada acerto concede **100 pontos-base**.
+- O bônus de velocidade concede **+20 pontos** por acerto dentro do alvo: até 5 segundos no Treinamento, 4 segundos no Serviço Regular e 2,5 segundos no Regime de Exceção. No Treinamento, o alvo existe mesmo sem cronômetro de expiração.
+- O bônus de velocidade acumula com o bônus de sequência. Ambos são inteiros e independentes.
+- A sequência concede bônus progressivo no Serviço Regular e no Regime de Exceção: 3º acerto consecutivo = +10; 4º e 5º = +20; 6º e 7º = +30; 8º e 9º = +40; 10º em diante = +50 por acerto. O Treinamento registra a sequência, mas não concede esse bônus.
+- Erros e timeouts quebram a sequência e não concedem bônus de velocidade. As penalidades são: Treinamento 0; Serviço Regular −25 por erro e −50 por timeout; Regime de Exceção −50 por erro e −75 por timeout. A pontuação acumulada tem piso zero: uma penalidade nunca deixa o placar negativo.
+- O Filer discrimina penalidades, bônus de sequência e bônus de velocidade.
+- A campanha de admissão não utiliza nem é afetada por essas regras.
+
+
+## Classificação e feedback de pontuação — atualização
+
+- A precisão percentual permanece no Filer como estatística descritiva. Ela não participa da classificação nem altera qualquer regra ou resultado.
+- A classificação dos turnos livres considera exclusivamente a pontuação final, normalizada internamente pelo máximo teórico do regime: 1.200 pontos no Treinamento e 1.440 no Serviço Regular e no Regime de Exceção. Esse índice interno não é exibido como estatística no Filer.
+- Faixas de classificação: 95–100 Distinção; 80–94 Conforme; 60–79 Ressalvas; abaixo de 60 Insatisfatório.
+- O placar tem piso zero. Penalidades continuam registradas no relatório, mas não podem produzir pontuação negativa.
+- Durante a partida, cada resposta exibe feedback flutuante junto ao placar, discriminando pontos-base por acerto, bônus de velocidade, bônus de sequência ou penalidade por erro/timeout.
+
+
+### Regulamento de pontuação no menu
+
+- O menu apresenta três opções para consultar as regras de cada regime.
+- Ao selecionar uma opção, as informações aparecem em uma janela modal sobreposta, com fundo desfocado e botão de fechamento.
+- O conteúdo resume pontuação por acerto, bônus de velocidade, progressão da sequência, penalidades, limite de tempo e diferenças entre regimes.
+- O regulamento não expõe máximos teóricos nem percentuais usados internamente na classificação.
+- O Arquivo pessoal permanece independente da janela e não muda de altura quando ela é aberta.
+
+
+### Identidade visual nacional
+
+- O brasão de Arstotzka (`assets/intro/Arstotzka.png`) substitui as letras decorativas nos selos da abertura e da apresentação de início de turno.
+- O mesmo símbolo aparece em escala reduzida no cabeçalho, nos comunicados ministeriais e no cabeçalho do Filer, reforçando a identidade institucional sem competir com o conteúdo.

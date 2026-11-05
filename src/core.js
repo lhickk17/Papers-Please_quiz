@@ -30,9 +30,70 @@ export function campaignOutcome(correct) {
   return 'retry';
 }
 
-export function scoreAnswer({ correct, elapsed = 99, streak = 0, difficulty = 'facil' }) {
-  if (!correct) return { points: difficulty === 'dificil' ? -50 : 0, streak: 0 };
-  const speedBonus = difficulty !== 'facil' && elapsed < 2 ? 25 : 0;
-  const streakBonus = difficulty !== 'facil' && streak >= 3 ? 50 : 0;
-  return { points: 100 + speedBonus + streakBonus, streak: streak + 1 };
+export function scoreAnswer({
+  correct,
+  timedOut = false,
+  streak = 0,
+  difficulty = 'facil',
+  responseTimeMs = Number.POSITIVE_INFINITY
+}) {
+  const penalties = {
+    facil: { error: 0, timeout: 0 },
+    normal: { error: -25, timeout: -50 },
+    dificil: { error: -50, timeout: -75 }
+  };
+  const speedThresholds = { facil: 5000, normal: 4000, dificil: 2500 };
+  const isCorrect = Boolean(correct) && !timedOut;
+
+  if (!isCorrect) {
+    const penalty = penalties[difficulty]?.[timedOut ? 'timeout' : 'error'] ?? 0;
+    return {
+      points: penalty,
+      streak: 0,
+      streakBonus: 0,
+      speedBonus: 0,
+      penalty,
+      timedOut
+    };
+  }
+
+  const nextStreak = streak + 1;
+  const streakBonus = difficulty === 'facil'
+    ? 0
+    : nextStreak >= 10 ? 50
+      : nextStreak >= 8 ? 40
+        : nextStreak >= 6 ? 30
+          : nextStreak >= 4 ? 20
+            : nextStreak >= 3 ? 10
+              : 0;
+  const speedBonus = responseTimeMs <= speedThresholds[difficulty] ? 20 : 0;
+
+  return {
+    points: 100 + streakBonus + speedBonus,
+    streak: nextStreak,
+    streakBonus,
+    speedBonus,
+    penalty: 0,
+    timedOut: false
+  };
+}
+
+export function classifyScore(points, difficulty = 'facil') {
+  const maximumScores = { facil: 1200, normal: 1440, dificil: 1440 };
+  const maximum = maximumScores[difficulty] ?? maximumScores.facil;
+  const normalizedScore = Math.max(0, Math.min(100, (points / maximum) * 100));
+  const scoreRate = Math.round(normalizedScore);
+  const levels = [
+    { min: 95, stamp: 'DISTINÇÃO', className: 'is-distinction' },
+    { min: 80, stamp: 'CONFORME', className: 'is-approved' },
+    { min: 60, stamp: 'RESSALVAS', className: 'is-warning' },
+    { min: 0, stamp: 'INSATISFATÓRIO', className: 'is-rejected' }
+  ];
+  const level = levels.find(({ min }) => scoreRate >= min);
+  return { ...level, scoreRate, maximum };
+}
+
+
+export function applyScoreDelta(currentPoints, pointsDelta) {
+  return Math.max(0, currentPoints + pointsDelta);
 }
