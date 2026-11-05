@@ -165,3 +165,30 @@ test('score total never drops below zero after a penalty', () => {
   assert.equal(applyScoreDelta(0, -75), 0);
   assert.equal(applyScoreDelta(100, 120), 220);
 });
+
+import { readFile } from 'node:fs/promises';
+
+test('every screen managed by navigation exists in the document', async () => {
+  const [html, main] = await Promise.all([
+    readFile(new URL('../index.html', import.meta.url), 'utf8'),
+    readFile(new URL('../src/main.js', import.meta.url), 'utf8')
+  ]);
+  const screenIdsMatch = main.match(/const screenIds = \[([^\]]+)\]/);
+  assert.ok(screenIdsMatch, 'screenIds declaration must exist');
+  const screenIds = [...screenIdsMatch[1].matchAll(/'([^']+)'/g)].map((match) => match[1]);
+  const documentIds = new Set([...html.matchAll(/\\bid="([^"]+)"/g)].map((match) => match[1]));
+  for (const id of screenIds) {
+    assert.ok(documentIds.has(id), `Navigation screen #${id} must exist in index.html`);
+  }
+});
+
+test('every static ID queried by the application exists in the document', async () => {
+  const [html, main] = await Promise.all([
+    readFile(new URL('../index.html', import.meta.url), 'utf8'),
+    readFile(new URL('../src/main.js', import.meta.url), 'utf8')
+  ]);
+  const documentIds = new Set([...html.matchAll(/\\bid="([^"]+)"/g)].map((match) => match[1]));
+  const queriedIds = [...new Set([...main.matchAll(/\\$\\(['"]#([^'"]+)['"]\\)/g)].map((match) => match[1]))];
+  const missing = queriedIds.filter((id) => !documentIds.has(id));
+  assert.deepEqual(missing, [], `Missing DOM elements: ${missing.join(', ')}`);
+});
