@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { CITIES, COUNTRIES, createRound, campaignOutcome, scoreAnswer, classifyScore } from '../src/core.js';
+import { CITIES, COUNTRIES, createRound, campaignOutcome, scoreAnswer, classifyScore, applyScoreDelta } from '../src/core.js';
 
 test('source question bank has seven countries and unique cities', () => {
   assert.equal(COUNTRIES.length, 7);
@@ -156,4 +156,12 @@ test('free-mode classification uses normalized score only', () => {
 
 test('classification helper does not accept or depend on precision', () => {
   assert.equal(classifyScore(1000, 'normal').stamp, 'RESSALVAS');
+});
+
+
+test('score total never drops below zero after a penalty', () => {
+  assert.equal(applyScoreDelta(100, -75), 25);
+  assert.equal(applyScoreDelta(25, -50), 0);
+  assert.equal(applyScoreDelta(0, -75), 0);
+  assert.equal(applyScoreDelta(100, 120), 220);
 });
