@@ -1,5 +1,5 @@
 import './style.css';
-import { createRound, campaignOutcome, scoreAnswer, classifyScore } from './core.js';
+import { createRound, campaignOutcome, scoreAnswer, classifyScore, applyScoreDelta } from './core.js';
 
 const $ = (selector) => document.querySelector(selector);
 const screenIds = ['opening', 'interview', 'registration', 'orientation', 'campaign', 'campaign-result', 'designation', 'menu', 'quiz', 'report'];
@@ -415,9 +415,7 @@ function renderGameQuestion() {
   questionStarted = performance.now();
   const limit = game.difficulty === 'normal' ? 8 : game.difficulty === 'dificil' ? 5 : 0;
   $('#game-count').textContent = `DOCUMENTO ${String(game.index + 1).padStart(2, '0')} / 10`;
-  $('#game-score').textContent = game.points >= 0
-    ? String(game.points).padStart(8, '0')
-    : String(game.points);
+  $('#game-score').textContent = String(game.points).padStart(8, '0');
   $('#game-streak').textContent = String(game.streak);
   $('#game-timer').textContent = limit ? `${limit.toFixed(1)}s` : 'SEM LIMITE';
   $('#game-feedback').textContent = '';
@@ -473,14 +471,16 @@ function answerGame(answer) {
   const scored = scoreAnswer({ correct, timedOut, streak: game.streak, difficulty: game.difficulty, responseTimeMs });
   game.answered = true;
   game.correct += Number(correct);
-  game.points += scored.points;
+  const previousPoints = game.points;
+  game.points = applyScoreDelta(game.points, scored.points);
   game.streak = scored.streak;
   game.bestStreak = Math.max(game.bestStreak, game.streak);
   game.timeouts += Number(timedOut);
   game.totalPenalties += Math.abs(scored.penalty);
   game.streakBonusTotal += scored.streakBonus;
   game.speedBonusTotal += scored.speedBonus;
-  showScoreBreakdown(scored, correct, timedOut);
+  const appliedPenalty = scored.penalty < 0 ? Math.min(previousPoints, Math.abs(scored.penalty)) : 0;
+  showScoreBreakdown({ ...scored, penalty: -appliedPenalty }, correct, timedOut);
   if (!correct) game.errors.push({
     city: question.city, expected: question.country,
     answered: timedOut ? 'tempo esgotado' : answer,
@@ -491,9 +491,7 @@ function answerGame(answer) {
   $('#game-feedback').textContent = correct ? 'ENTRADA APROVADA' : `ENTRADA RECUSADA · ${question.country.toUpperCase()}`;
   $('#game-feedback').className = `feedback-row ${correct ? 'is-success' : 'is-error'}`;
   $('#game-curiosity').textContent = question.curiosity;
-  $('#game-score').textContent = game.points >= 0
-    ? String(game.points).padStart(8, '0')
-    : String(game.points);
+  $('#game-score').textContent = String(game.points).padStart(8, '0');
   $('#game-streak').textContent = String(game.streak);
   $('#game-next').hidden = false;
   $('#game-next').textContent = game.index === 9 ? 'Abrir relatório →' : 'Próximo documento →';
@@ -592,7 +590,6 @@ function finishQuiz() {
     ['Erros', game.errors.length - game.timeouts],
     ['Timeouts', game.timeouts],
     ['Precisão', Math.round((game.correct / game.questions.length) * 100) + '%'],
-    ['Índice de pontuação', scoreAssessment.scoreRate + '% do máximo do regime'],
     ['Melhor sequência', game.bestStreak],
     ['Pontuação final', game.points + ' pts'],
     ['Tempo total', elapsedMinutes + 'm ' + String(elapsedRemainder).padStart(2, '0') + 's'],
