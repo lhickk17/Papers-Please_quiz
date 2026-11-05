@@ -415,7 +415,7 @@ function renderGameQuestion() {
   questionStarted = performance.now();
   const limit = game.difficulty === 'normal' ? 8 : game.difficulty === 'dificil' ? 5 : 0;
   $('#game-count').textContent = `DOCUMENTO ${String(game.index + 1).padStart(2, '0')} / 10`;
-  $('#game-score').textContent = String(game.points).padStart(5, '0');
+  $('#game-score').textContent = game.points.toFixed(2).padStart(8, '0');
   $('#game-streak').textContent = String(game.streak);
   $('#game-timer').textContent = limit ? `${limit.toFixed(1)}s` : 'SEM LIMITE';
   $('#game-feedback').textContent = '';
@@ -441,14 +441,14 @@ function answerGame(answer) {
   const scored = scoreAnswer({ correct, timedOut, elapsed, streak: game.streak, difficulty: game.difficulty });
   game.answered = true;
   game.correct += Number(correct);
-  game.points += scored.points;
+  game.points = Math.round((game.points + scored.points + Number.EPSILON) * 100) / 100;
   game.streak = scored.streak;
   game.bestStreak = Math.max(game.bestStreak, game.streak);
   game.timeouts += Number(timedOut);
   game.answerTimes.push(elapsed);
   game.totalPenalties += Math.abs(scored.penalty);
-  game.speedBonusTotal += scored.speedBonus;
-  game.streakBonusTotal += scored.streakBonus;
+  game.speedBonusTotal = Math.round((game.speedBonusTotal + scored.speedBonus + Number.EPSILON) * 100) / 100;
+  game.streakBonusTotal = Math.round((game.streakBonusTotal + scored.streakBonus + Number.EPSILON) * 100) / 100;
   game.scoreBreakdown.push({
     city: question.city, correct, timedOut, elapsed,
     basePoints: scored.basePoints, speedBonus: scored.speedBonus,
@@ -499,7 +499,7 @@ function finishQuiz() {
   const elapsedSeconds = Math.max(0, Math.floor((performance.now() - roundStartedAt) / 1000));
   const elapsedMinutes = Math.floor(elapsedSeconds / 60);
   const elapsedRemainder = elapsedSeconds % 60;
-  $('#report-score').textContent = `${game.points} PTS`;
+  $('#report-score').textContent = `${game.points.toFixed(2)} PTS`;
   $('#report-summary').textContent = `${game.correct} acertos em 10 documentos · melhor sequência: ${game.bestStreak}`;
   const filerErrors = $('#report-filer-errors');
   filerErrors.replaceChildren();
@@ -577,13 +577,13 @@ function finishQuiz() {
     ['Timeouts', game.timeouts],
     ['Precisão', Math.round((game.correct / game.questions.length) * 100) + '%'],
     ['Streak máximo', game.bestStreak],
-    ['Pontuação final', game.points],
+    ['Pontuação final', game.points.toFixed(2) + ' pts'],
     ['Tempo total', elapsedMinutes + 'm ' + String(elapsedRemainder).padStart(2, '0') + 's'],
     ['Tempo médio por questão', formatTime(averageAnswerTime)],
     ['Resposta mais rápida', formatTime(fastestAnswer)],
     ['Resposta mais lenta', formatTime(slowestAnswer)],
     ['Penalidades acumuladas', '-' + game.totalPenalties + ' pts'],
-    ['Bônus de velocidade', '+' + game.speedBonusTotal.toFixed(1) + ' pts'],
+    ['Bônus de velocidade', '+' + game.speedBonusTotal.toFixed(2) + ' pts'],
     ['Bônus de sequência', '+' + game.streakBonusTotal + ' pts']
   ];
   const statsList = $('#report-filer-stats');
