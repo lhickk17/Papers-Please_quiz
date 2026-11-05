@@ -451,3 +451,17 @@ body.is-shift-intro{overflow:hidden}
 @media(prefers-reduced-motion:reduce){
   .score-popup{animation:none;opacity:1}
 }
+
+/* Identidade nacional: brasão de Arstotzka */
+.topbar-brand{display:flex;align-items:center;gap:.7rem}
+.topbar-crest{width:30px;height:30px;flex:0 0 30px;object-fit:contain;filter:drop-shadow(0 2px 5px rgba(0,0,0,.45));opacity:.9}
+.admission-seal{overflow:hidden}
+.admission-seal img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 2px 5px rgba(0,0,0,.5))}
+.shift-intro-seal{padding:12px}
+.shift-intro-seal img{display:block;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 2px 8px rgba(0,0,0,.55))}
+.shift-intro[data-step="4"] .shift-intro-seal img{filter:drop-shadow(0 0 7px rgba(196,208,167,.32))}
+.bulletin-state-mark{display:inline-flex;align-items:center;gap:.45rem}
+.bulletin-state-mark img{width:18px;height:18px;object-fit:contain;opacity:.8}
+.filer-authority-line{display:flex;align-items:center;gap:.5rem}
+.filer-authority-line img{width:20px;height:20px;object-fit:contain;opacity:.85}
+@media(max-width:520px){.topbar-crest{width:24px;height:24px;flex-basis:24px}.topbar-brand{max-width:58%;gap:.45rem}}
