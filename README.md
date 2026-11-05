@@ -141,3 +141,12 @@ A campanha expandida utiliza novas chaves de armazenamento (`ppquiz.campaign.v3`
 - A tela de encerramento da campanha oferece um atalho para conhecer/comprar o jogo original.
 - A ordem de designação também contém o aviso de caráter não oficial do projeto.
 - O projeto não utiliza a marcação de produto oficial nem sugere endosso dos titulares.
+
+
+## Revisão de estabilidade 2.0
+
+- O favicon do navegador utiliza a arte `assets/intro/Intro1.png`, associada à Loteria do Trabalho.
+- O painel de áudio permite ativar/desativar música e efeitos separadamente, ajustar os dois volumes e silenciar o conjunto. As preferências são persistidas no navegador em `ppquiz.audio.settings.v1`.
+- A música e os efeitos da abertura aguardam uma interação do jogador para respeitar as políticas de reprodução automática dos navegadores. Falhas de reprodução passam a ser registradas no console com a identificação do efeito e do arquivo.
+- O comunicado inicial descreve a avaliação como um exame de geografia dos países e cidades da região, compatível com o banco de questões atual.
+- A validação automatizada em Pull Requests executa `npm ci`, `npm test` e `npm run build`. A publicação no GitHub Pages continua restrita à branch `main`.
