@@ -78,62 +78,72 @@ function showMinistryBulletin() {
 const scoreRegimes = {
   facil: {
     kicker: '01 / ADAPTAÇÃO',
-    title: 'Treinamento · Adaptação',
-    overview: 'O regime de entrada foi pensado para aprender o procedimento sem pressão de cronômetro. Cada acerto vale 100 pontos e respostas rápidas podem render um bônus, mas erros não retiram pontos. A sequência é registrada para acompanhamento, sem recompensa adicional.',
+    title: 'Treinamento',
+    overview: 'Pontuação sem limite de tempo.',
     rules: [
       'Acerto: +100 pontos.',
-      'Bônus de velocidade: +20 pontos ao responder corretamente em até 5 segundos.',
-      'Sequência: registrada, mas não concede bônus.',
-      'Erro: 0 ponto. Tempo esgotado: não se aplica, pois não há cronômetro.',
-      'Sem limite de tempo para responder.'
+      'Acerto em até 5 segundos: +20 pontos adicionais.',
+      'Erro: 0 ponto.',
+      'Sequência de acertos: contabilizada, sem bônus.',
+      'Não há timeout.'
     ],
-    comparison: 'Em relação aos outros regimes, é o único sem cronômetro e sem penalidade por erro. É indicado para conhecer as questões e entender a dinâmica. Ainda é possível pontuar pela rapidez, mas não há pressão para isso.'
+    comparison: 'Diferenças: não há cronômetro nem penalidade por erro. O bônus de velocidade é o único bônus adicional.'
   },
   normal: {
     kicker: '02 / PROTOCOLO PADRÃO',
-    title: 'Serviço Regular · Protocolo padrão',
-    overview: 'O regime regular introduz ritmo de trabalho e consequência para falhas. Os acertos continuam valendo 100 pontos, com bônus de velocidade e uma recompensa progressiva por manter uma sequência correta.',
+    title: 'Serviço Regular',
+    overview: 'Limite de 8 segundos por questão.',
     rules: [
       'Acerto: +100 pontos.',
-      'Bônus de velocidade: +20 pontos ao responder corretamente em até 4 segundos.',
-      'Bônus de sequência: 3º acerto consecutivo +10; 4º e 5º +20; 6º e 7º +30; 8º e 9º +40; do 10º em diante +50 por acerto.',
-      'Erro: −25 pontos. Tempo esgotado: −50 pontos.',
-      'Limite de 8 segundos por documento. Erro ou timeout zera a sequência.'
+      'Acerto em até 4 segundos: +20 pontos adicionais.',
+      'Bônus por sequência: 3º acerto +10; 4º–5º +20; 6º–7º +30; 8º–9º +40; a partir do 10º +50 por acerto.',
+      'Erro: −25 pontos. Timeout: −50 pontos.',
+      'Erro ou timeout zera a sequência.'
     ],
-    comparison: 'É o ponto de equilíbrio entre adaptação e rigor. Em comparação ao Treinamento, há cronômetro, penalidades e bônus de sequência. Em comparação ao Regime de Exceção, oferece mais tempo para responder e cobra menos por falhas.'
+    comparison: 'Diferenças: em relação ao Treinamento, adiciona cronômetro, penalidades e bônus de sequência. Em relação ao Regime de Exceção, concede 3 segundos a mais e aplica descontos menores.'
   },
   dificil: {
     kicker: '03 / INSPEÇÃO RIGOROSA',
-    title: 'Regime de Exceção · Inspeção rigorosa',
-    overview: 'O regime mais exigente mantém a mesma recompensa-base e a mesma progressão de sequência do Serviço Regular, mas reduz a janela para respostas rápidas e amplia o custo dos erros. A pressão vem da combinação entre tempo curto e penalidades maiores.',
+    title: 'Regime de Exceção',
+    overview: 'Limite de 5 segundos por questão.',
     rules: [
       'Acerto: +100 pontos.',
-      'Bônus de velocidade: +20 pontos ao responder corretamente em até 2,5 segundos.',
-      'Bônus de sequência: 3º acerto consecutivo +10; 4º e 5º +20; 6º e 7º +30; 8º e 9º +40; do 10º em diante +50 por acerto.',
-      'Erro: −50 pontos. Tempo esgotado: −75 pontos.',
-      'Limite de 5 segundos por documento. Erro ou timeout zera a sequência.'
+      'Acerto em até 2,5 segundos: +20 pontos adicionais.',
+      'Bônus por sequência: 3º acerto +10; 4º–5º +20; 6º–7º +30; 8º–9º +40; a partir do 10º +50 por acerto.',
+      'Erro: −50 pontos. Timeout: −75 pontos.',
+      'Erro ou timeout zera a sequência.'
     ],
-    comparison: 'É o único regime que combina a menor janela de resposta com as maiores penalidades. O bônus de sequência é igual ao Serviço Regular, mas conseguir mantê-la exige mais consistência sob pressão.'
+    comparison: 'Diferenças: em relação ao Serviço Regular, reduz o limite em 3 segundos e dobra a penalidade por erro, além de elevar o desconto por timeout em 25 pontos.'
   }
 };
 
-function renderScoreRegime(difficulty = 'facil') {
+function openScoreRegime(difficulty, trigger) {
   const regime = scoreRegimes[difficulty] ?? scoreRegimes.facil;
-  document.querySelectorAll('[data-score-regime]').forEach((button) => {
-    const selected = button.dataset.scoreRegime === difficulty;
-    button.classList.toggle('is-active', selected);
-    button.setAttribute('aria-pressed', String(selected));
-  });
-  $('#score-regime-kicker').textContent = regime.kicker;
-  $('#score-regime-title').textContent = regime.title;
-  $('#score-regime-overview').textContent = regime.overview;
-  $('#score-regime-rules').replaceChildren();
+  const modal = $('#score-regulation-modal');
+  $('#score-modal-kicker').textContent = regime.kicker;
+  $('#score-modal-title').textContent = regime.title;
+  $('#score-modal-overview').textContent = regime.overview;
+  $('#score-modal-rules').replaceChildren();
   regime.rules.forEach((rule) => {
     const item = document.createElement('li');
     item.textContent = rule;
-    $('#score-regime-rules').append(item);
+    $('#score-modal-rules').append(item);
   });
-  $('#score-regime-comparison').textContent = regime.comparison;
+  $('#score-modal-comparison').textContent = regime.comparison;
+  modal.hidden = false;
+  document.body.classList.add('score-modal-open');
+  modal.dataset.returnFocus = trigger?.dataset.scoreRegime ?? difficulty;
+  $('#score-modal-close')?.focus();
+  modal.querySelector('.score-modal-close').focus();
+}
+
+function closeScoreRegulation() {
+  const modal = $('#score-regulation-modal');
+  if (modal.hidden) return;
+  const previousRegime = modal.dataset.returnFocus;
+  modal.hidden = true;
+  document.body.classList.remove('score-modal-open');
+  document.querySelector(`[data-score-regime="${previousRegime}"]`)?.focus();
 }
 
 function navigate(id) {
@@ -771,8 +781,11 @@ startOpeningSequence();
 $('#menu-review').addEventListener('click', reviewCampaign);
 $('#menu-reset').addEventListener('click', () => beginQuiz('facil'));
 document.querySelectorAll('[data-difficulty]').forEach((button) => button.addEventListener('click', () => beginQuiz(button.dataset.difficulty)));
-document.querySelectorAll('[data-score-regime]').forEach((button) => button.addEventListener('click', () => renderScoreRegime(button.dataset.scoreRegime)));
-renderScoreRegime('facil');
+document.querySelectorAll('[data-score-regime]').forEach((button) => button.addEventListener('click', () => openScoreRegime(button.dataset.scoreRegime, button)));
+document.querySelectorAll('[data-score-modal-close]').forEach((element) => element.addEventListener('click', closeScoreRegulation));
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && !$('#score-regulation-modal').hidden) closeScoreRegulation();
+});
 $('#game-next').addEventListener('click', () => { game.index += 1; game.answered = false; renderGameQuestion(); });
 $('#game-report').addEventListener('click', finishQuiz);
 $('#game-menu').addEventListener('click', () => { clearInterval(timerId); navigate('menu'); });
