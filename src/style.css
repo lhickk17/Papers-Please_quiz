@@ -334,3 +334,84 @@ body.is-opening .opening-screen{display:flex;align-items:stretch;justify-content
 }
 @media(prefers-reduced-motion:reduce){.ministry-bulletin{animation:none}}
 
+/* Apresentação breve de preparação antes de cada turno. */
+body.is-shift-intro{overflow:hidden}
+.shift-intro{
+  position:fixed;z-index:1000;inset:0;display:grid;place-items:center;
+  padding:1.25rem;background:rgba(5,9,6,.94);
+  backdrop-filter:blur(6px);
+}
+.shift-intro[hidden]{display:none!important}
+.shift-intro-panel{
+  position:relative;width:min(590px,100%);padding:clamp(1.35rem,4vw,2.5rem);
+  color:var(--ink);background:linear-gradient(145deg,#20291f,#111811);
+  border:1px solid rgba(200,184,154,.35);
+  box-shadow:0 28px 90px rgba(0,0,0,.62);
+  text-align:center;animation:shift-panel-arrive .38s ease-out both;
+}
+.shift-intro-panel:before{
+  content:'';position:absolute;inset:7px;border:1px solid rgba(200,184,154,.1);
+  pointer-events:none;
+}
+.shift-intro-heading,.shift-intro-footer{
+  position:relative;display:flex;justify-content:space-between;align-items:center;gap:1rem;
+  color:#a99775;font-size:.55rem;letter-spacing:.13em;
+}
+.shift-intro-scene{
+  position:relative;display:flex;align-items:center;justify-content:center;gap:1.4rem;
+  min-height:145px;margin:1.2rem 0 .5rem;
+}
+.shift-intro-seal{
+  display:grid;place-items:center;width:76px;height:76px;flex:0 0 76px;
+  border:1px solid rgba(200,184,154,.65);border-radius:50%;
+  box-shadow:inset 0 0 0 5px rgba(200,184,154,.06),0 0 28px rgba(182,155,112,.08);
+  color:#c8b89a;font-size:2rem;font-weight:bold;
+}
+.shift-intro-document{
+  display:flex;flex-direction:column;justify-content:center;gap:.55rem;
+  width:178px;min-height:112px;padding:1rem;text-align:left;
+  color:#55452c;background:linear-gradient(135deg,#d1bd96,#ad9569);
+  border:1px solid #806a45;box-shadow:0 12px 25px rgba(0,0,0,.25);
+  transform:translateY(0) rotate(1deg);
+}
+.shift-intro-document span{font-size:.48rem;letter-spacing:.1em}
+.shift-intro-document i{display:block;width:100%;height:1px;background:rgba(53,39,20,.28)}
+.shift-intro-document i:last-child{width:62%}
+.shift-intro h2{
+  position:relative;margin:.8rem 0 .45rem;color:#e2d2b3;
+  font-size:clamp(1.15rem,3vw,1.55rem);font-weight:400;letter-spacing:.04em;
+}
+.shift-intro p{
+  position:relative;min-height:2.8em;max-width:46ch;margin:0 auto;
+  color:#b5a88d;font-size:.76rem;line-height:1.8;
+}
+.shift-intro-progress{display:flex;gap:.4rem;margin:1.4rem 0 1.2rem}
+.shift-intro-progress span{
+  display:block;height:3px;flex:1;background:rgba(200,184,154,.16);
+  transition:background .2s ease,box-shadow .2s ease;
+}
+.shift-intro-progress span.is-complete{background:#9caa82}
+.shift-intro-progress span.is-current{background:#c8b89a;box-shadow:0 0 10px rgba(200,184,154,.35)}
+.shift-intro-footer{padding-top:1rem;border-top:1px solid rgba(200,184,154,.16)}
+.shift-intro-footer .button{white-space:nowrap}
+.shift-intro[data-step="1"] .shift-intro-seal{animation:shift-seal-pulse .65s ease-in-out}
+.shift-intro[data-step="2"] .shift-intro-seal{box-shadow:inset 0 0 0 5px rgba(200,184,154,.12),0 0 24px rgba(156,170,130,.18)}
+.shift-intro[data-step="3"] .shift-intro-document{animation:shift-paper-arrive .48s cubic-bezier(.2,.75,.25,1) both}
+.shift-intro[data-step="4"] .shift-intro-seal{color:#c4d0a7;border-color:#9caa82;box-shadow:0 0 25px rgba(156,170,130,.2)}
+@keyframes shift-panel-arrive{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes shift-seal-pulse{50%{box-shadow:inset 0 0 0 5px rgba(200,184,154,.18),0 0 25px rgba(200,184,154,.25)}}
+@keyframes shift-paper-arrive{from{opacity:0;transform:translate(20px,-8px) rotate(5deg)}to{opacity:1;transform:translate(0) rotate(1deg)}}
+@media(max-width:480px){
+  .shift-intro{padding:.8rem}
+  .shift-intro-heading,.shift-intro-footer{align-items:flex-start;flex-direction:column}
+  .shift-intro-scene{min-height:125px;gap:1rem}
+  .shift-intro-seal{width:62px;height:62px;flex-basis:62px}
+  .shift-intro-document{width:150px;min-height:100px}
+  .shift-intro-footer .button{width:100%}
+}
+@media(prefers-reduced-motion:reduce){
+  .shift-intro-panel,.shift-intro[data-step] .shift-intro-seal,
+  .shift-intro[data-step="3"] .shift-intro-document{animation:none!important}
+  .shift-intro-progress span{transition:none}
+}
+
