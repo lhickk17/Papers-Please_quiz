@@ -395,7 +395,12 @@ function showCampaignResult(correct, persist = false) {
 
 function beginQuiz(difficulty) {
   clearInterval(timerId);
-  game = { difficulty, questions: createRound(10), index: 0, correct: 0, points: 0, streak: 0, bestStreak: 0, errors: [], answered: false };
+  game = {
+    difficulty, questions: createRound(10), index: 0, correct: 0, points: 0,
+    streak: 0, bestStreak: 0, errors: [], timeouts: 0, answerTimes: [],
+    totalPenalties: 0, speedBonusTotal: 0, streakBonusTotal: 0, scoreBreakdown: [],
+    answered: false
+  };
   navigate('quiz');
   startShiftIntro(() => {
     roundStartedAt = performance.now();
@@ -431,14 +436,29 @@ function answerGame(answer) {
   clearInterval(timerId);
   const question = game.questions[game.index];
   const elapsed = (performance.now() - questionStarted) / 1000;
-  const correct = answer === question.country;
-  const scored = scoreAnswer({ correct, elapsed, streak: game.streak, difficulty: game.difficulty });
+  const timedOut = answer === null;
+  const correct = !timedOut && answer === question.country;
+  const scored = scoreAnswer({ correct, timedOut, elapsed, streak: game.streak, difficulty: game.difficulty });
   game.answered = true;
   game.correct += Number(correct);
   game.points += scored.points;
   game.streak = scored.streak;
   game.bestStreak = Math.max(game.bestStreak, game.streak);
-  if (!correct) game.errors.push({ city: question.city, expected: question.country, answered: answer ?? 'tempo esgotado' });
+  game.timeouts += Number(timedOut);
+  game.answerTimes.push(elapsed);
+  game.totalPenalties += Math.abs(scored.penalty);
+  game.speedBonusTotal += scored.speedBonus;
+  game.streakBonusTotal += scored.streakBonus;
+  game.scoreBreakdown.push({
+    city: question.city, correct, timedOut, elapsed,
+    basePoints: scored.basePoints, speedBonus: scored.speedBonus,
+    streakBonus: scored.streakBonus, penalty: scored.penalty, points: scored.points
+  });
+  if (!correct) game.errors.push({
+    city: question.city, expected: question.country,
+    answered: timedOut ? 'tempo esgotado' : answer,
+    type: timedOut ? 'timeout' : 'error'
+  });
   renderOptions($('#game-options'), question, () => {}, answer ?? '__TIMEOUT__');
   keyboardOptions = null;
   $('#game-feedback').textContent = correct ? 'ENTRADA APROVADA' : `ENTRADA RECUSADA · ${question.country.toUpperCase()}`;
@@ -490,7 +510,7 @@ function finishQuiz() {
   } else {
     game.errors.forEach((error) => {
       const item = document.createElement('li');
-      item.textContent = error.city + ': ' + error.answered + ' · correto: ' + error.expected;
+      item.textContent = error.city + ': ' + (error.type === 'timeout' ? 'TEMPO ESGOTADO' : error.answered) + ' · correto: ' + error.expected;
       filerErrors.append(item);
     });
   }
@@ -545,17 +565,27 @@ function finishQuiz() {
   classification.textContent = assessmentLevel.stamp;
   classification.className = `classification-stamp ${assessmentLevel.className}`;
 
+  const totalAnswerTime = game.answerTimes.reduce((sum, value) => sum + value, 0);
+  const averageAnswerTime = game.answerTimes.length ? totalAnswerTime / game.answerTimes.length : 0;
+  const fastestAnswer = game.answerTimes.length ? Math.min(...game.answerTimes) : 0;
+  const slowestAnswer = game.answerTimes.length ? Math.max(...game.answerTimes) : 0;
+  const formatTime = (seconds) => seconds.toFixed(2) + ' s';
   const stats = [
     ['Modo', game.difficulty.toUpperCase()],
     ['Acertos', game.correct + ' / 10'],
-    ['Erros', game.errors.length],
-    ['Streak máximo', game.bestStreak]
+    ['Erros', game.errors.length - game.timeouts],
+    ['Timeouts', game.timeouts],
+    ['Precisão', Math.round((game.correct / game.questions.length) * 100) + '%'],
+    ['Streak máximo', game.bestStreak],
+    ['Pontuação final', game.points],
+    ['Tempo total', elapsedMinutes + 'm ' + String(elapsedRemainder).padStart(2, '0') + 's'],
+    ['Tempo médio por questão', formatTime(averageAnswerTime)],
+    ['Resposta mais rápida', formatTime(fastestAnswer)],
+    ['Resposta mais lenta', formatTime(slowestAnswer)],
+    ['Penalidades acumuladas', '-' + game.totalPenalties + ' pts'],
+    ['Bônus de velocidade', '+' + game.speedBonusTotal.toFixed(1) + ' pts'],
+    ['Bônus de sequência', '+' + game.streakBonusTotal + ' pts']
   ];
-  if (game.difficulty !== 'facil') {
-    stats.push(['Pontuação final', game.points]);
-    stats.push(['Tempo total', elapsedMinutes + 'm ' + String(elapsedRemainder).padStart(2, '0') + 's']);
-  }
-  if (game.difficulty === 'dificil') stats.push(['Penalidades', '-' + (game.errors.length * 50) + ' pts']);
   const statsList = $('#report-filer-stats');
   statsList.replaceChildren();
   stats.forEach(([label, value]) => {
