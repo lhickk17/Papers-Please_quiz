@@ -30,17 +30,31 @@ export function campaignOutcome(correct) {
   return 'retry';
 }
 
-export function scoreAnswer({ correct, timedOut = false, streak = 0, difficulty = 'facil' }) {
+export function scoreAnswer({
+  correct,
+  timedOut = false,
+  streak = 0,
+  difficulty = 'facil',
+  responseTimeMs = Number.POSITIVE_INFINITY
+}) {
   const penalties = {
     facil: { error: 0, timeout: 0 },
     normal: { error: -25, timeout: -50 },
     dificil: { error: -50, timeout: -75 }
   };
+  const speedThresholds = { facil: 5000, normal: 4000, dificil: 2500 };
   const isCorrect = Boolean(correct) && !timedOut;
 
   if (!isCorrect) {
     const penalty = penalties[difficulty]?.[timedOut ? 'timeout' : 'error'] ?? 0;
-    return { points: penalty, streak: 0, streakBonus: 0, penalty, timedOut };
+    return {
+      points: penalty,
+      streak: 0,
+      streakBonus: 0,
+      speedBonus: 0,
+      penalty,
+      timedOut
+    };
   }
 
   const nextStreak = streak + 1;
@@ -52,11 +66,13 @@ export function scoreAnswer({ correct, timedOut = false, streak = 0, difficulty 
           : nextStreak >= 4 ? 20
             : nextStreak >= 3 ? 10
               : 0;
+  const speedBonus = responseTimeMs <= speedThresholds[difficulty] ? 20 : 0;
 
   return {
-    points: 100 + streakBonus,
+    points: 100 + streakBonus + speedBonus,
     streak: nextStreak,
     streakBonus,
+    speedBonus,
     penalty: 0,
     timedOut: false
   };
