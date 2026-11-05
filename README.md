@@ -163,3 +163,11 @@ A campanha expandida utiliza novas chaves de armazenamento (`ppquiz.campaign.v3`
 - Os modos foram renomeados para **Adaptação**, **Protocolo padrão** e **Inspeção rigorosa**, mantendo os identificadores de treinamento, serviço regular e regime de exceção.
 - A central de comunicados do Ministério conta agora com 20 mensagens rotativas sobre disciplina, procedimentos, propaganda institucional, segurança de fronteira, administração e relações exteriores.
 - O texto do Arquivo pessoal foi mantido nesta revisão para preservar espaço destinado a avisos e orientações futuras.
+
+## Preparação de início de turno
+
+- A campanha obrigatória e os turnos do modo livre apresentam uma sequência institucional curta antes do primeiro documento.
+- A sequência percorre preparação do posto, identificação de Grestin, recebimento do primeiro documento e liberação da estação.
+- A apresentação pode ser pulada a qualquer momento; o cronômetro do modo livre só começa quando a inspeção é liberada.
+- A preferência de movimento reduzido desativa as animações decorativas da apresentação.
+
