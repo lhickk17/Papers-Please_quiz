@@ -106,7 +106,7 @@ Projeto de fã não oficial e sem fins comerciais. **Papers, Please** pertence a
 
 - A abertura institucional fica isolada do posto principal, com o mapa, a barra superior e o rodapé ocultos.
 - A imagem de fundo ampliada e o retrato da imigração obristana foram retirados da abertura. O símbolo do Ministério foi reduzido a um selo tipográfico discreto; o fundo agora é uma composição própria em CSS.
-- O comunicado mantém o texto digitado, a buzina, o efeito de inspeção e o avanço por clique ou Enter.
+- O comunicado mantém o texto digitado e os efeitos sonoros; durante a digitação, clique, Enter ou Espaço revelam o texto completo. Uma nova interação avança para a próxima etapa.
 - A campanha completa agora inclui entrevista com M. Vonel, registro funcional, boletim político, orientação, avaliação geográfica, parecer e ordem de designação.
 - O retrato de M. Vonel é representado por um monograma visual porque o repositório não contém um asset de retrato identificável do supervisor.
 
