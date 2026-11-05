@@ -126,6 +126,34 @@
 </article>
 <div class="menu-modes"><button class="mode-card" type="button" data-difficulty="facil"><span class="mode-number">01 / TREINAMENTO</span><strong>Adaptação</strong><span>Sem limite de tempo. Familiarize-se com os procedimentos e regulamentos do posto.</span></button><button class="mode-card" type="button" data-difficulty="normal"><span class="mode-number">02 / SERVIÇO REGULAR</span><strong>Protocolo padrão</strong><span>Oito segundos por documento. Bonificações por velocidade e sequência de acertos.</span></button><button class="mode-card" type="button" data-difficulty="dificil"><span class="mode-number">03 / REGIME DE EXCEÇÃO</span><strong>Inspeção rigorosa</strong><span>Cinco segundos por documento. Janela de bônus de velocidade reduzida e penalidades ampliadas.</span></button></div>
 <div class="report-grid"><section class="report-panel score-regulation-panel"><p class="eyebrow">Regulamento de pontuação</p><h2 class="score-regulation-heading">Pontuação por regime</h2><p class="score-regulation-intro">Consulte as regras específicas de cada modalidade.</p><div class="score-regime-tabs" role="group" aria-label="Consultar regras de pontuação"><button class="score-regime-tab" type="button" data-score-regime="facil"><span>01</span> Treinamento</button><button class="score-regime-tab" type="button" data-score-regime="normal"><span>02</span> Serviço regular</button><button class="score-regime-tab" type="button" data-score-regime="dificil"><span>03</span> Regime de exceção</button></div></section><div class="report-panel"><p class="eyebrow">Arquivo pessoal</p><p class="body-copy">A campanha fica concluída após a primeira avaliação, independentemente da nota. É possível revê-la pelo menu; você não precisa refazer dez perguntas a cada visita.</p><div class="button-row"><button id="menu-review" class="button" type="button">Rever campanha</button><button id="menu-reset" class="button button-danger" type="button">Realizar avaliação individual</button></div></div></div></div></section>
+<section id="quiz" class="screen" aria-hidden="true" inert>
+  <div class="screen-content">
+    <div class="section-heading">
+      <div><p class="eyebrow">Modo livre · Inspeção em andamento</p><h1>Verificação geográfica</h1></div>
+      <span id="game-count" class="status-stamp">DOCUMENTO 01 / 10</span>
+    </div>
+    <div class="game-layout">
+      <article id="game-panel" class="document-card question-panel">
+        <div class="document-card-inner">
+          <div class="document-header">Registro de entrada · Uso interno</div>
+          <p class="question-prompt">Identifique o país de emissão deste documento.</p>
+          <h2 class="question-title question-city">Carregando registro...</h2>
+          <div id="game-options" class="options-grid"></div>
+          <p class="keyboard-hint">ATALHO DE TECLADO: 1–4 SELECIONAR · ENTER CONFIRMAR</p>
+          <p id="game-feedback" class="feedback-row" aria-live="polite"></p>
+          <p id="game-curiosity" class="question-curiosity curiosity-note"></p>
+          <button id="game-next" class="button button-primary" type="button" hidden>Próximo documento →</button>
+        </div>
+      </article>
+      <aside class="game-sidebar">
+        <div class="metric score-metric"><span class="metric-label">Pontuação</span><strong id="game-score" class="metric-value">00000</strong><div id="game-score-popups" class="score-popups" aria-live="polite" aria-atomic="false"></div></div>
+        <div class="metric"><span class="metric-label">Sequência</span><strong id="game-streak" class="metric-value">0</strong></div>
+        <div class="metric"><span class="metric-label">Tempo restante</span><strong id="game-timer" class="metric-value">—</strong></div>
+      </aside>
+    </div>
+    <div class="button-row"><button id="game-report" class="button" type="button">Encerrar turno e gerar relatório</button><button id="game-menu" class="button" type="button">Voltar ao menu</button></div>
+  </div>
+</section>
 <section id="report" class="screen" aria-hidden="true" inert><div class="screen-content"><p class="eyebrow">Filer · Documento arquivado</p><div class="section-heading"><h1 id="report-title">Relatório de desempenho</h1></div>
 <div class="report-grid report-closing-grid"><section class="report-panel report-assessment-panel"><p class="eyebrow">Observação da supervisão</p><p id="report-assessment" class="report-assessment-copy"></p></section><section class="report-panel report-next-panel"><p class="eyebrow">Próximo procedimento</p><p class="body-copy">O relatório foi encerrado e arquivado. O Ministério agradece a sua cooperação, voluntária ou não.</p><div class="button-row"><button id="report-again" class="button button-primary" type="button">Novo turno</button><button id="report-menu" class="button" type="button">Menu principal</button></div></section></div>
 <div id="report-filer" class="filer-shell">
@@ -154,7 +182,7 @@
 </main><footer class="site-footer"><span class="footer-disclaimer">T.G.I.F. é um fan game independente, inspirado em <em>Papers, Please</em>. Não oficial e sem vínculo com Lucas Pope ou 3909 LLC.</span><a class="footer-steam-link" href="https://store.steampowered.com/app/239030/Papers_Please/" target="_blank" rel="noopener noreferrer">Conheça o jogo original na Steam ↗</a><span>Glória a Arstotzka</span></footer></div><div id="score-regulation-modal" class="score-modal" hidden>
   <div class="score-modal-backdrop" data-score-modal-close></div>
   <section class="score-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="score-modal-title" aria-describedby="score-modal-overview" tabindex="-1">
-    <button class="score-modal-close" type="button" data-score-modal-close aria-label="Fechar regulamento">FECHAR <span aria-hidden="true">×</span></button>
+    <button id="score-modal-close" class="score-modal-close" type="button" data-score-modal-close aria-label="Fechar regulamento">FECHAR <span aria-hidden="true">×</span></button>
     <p class="eyebrow" id="score-modal-kicker">01 / ADAPTAÇÃO</p>
     <h2 id="score-modal-title">Treinamento</h2>
     <p id="score-modal-overview" class="score-modal-overview"></p>
