@@ -350,23 +350,29 @@ function finishQuiz() {
   const elapsedRemainder = elapsedSeconds % 60;
   $('#report-score').textContent = `${game.points} PTS`;
   $('#report-summary').textContent = `${game.correct} acertos em 10 documentos · melhor sequência: ${game.bestStreak}`;
-  const list = $('#report-errors');
-  list.replaceChildren();
   const filerErrors = $('#report-filer-errors');
-  [list, filerErrors].forEach((target) => {
-    target.replaceChildren();
-    if (!game.errors.length) {
+  filerErrors.replaceChildren();
+  if (!game.errors.length) {
+    const item = document.createElement('li');
+    item.textContent = 'Nenhuma discrepância registrada. O Ministério agradece sua precisão.';
+    filerErrors.append(item);
+  } else {
+    game.errors.forEach((error) => {
       const item = document.createElement('li');
-      item.textContent = 'Nenhuma discrepância registrada. O Ministério agradece sua precisão.';
-      target.append(item);
-    } else {
-      game.errors.forEach((error) => {
-        const item = document.createElement('li');
-        item.textContent = error.city + ': ' + error.answered + ' · correto: ' + error.expected;
-        target.append(item);
-      });
-    }
-  });
+      item.textContent = error.city + ': ' + error.answered + ' · correto: ' + error.expected;
+      filerErrors.append(item);
+    });
+  }
+
+  const accuracy = game.correct / game.questions.length;
+  const assessment = accuracy === 1
+    ? 'Precisão integral. O desempenho será encaminhado à supervisão como referência de conformidade. O Ministério espera que esse padrão seja mantido nos próximos turnos.'
+    : accuracy >= 0.8
+      ? 'Desempenho satisfatório. As divergências registradas não comprometem a aptidão operacional, mas deverão ser revistas antes do próximo turno.'
+      : accuracy >= 0.5
+        ? 'Foram identificadas inconsistências relevantes. Recomenda-se revisar o manual geográfico e redobrar a atenção aos registros de origem.'
+        : 'O resultado está abaixo do padrão esperado para o posto. A supervisão recomenda revisão imediata dos procedimentos e poderá solicitar nova avaliação.';
+  $('#report-assessment').textContent = assessment;
 
   const stats = [
     ['Modo', game.difficulty.toUpperCase()],
