@@ -152,3 +152,5 @@ A campanha expandida utiliza novas chaves de armazenamento (`ppquiz.campaign.v3`
 - A validação automatizada em Pull Requests executa `npm ci`, `npm test` e `npm run build`. A publicação no GitHub Pages continua restrita à branch `main`.
 
 - Os relatórios dos modos livres recebem protocolo sequencial persistido no navegador, data diegética (04 OUT 1982), número do turno, identificação do inspetor e unidade de serviço.
+
+- Os relatórios de desempenho recebem carimbos de classificação por faixa de acertos e mensagens variáveis da supervisão, selecionadas conforme o resultado.
