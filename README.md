@@ -200,3 +200,9 @@ A campanha expandida utiliza novas chaves de armazenamento (`ppquiz.campaign.v3`
 - O conteúdo resume pontuação por acerto, bônus de velocidade, progressão da sequência, penalidades, limite de tempo e diferenças entre regimes.
 - O regulamento não expõe máximos teóricos nem percentuais usados internamente na classificação.
 - O Arquivo pessoal permanece independente da janela e não muda de altura quando ela é aberta.
+
+
+### Identidade visual nacional
+
+- O brasão de Arstotzka (`assets/intro/Arstotzka.png`) substitui as letras decorativas nos selos da abertura e da apresentação de início de turno.
+- O mesmo símbolo aparece em escala reduzida no cabeçalho, nos comunicados ministeriais e no cabeçalho do Filer, reforçando a identidade institucional sem competir com o conteúdo.
