@@ -33,6 +33,9 @@ let openingReady = false;
 let reviewingCampaign = false;
 let openingTimer = null;
 let typingTimer = null;
+let shiftIntroTimer = null;
+let shiftIntroIndex = 0;
+let shiftIntroCallback = null;
 const audio = {};
 
 const ministryBulletins = [
@@ -88,6 +91,69 @@ function navigate(id) {
   });
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+const shiftIntroStages = [
+  { status: 'ETAPA 01 / 04', title: 'Preparação do posto', detail: 'Verificando equipamentos, iluminação e canais de comunicação.', duration: 650 },
+  { status: 'ETAPA 02 / 04', title: 'Identificação confirmada', detail: 'Posto fronteiriço de Grestin · República de Arstotzka · 04 OUT 1982.', duration: 650 },
+  { status: 'ETAPA 03 / 04', title: 'Primeiro documento recebido', detail: 'Um novo registro foi encaminhado à mesa de inspeção.', duration: 750 },
+  { status: 'ETAPA 04 / 04', title: 'Posto em operação', detail: 'Estação pronta. A inspeção será iniciada.', duration: 850 }
+];
+
+function renderShiftIntroStage() {
+  const stage = shiftIntroStages[shiftIntroIndex];
+  const intro = $('#shift-intro');
+  intro.dataset.step = String(shiftIntroIndex + 1);
+  $('#shift-intro-status').textContent = stage.status;
+  $('#shift-intro-title').textContent = stage.title;
+  $('#shift-intro-detail').textContent = stage.detail;
+  [...$('#shift-intro-progress').children].forEach((item, index) => {
+    item.classList.toggle('is-complete', index < shiftIntroIndex);
+    item.classList.toggle('is-current', index === shiftIntroIndex);
+  });
+}
+
+function finishShiftIntro() {
+  window.clearTimeout(shiftIntroTimer);
+  shiftIntroTimer = null;
+  const intro = $('#shift-intro');
+  if (intro.hidden) return;
+  intro.hidden = true;
+  intro.removeAttribute('data-step');
+  document.body.classList.remove('is-shift-intro');
+  $('main').inert = false;
+  $('header').inert = false;
+  $('footer').inert = false;
+  const callback = shiftIntroCallback;
+  shiftIntroCallback = null;
+  if (callback) callback();
+}
+
+function scheduleShiftIntroStage() {
+  const stage = shiftIntroStages[shiftIntroIndex];
+  shiftIntroTimer = window.setTimeout(() => {
+    if (shiftIntroIndex >= shiftIntroStages.length - 1) {
+      finishShiftIntro();
+      return;
+    }
+    shiftIntroIndex += 1;
+    renderShiftIntroStage();
+    scheduleShiftIntroStage();
+  }, stage.duration);
+}
+
+function startShiftIntro(onComplete) {
+  window.clearTimeout(shiftIntroTimer);
+  shiftIntroCallback = onComplete;
+  shiftIntroIndex = 0;
+  $('main').inert = true;
+  $('header').inert = true;
+  $('footer').inert = true;
+  document.body.classList.add('is-shift-intro');
+  $('#shift-intro').hidden = false;
+  renderShiftIntroStage();
+  $('#shift-intro-skip').focus();
+  scheduleShiftIntroStage();
 }
 
 function persistAudioSettings() {
@@ -259,8 +325,8 @@ function beginCampaign() {
   campaign = createRound(10);
   campaignIndex = 0;
   campaignCorrect = 0;
-  renderCampaignQuestion();
   navigate('campaign');
+  startShiftIntro(() => renderCampaignQuestion());
 }
 
 function renderCampaignQuestion() {
@@ -324,10 +390,12 @@ function showCampaignResult(correct, persist = false) {
 
 function beginQuiz(difficulty) {
   clearInterval(timerId);
-  roundStartedAt = performance.now();
   game = { difficulty, questions: createRound(10), index: 0, correct: 0, points: 0, streak: 0, bestStreak: 0, errors: [], answered: false };
-  renderGameQuestion();
   navigate('quiz');
+  startShiftIntro(() => {
+    roundStartedAt = performance.now();
+    renderGameQuestion();
+  });
 }
 
 function renderGameQuestion() {
