@@ -546,7 +546,7 @@ function finishQuiz() {
 
   const assessmentByLevel = [
     {
-      min: 95, stamp: 'DISTINÇÃO', className: 'is-distinction',
+      stamp: 'DISTINÇÃO', className: 'is-distinction',
       messages: [
         'A pontuação do turno alcançou nível de excelência. A supervisão registra o resultado como referência operacional. Mantenha o padrão.',
         'Resultado excepcional no sistema de avaliação. O Ministério reconhece o desempenho e espera que não tenha sido um acidente.',
@@ -554,7 +554,7 @@ function finishQuiz() {
       ]
     },
     {
-      min: 80, stamp: 'CONFORME', className: 'is-approved',
+      stamp: 'CONFORME', className: 'is-approved',
       messages: [
         'A pontuação atende ao padrão operacional esperado. A supervisão registra o resultado e recomenda manter a regularidade.',
         'Desempenho considerado adequado pelo sistema de avaliação. O Ministério espera a manutenção dos resultados nos próximos turnos.',
@@ -562,7 +562,7 @@ function finishQuiz() {
       ]
     },
     {
-      min: 60, stamp: 'RESSALVAS', className: 'is-warning',
+      stamp: 'RESSALVAS', className: 'is-warning',
       messages: [
         'A pontuação ficou abaixo do padrão desejado. A supervisão recomenda revisar os procedimentos e melhorar a execução no próximo turno.',
         'O resultado exige acompanhamento. A administração espera uma recuperação imediata do desempenho operacional.',
@@ -570,7 +570,7 @@ function finishQuiz() {
       ]
     },
     {
-      min: 0, stamp: 'INSATISFATÓRIO', className: 'is-rejected',
+      stamp: 'INSATISFATÓRIO', className: 'is-rejected',
       messages: [
         'A pontuação ficou abaixo do mínimo operacional. A supervisão recomenda revisão imediata dos procedimentos.',
         'O resultado é incompatível com o padrão exigido em Grestin. Sua permanência no posto poderá ser reavaliada.',
@@ -579,12 +579,12 @@ function finishQuiz() {
     }
   ];
   const scoreAssessment = classifyScore(game.points, game.difficulty);
-  const assessmentLevel = assessmentByLevel.find((level) => scoreAssessment.scoreRate >= level.min);
+  const assessmentLevel = assessmentByLevel.find((level) => level.stamp === scoreAssessment.stamp);
   const assessment = assessmentLevel.messages[Math.floor(Math.random() * assessmentLevel.messages.length)];
   $('#report-assessment').textContent = assessment;
   const classification = $('#report-classification');
-  classification.textContent = assessmentLevel.stamp;
-  classification.className = `classification-stamp ${assessmentLevel.className}`;
+  classification.textContent = scoreAssessment.stamp;
+  classification.className = `classification-stamp ${scoreAssessment.className}`;
 
   const stats = [
     ['Modo', game.difficulty.toUpperCase()],
