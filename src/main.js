@@ -73,9 +73,13 @@ function showMinistryBulletin() {
 }
 
 function navigate(id) {
+  const target = document.getElementById(id);
+  if (!target) return;
   if (id === 'menu') showMinistryBulletin();
+
   const previous = document.querySelector('.screen.is-active');
   document.body.classList.toggle('is-opening', id === 'opening');
+
   const show = () => screenIds.forEach((key) => {
     const screen = document.getElementById(key);
     const active = key === id;
@@ -83,14 +87,30 @@ function navigate(id) {
     screen.setAttribute('aria-hidden', String(!active));
     screen.inert = !active;
   });
-  if (document.startViewTransition) document.startViewTransition(show);
-  else {
-    document.querySelector('.screen.is-active')?.classList.add('is-leaving');
+
+  if (previous === target) {
+    show();
+    return;
+  }
+
+  if (document.startViewTransition) {
+    if (previous) previous.style.viewTransitionName = 'screen-panel';
+    const transition = document.startViewTransition(() => {
+      show();
+      target.style.viewTransitionName = 'screen-panel';
+    });
+    transition.finished.finally(() => {
+      if (previous) previous.style.viewTransitionName = '';
+      target.style.viewTransitionName = '';
+    });
+  } else {
+    previous?.classList.add('is-leaving');
     window.setTimeout(() => {
       show();
       previous?.classList.remove('is-leaving');
-    }, 80);
+    }, 150);
   }
+
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
