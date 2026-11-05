@@ -89,6 +89,6 @@ export function classifyScore(points, difficulty = 'facil') {
     { min: 60, stamp: 'RESSALVAS', className: 'is-warning' },
     { min: 0, stamp: 'INSATISFATÓRIO', className: 'is-rejected' }
   ];
-  const level = levels.find(({ min }) => normalizedScore >= min);
+  const level = levels.find(({ min }) => scoreRate >= min);
   return { ...level, scoreRate, maximum };
 }
