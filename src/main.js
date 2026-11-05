@@ -99,10 +99,11 @@ function navigate(id) {
       show();
       target.style.viewTransitionName = 'screen-panel';
     });
-    transition.finished.finally(() => {
+    const clearTransitionNames = () => {
       if (previous) previous.style.viewTransitionName = '';
       target.style.viewTransitionName = '';
-    });
+    };
+    transition.finished.then(clearTransitionNames, clearTransitionNames);
   } else {
     previous?.classList.add('is-leaving');
     window.setTimeout(() => {
