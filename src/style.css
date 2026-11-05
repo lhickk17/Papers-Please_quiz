@@ -425,7 +425,7 @@ body.is-shift-intro{overflow:hidden}
 /* Feedback visual de pontuação por documento, inspirado em floating combat text. */
 .score-metric{position:relative}
 .score-popups{
-  position:absolute;z-index:5;top:-.35rem;right:0;
+  position:absolute;z-index:5;top:1.25rem;right:0;
   display:grid;justify-items:end;gap:.2rem;
   width:max-content;max-width:100%;pointer-events:none;
 }
