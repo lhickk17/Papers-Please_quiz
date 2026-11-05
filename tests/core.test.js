@@ -26,6 +26,40 @@ test('campaign score thresholds are 7 for pass and 9 for distinction', () => {
   assert.equal(campaignOutcome(10), 'distinction');
 });
 
-test('hard mode deducts 50 points for a wrong answer', () => {
+test('scoring applies the approved error and timeout penalties by regime', () => {
+  assert.equal(scoreAnswer({ correct: false, difficulty: 'facil' }).points, 0);
+  assert.equal(scoreAnswer({ correct: false, difficulty: 'normal' }).points, -25);
   assert.equal(scoreAnswer({ correct: false, difficulty: 'dificil' }).points, -50);
+  assert.equal(scoreAnswer({ correct: false, timedOut: true, difficulty: 'facil' }).points, 0);
+  assert.equal(scoreAnswer({ correct: false, timedOut: true, difficulty: 'normal' }).points, -50);
+  assert.equal(scoreAnswer({ correct: false, timedOut: true, difficulty: 'dificil' }).points, -75);
+});
+
+test('speed bonus decreases continuously and linearly within each timed regime', () => {
+  assert.equal(scoreAnswer({ correct: true, elapsed: 0, difficulty: 'normal' }).speedBonus, 40);
+  assert.equal(scoreAnswer({ correct: true, elapsed: 2, difficulty: 'normal' }).speedBonus, 30);
+  assert.equal(scoreAnswer({ correct: true, elapsed: 1, difficulty: 'dificil' }).speedBonus, 32);
+  assert.equal(scoreAnswer({ correct: true, elapsed: 5, difficulty: 'dificil' }).speedBonus, 0);
+  assert.equal(scoreAnswer({ correct: true, elapsed: 1, difficulty: 'facil' }).speedBonus, 0);
+});
+
+test('streak bonus applies to every correct answer within its reached band', () => {
+  assert.equal(scoreAnswer({ correct: true, streak: 1, difficulty: 'normal' }).streakBonus, 0);
+  assert.equal(scoreAnswer({ correct: true, streak: 2, difficulty: 'normal' }).streakBonus, 10);
+  assert.equal(scoreAnswer({ correct: true, streak: 3, difficulty: 'normal' }).streakBonus, 20);
+  assert.equal(scoreAnswer({ correct: true, streak: 5, difficulty: 'normal' }).streakBonus, 30);
+  assert.equal(scoreAnswer({ correct: true, streak: 7, difficulty: 'normal' }).streakBonus, 40);
+  assert.equal(scoreAnswer({ correct: true, streak: 9, difficulty: 'normal' }).streakBonus, 50);
+  assert.equal(scoreAnswer({ correct: true, streak: 9, difficulty: 'facil' }).streakBonus, 0);
+});
+
+test('wrong answers and timeouts reset the streak and never receive bonuses', () => {
+  const wrong = scoreAnswer({ correct: false, streak: 5, difficulty: 'normal' });
+  const timeout = scoreAnswer({ correct: false, timedOut: true, streak: 5, difficulty: 'dificil' });
+  assert.equal(wrong.streak, 0);
+  assert.equal(wrong.speedBonus, 0);
+  assert.equal(wrong.streakBonus, 0);
+  assert.equal(timeout.streak, 0);
+  assert.equal(timeout.speedBonus, 0);
+  assert.equal(timeout.streakBonus, 0);
 });
