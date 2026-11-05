@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { CITIES, COUNTRIES, createRound, campaignOutcome, scoreAnswer } from '../src/core.js';
+import { CITIES, COUNTRIES, createRound, campaignOutcome, scoreAnswer, classifyScore } from '../src/core.js';
 
 test('source question bank has seven countries and unique cities', () => {
   assert.equal(COUNTRIES.length, 7);
@@ -139,4 +139,19 @@ test('incorrect answers and timeouts never receive speed bonus', () => {
   assert.equal(timeout.speedBonus, 0);
   assert.equal(wrong.points, -25);
   assert.equal(timeout.points, -75);
+});
+
+
+test('free-mode classification uses normalized score only', () => {
+  assert.equal(classifyScore(1200, 'facil').stamp, 'DISTINÇÃO');
+  assert.equal(classifyScore(1152, 'normal').stamp, 'DISTINÇÃO');
+  assert.equal(classifyScore(1151, 'normal').stamp, 'CONFORME');
+  assert.equal(classifyScore(864, 'normal').stamp, 'RESSALVAS');
+  assert.equal(classifyScore(-50, 'normal').scoreRate, 0);
+  assert.equal(classifyScore(-50, 'normal').stamp, 'INSATISFATÓRIO');
+  assert.equal(classifyScore(1440, 'dificil').scoreRate, 100);
+});
+
+test('classification helper does not accept or depend on precision', () => {
+  assert.equal(classifyScore(1000, 'normal').stamp, 'CONFORME');
 });
