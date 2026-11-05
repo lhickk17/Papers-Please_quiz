@@ -537,10 +537,10 @@ function answerGame(answer) {
   game.streak = scored.streak;
   game.bestStreak = Math.max(game.bestStreak, game.streak);
   game.timeouts += Number(timedOut);
+  const appliedPenalty = scored.penalty < 0 ? Math.min(previousPoints, Math.abs(scored.penalty)) : 0;
   game.totalPenalties += appliedPenalty;
   game.streakBonusTotal += scored.streakBonus;
   game.speedBonusTotal += scored.speedBonus;
-  const appliedPenalty = scored.penalty < 0 ? Math.min(previousPoints, Math.abs(scored.penalty)) : 0;
   showScoreBreakdown({ ...scored, penalty: -appliedPenalty }, correct, timedOut);
   if (!correct) game.errors.push({
     city: question.city, expected: question.country,
