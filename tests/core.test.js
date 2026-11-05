@@ -76,3 +76,67 @@ test('an error or timeout breaks the streak immediately', () => {
   assert.equal(wrong.streakBonus, 0);
   assert.equal(timeout.streakBonus, 0);
 });
+
+test('speed bonus awards 20 integer points at or below each regime threshold', () => {
+  const cases = [
+    ['facil', 5000],
+    ['normal', 4000],
+    ['dificil', 2500]
+  ];
+
+  for (const [difficulty, threshold] of cases) {
+    const atLimit = scoreAnswer({ correct: true, difficulty, responseTimeMs: threshold });
+    const belowLimit = scoreAnswer({ correct: true, difficulty, responseTimeMs: threshold - 1 });
+    const aboveLimit = scoreAnswer({ correct: true, difficulty, responseTimeMs: threshold + 1 });
+    assert.equal(atLimit.speedBonus, 20);
+    assert.equal(belowLimit.speedBonus, 20);
+    assert.equal(aboveLimit.speedBonus, 0);
+    assert.equal(atLimit.points, 120);
+    assert.ok(Number.isInteger(atLimit.points));
+  }
+});
+
+test('speed and streak bonuses accumulate independently', () => {
+  const result = scoreAnswer({
+    correct: true,
+    streak: 7,
+    difficulty: 'normal',
+    responseTimeMs: 3500
+  });
+  assert.equal(result.streakBonus, 40);
+  assert.equal(result.speedBonus, 20);
+  assert.equal(result.points, 160);
+});
+
+test('training can earn speed bonus but never streak bonus', () => {
+  const result = scoreAnswer({
+    correct: true,
+    streak: 8,
+    difficulty: 'facil',
+    responseTimeMs: 4500
+  });
+  assert.equal(result.streak, 9);
+  assert.equal(result.streakBonus, 0);
+  assert.equal(result.speedBonus, 20);
+  assert.equal(result.points, 120);
+});
+
+test('incorrect answers and timeouts never receive speed bonus', () => {
+  const wrong = scoreAnswer({
+    correct: false,
+    streak: 4,
+    difficulty: 'normal',
+    responseTimeMs: 1000
+  });
+  const timeout = scoreAnswer({
+    correct: false,
+    timedOut: true,
+    streak: 4,
+    difficulty: 'dificil',
+    responseTimeMs: 1000
+  });
+  assert.equal(wrong.speedBonus, 0);
+  assert.equal(timeout.speedBonus, 0);
+  assert.equal(wrong.points, -25);
+  assert.equal(timeout.points, -75);
+});
