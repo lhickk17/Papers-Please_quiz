@@ -299,3 +299,37 @@ body.is-opening .opening-screen{display:flex;align-items:stretch;justify-content
 @media(max-width:520px){
   .filer-document-stamps{justify-content:flex-start}
 }
+
+
+/* Circulares e avisos rotativos no menu do posto. */
+.ministry-bulletin{
+  position:relative;margin:1.25rem 0 1.6rem;padding:1.15rem 1.35rem 1rem;
+  color:#302819;background:linear-gradient(125deg,#c9b487,#b29a6d);
+  border:1px solid #806a45;box-shadow:0 12px 28px rgba(0,0,0,.2);
+  animation:bulletin-arrive .42s var(--ease) both;
+}
+.ministry-bulletin:before{content:'';position:absolute;inset:6px;border:1px solid rgba(53,39,20,.2);pointer-events:none}
+.ministry-bulletin-heading,.ministry-bulletin-footer{
+  position:relative;display:flex;justify-content:space-between;align-items:center;gap:1rem;
+}
+.ministry-bulletin .eyebrow{margin:0;color:#665334;font-size:.57rem}
+.bulletin-number{font-size:.56rem;letter-spacing:.1em;color:#665334;white-space:nowrap}
+.ministry-bulletin h2{
+  position:relative;margin:.8rem 0 .45rem;font-family:Georgia,serif;
+  font-size:clamp(.95rem,2vw,1.18rem);letter-spacing:.035em;color:#292418;
+}
+.ministry-bulletin>p{
+  position:relative;max-width:82ch;margin:0;color:#403522;
+  font-family:Georgia,serif;font-size:.82rem;line-height:1.8;
+}
+.ministry-bulletin-footer{
+  margin-top:.85rem;padding-top:.65rem;border-top:1px solid rgba(53,39,20,.25);
+  color:#6b5837;font-size:.5rem;letter-spacing:.14em;
+}
+@keyframes bulletin-arrive{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:520px){
+  .ministry-bulletin{padding:1rem}
+  .ministry-bulletin-heading{align-items:flex-start;flex-direction:column;gap:.35rem}
+  .ministry-bulletin-footer{font-size:.43rem}
+}
+@media(prefers-reduced-motion:reduce){.ministry-bulletin{animation:none}}
