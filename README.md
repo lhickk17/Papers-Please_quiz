@@ -13,7 +13,6 @@ A branch `rebuild/vite-architecture` inicia uma reconstrução estrutural sem ap
 - **Progressão sem bloqueio:** nota baixa não impede o acesso ao menu. A campanha fica concluída após a primeira avaliação, independentemente da nota, e pode ser revista no menu.
 - **Faixas da campanha:** 0–6 acertos = avaliação insatisfatória; 7–8 = aprovação com ressalvas; 9–10 = distinção.
 - **Modo livre:** três dificuldades, pontuação, bônus, cronômetro e relatório de erros.
-- **Transições:** entrada e saída com fade e deslocamento horizontal discreto, aplicadas ao painel da tela (sem animar toda a página). Usa View Transitions API quando disponível e fallback CSS; respeita `prefers-reduced-motion`.
 - **Acessibilidade básica:** foco visível, regiões de feedback com `aria-live`, controles nativos e suporte a `prefers-reduced-motion`.
 - **Testes automatizados:** geração de perguntas, opções, cidades únicas e limites da campanha.
 
