@@ -115,18 +115,22 @@ function renderShiftIntroStage() {
 
 function finishShiftIntro() {
   window.clearTimeout(shiftIntroTimer);
-  shiftIntroTimer = null;
   const intro = $('#shift-intro');
-  if (intro.hidden) return;
-  intro.hidden = true;
-  intro.removeAttribute('data-step');
-  document.body.classList.remove('is-shift-intro');
-  $('main').inert = false;
-  $('header').inert = false;
-  $('footer').inert = false;
-  const callback = shiftIntroCallback;
-  shiftIntroCallback = null;
-  if (callback) callback();
+  if (intro.hidden || intro.classList.contains('is-closing')) return;
+  intro.classList.add('is-closing');
+  shiftIntroTimer = window.setTimeout(() => {
+    shiftIntroTimer = null;
+    intro.hidden = true;
+    intro.classList.remove('is-closing');
+    intro.removeAttribute('data-step');
+    document.body.classList.remove('is-shift-intro');
+    $('main').inert = false;
+    $('header').inert = false;
+    $('footer').inert = false;
+    const callback = shiftIntroCallback;
+    shiftIntroCallback = null;
+    if (callback) callback();
+  }, 320);
 }
 
 function scheduleShiftIntroStage() {
@@ -150,6 +154,7 @@ function startShiftIntro(onComplete) {
   $('header').inert = true;
   $('footer').inert = true;
   document.body.classList.add('is-shift-intro');
+  $('#shift-intro').classList.remove('is-closing');
   $('#shift-intro').hidden = false;
   renderShiftIntroStage();
   $('#shift-intro-skip').focus();
