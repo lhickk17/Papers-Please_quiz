@@ -464,7 +464,7 @@ function answerGame(answer) {
   $('#game-feedback').textContent = correct ? 'ENTRADA APROVADA' : `ENTRADA RECUSADA · ${question.country.toUpperCase()}`;
   $('#game-feedback').className = `feedback-row ${correct ? 'is-success' : 'is-error'}`;
   $('#game-curiosity').textContent = question.curiosity;
-  $('#game-score').textContent = String(game.points).padStart(5, '0');
+  $('#game-score').textContent = game.points.toFixed(2).padStart(8, '0');
   $('#game-streak').textContent = String(game.streak);
   $('#game-next').hidden = false;
   $('#game-next').textContent = game.index === 9 ? 'Abrir relatório →' : 'Próximo documento →';
