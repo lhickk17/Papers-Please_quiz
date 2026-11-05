@@ -1,5 +1,5 @@
 import './style.css';
-import { createRound, campaignOutcome, scoreAnswer } from './core.js';
+import { createRound, campaignOutcome, scoreAnswer, classifyScore } from './core.js';
 
 const $ = (selector) => document.querySelector(selector);
 const screenIds = ['opening', 'interview', 'registration', 'orientation', 'campaign', 'campaign-result', 'designation', 'menu', 'quiz', 'report'];
@@ -421,6 +421,7 @@ function renderGameQuestion() {
   $('#game-streak').textContent = String(game.streak);
   $('#game-timer').textContent = limit ? `${limit.toFixed(1)}s` : 'SEM LIMITE';
   $('#game-feedback').textContent = '';
+  $('#game-score-popups').replaceChildren();
   $('#game-next').hidden = true;
   renderQuestion($('#game-panel'), question, $('#game-options'), answerGame);
   if (limit) {
@@ -431,6 +432,35 @@ function renderGameQuestion() {
       if (remaining <= 0) answerGame(null);
     }, 100);
   }
+}
+
+function showScoreBreakdown(scored, correct, timedOut) {
+  const container = $('#game-score-popups');
+  container.replaceChildren();
+  const entries = correct
+    ? [
+        { points: 100, label: 'ACERTO', kind: 'positive' },
+        ...(scored.speedBonus ? [{ points: scored.speedBonus, label: 'RESPOSTA RÁPIDA', kind: 'positive' }] : []),
+        ...(scored.streakBonus ? [{ points: scored.streakBonus, label: `SEQUÊNCIA · ${scored.streak}º ACERTO`, kind: 'positive' }] : [])
+      ]
+    : [{
+        points: scored.penalty,
+        label: timedOut ? 'TEMPO ESGOTADO' : 'ERRO',
+        kind: scored.penalty < 0 ? 'negative' : 'neutral'
+      }];
+
+  entries.forEach((entry, index) => {
+    const popup = document.createElement('div');
+    popup.className = `score-popup is-${entry.kind}`;
+    popup.style.animationDelay = `${index * 90}ms`;
+    const amount = document.createElement('strong');
+    amount.textContent = `${entry.points > 0 ? '+' : entry.points < 0 ? '−' : ''}${Math.abs(entry.points)} PTS`;
+    const reason = document.createElement('span');
+    reason.textContent = entry.label;
+    popup.append(amount, reason);
+    popup.addEventListener('animationend', () => popup.remove(), { once: true });
+    container.append(popup);
+  });
 }
 
 function answerGame(answer) {
@@ -450,6 +480,7 @@ function answerGame(answer) {
   game.totalPenalties += Math.abs(scored.penalty);
   game.streakBonusTotal += scored.streakBonus;
   game.speedBonusTotal += scored.speedBonus;
+  showScoreBreakdown(scored, correct, timedOut);
   if (!correct) game.errors.push({
     city: question.city, expected: question.country,
     answered: timedOut ? 'tempo esgotado' : answer,
@@ -513,50 +544,42 @@ function finishQuiz() {
     });
   }
 
-  const accuracy = game.correct / game.questions.length;
   const assessmentByLevel = [
     {
-      min: 1,
-      stamp: 'DISTINÇÃO',
-      className: 'is-distinction',
+      min: 95, stamp: 'DISTINÇÃO', className: 'is-distinction',
       messages: [
-        'Precisão integral. Seu desempenho será encaminhado à supervisão como referência de conformidade. O Ministério espera que esse padrão seja mantido.',
-        'Nenhuma falha foi registrada. A supervisão reconhece a execução exemplar dos procedimentos. Não confunda reconhecimento com autorização para relaxar a vigilância.',
-        'Resultado impecável. Seu nome será incluído no registro de excelência operacional. A administração espera que não tenha sido um acidente.'
+        'A pontuação do turno alcançou nível de excelência. A supervisão registra o resultado como referência operacional. Mantenha o padrão.',
+        'Resultado excepcional no sistema de avaliação. O Ministério reconhece o desempenho e espera que não tenha sido um acidente.',
+        'A pontuação obtida demonstra domínio dos procedimentos e das exigências do posto. O reconhecimento foi devidamente registrado.'
       ]
     },
     {
-      min: 0.8,
-      stamp: 'CONFORME',
-      className: 'is-approved',
+      min: 80, stamp: 'CONFORME', className: 'is-approved',
       messages: [
-        'Desempenho satisfatório. As divergências registradas não comprometem sua aptidão operacional, mas deverão ser revistas antes do próximo turno.',
-        'A avaliação atende aos padrões mínimos de precisão. A supervisão recomenda atenção redobrada aos registros que apresentaram inconsistências.',
-        'Procedimento considerado adequado. O Ministério registra sua contribuição e espera uma execução mais rigorosa na próxima jornada.'
+        'A pontuação atende ao padrão operacional esperado. A supervisão registra o resultado e recomenda manter a regularidade.',
+        'Desempenho considerado adequado pelo sistema de avaliação. O Ministério espera a manutenção dos resultados nos próximos turnos.',
+        'O resultado está dentro dos parâmetros administrativos. Há margem para melhorar, mas o serviço foi considerado conforme.'
       ]
     },
     {
-      min: 0.5,
-      stamp: 'RESSALVAS',
-      className: 'is-warning',
+      min: 60, stamp: 'RESSALVAS', className: 'is-warning',
       messages: [
-        'Foram identificadas inconsistências relevantes. Revise o manual geográfico e redobre a atenção aos registros de origem.',
-        'Seu desempenho exige acompanhamento. A supervisão recomenda cautela adicional e espera uma redução imediata das falhas.',
-        'A quantidade de divergências registradas não passou despercebida. Uma nova ocorrência poderá resultar em medidas administrativas.'
+        'A pontuação ficou abaixo do padrão desejado. A supervisão recomenda revisar os procedimentos e melhorar a execução no próximo turno.',
+        'O resultado exige acompanhamento. A administração espera uma recuperação imediata do desempenho operacional.',
+        'A pontuação registrada não passou despercebida. Revise os procedimentos antes de assumir o próximo turno.'
       ]
     },
     {
-      min: 0,
-      stamp: 'INSATISFATÓRIO',
-      className: 'is-rejected',
+      min: 0, stamp: 'INSATISFATÓRIO', className: 'is-rejected',
       messages: [
-        'O resultado está abaixo do padrão esperado para o posto. A supervisão recomenda revisão imediata dos procedimentos.',
-        'A avaliação revela falhas incompatíveis com o nível de atenção exigido em Grestin. Sua permanência no posto poderá ser reavaliada.',
-        'O Ministério considera o desempenho insatisfatório. A administração espera uma correção urgente. A próxima avaliação não será tratada como mera formalidade.'
+        'A pontuação ficou abaixo do mínimo operacional. A supervisão recomenda revisão imediata dos procedimentos.',
+        'O resultado é incompatível com o padrão exigido em Grestin. Sua permanência no posto poderá ser reavaliada.',
+        'O Ministério considera o desempenho insatisfatório. A próxima avaliação não será tratada como mera formalidade.'
       ]
     }
   ];
-  const assessmentLevel = assessmentByLevel.find((level) => accuracy >= level.min);
+  const scoreAssessment = classifyScore(game.points, game.difficulty);
+  const assessmentLevel = assessmentByLevel.find((level) => scoreAssessment.scoreRate >= level.min);
   const assessment = assessmentLevel.messages[Math.floor(Math.random() * assessmentLevel.messages.length)];
   $('#report-assessment').textContent = assessment;
   const classification = $('#report-classification');
@@ -569,6 +592,7 @@ function finishQuiz() {
     ['Erros', game.errors.length - game.timeouts],
     ['Timeouts', game.timeouts],
     ['Precisão', Math.round((game.correct / game.questions.length) * 100) + '%'],
+    ['Índice de pontuação', scoreAssessment.scoreRate + '% do máximo do regime'],
     ['Melhor sequência', game.bestStreak],
     ['Pontuação final', game.points + ' pts'],
     ['Tempo total', elapsedMinutes + 'm ' + String(elapsedRemainder).padStart(2, '0') + 's'],
