@@ -54,9 +54,11 @@ export function scoreAnswer({ correct, timedOut = false, elapsed = 0, streak = 0
   }
 
   const safeElapsed = Math.max(0, Number(elapsed) || 0);
-  const speedBonus = limit
+  const rawSpeedBonus = limit
     ? 40 * Math.max(0, Math.min(1, 1 - safeElapsed / limit))
     : 0;
+  // Mantém a fórmula linear, mas limita a pontuação a duas casas decimais.
+  const speedBonus = Math.round((rawSpeedBonus + Number.EPSILON) * 100) / 100;
   const nextStreak = streak + 1;
   const streakBonus = difficulty === 'facil'
     ? 0
@@ -68,7 +70,7 @@ export function scoreAnswer({ correct, timedOut = false, elapsed = 0, streak = 0
               : 0;
 
   return {
-    points: 100 + speedBonus + streakBonus,
+    points: Math.round((100 + speedBonus + streakBonus + Number.EPSILON) * 100) / 100,
     basePoints: 100,
     speedBonus,
     streakBonus,
