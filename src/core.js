@@ -30,9 +30,50 @@ export function campaignOutcome(correct) {
   return 'retry';
 }
 
-export function scoreAnswer({ correct, elapsed = 99, streak = 0, difficulty = 'facil' }) {
-  if (!correct) return { points: difficulty === 'dificil' ? -50 : 0, streak: 0 };
-  const speedBonus = difficulty !== 'facil' && elapsed < 2 ? 25 : 0;
-  const streakBonus = difficulty !== 'facil' && streak >= 3 ? 50 : 0;
-  return { points: 100 + speedBonus + streakBonus, streak: streak + 1 };
+export function scoreAnswer({ correct, timedOut = false, elapsed = 0, streak = 0, difficulty = 'facil' }) {
+  const limits = { facil: 0, normal: 8, dificil: 5 };
+  const penalties = {
+    facil: { error: 0, timeout: 0 },
+    normal: { error: -25, timeout: -50 },
+    dificil: { error: -50, timeout: -75 }
+  };
+  const limit = limits[difficulty] ?? 0;
+  const isCorrect = Boolean(correct) && !timedOut;
+
+  if (!isCorrect) {
+    const penalty = penalties[difficulty]?.[timedOut ? 'timeout' : 'error'] ?? 0;
+    return {
+      points: penalty,
+      basePoints: 0,
+      speedBonus: 0,
+      streakBonus: 0,
+      penalty,
+      streak: 0,
+      timedOut
+    };
+  }
+
+  const safeElapsed = Math.max(0, Number(elapsed) || 0);
+  const speedBonus = limit
+    ? 40 * Math.max(0, Math.min(1, 1 - safeElapsed / limit))
+    : 0;
+  const nextStreak = streak + 1;
+  const streakBonus = difficulty === 'facil'
+    ? 0
+    : nextStreak >= 10 ? 50
+      : nextStreak >= 8 ? 40
+        : nextStreak >= 6 ? 30
+          : nextStreak >= 4 ? 20
+            : nextStreak >= 3 ? 10
+              : 0;
+
+  return {
+    points: 100 + speedBonus + streakBonus,
+    basePoints: 100,
+    speedBonus,
+    streakBonus,
+    penalty: 0,
+    streak: nextStreak,
+    timedOut: false
+  };
 }
