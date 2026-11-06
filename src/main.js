@@ -831,6 +831,29 @@ function exportPlayerBackup() {
   URL.revokeObjectURL(url);
 }
 
+function confirmInApp({ title, message, confirmLabel = 'Confirmar' }) {
+  return new Promise((resolve) => {
+    const modal = $('#profile-confirm-modal');
+    $('#profile-confirm-title').textContent = title;
+    $('#profile-confirm-message').textContent = message;
+    $('#profile-confirm-accept').textContent = confirmLabel;
+    const finish = (accepted) => {
+      modal.hidden = true;
+      document.body.classList.remove('review-modal-open');
+      $('#profile-confirm-accept').removeEventListener('click', accept);
+      $('#profile-confirm-cancel').removeEventListener('click', cancel);
+      resolve(accepted);
+    };
+    const accept = () => finish(true);
+    const cancel = () => finish(false);
+    $('#profile-confirm-accept').addEventListener('click', accept);
+    $('#profile-confirm-cancel').addEventListener('click', cancel);
+    modal.hidden = false;
+    document.body.classList.add('review-modal-open');
+    $('#profile-confirm-cancel').focus();
+  });
+}
+
 async function importPlayerBackup(event) {
   const file = event.target.files?.[0];
   event.target.value = '';
@@ -842,7 +865,7 @@ async function importPlayerBackup(event) {
         typeof backup.profile.code !== 'string' || typeof backup.profile.name !== 'string') {
       throw new Error('Formato de backup inválido.');
     }
-    if (!window.confirm('A importação substituirá o perfil e o progresso local deste navegador. Deseja continuar?')) return;
+    if (!await confirmInApp({ title: 'Substituir arquivo pessoal', message: 'A importação substituirá o perfil e todo o progresso local deste navegador. Deseja continuar?', confirmLabel: 'Importar backup' })) return;
     localStorage.setItem(playerProfileKey, JSON.stringify(backup.profile));
     localStorage.setItem(campaignKey, backup.campaignCompleted ? 'true' : 'false');
     if (backup.campaignResult) localStorage.setItem(campaignResultKey, JSON.stringify(backup.campaignResult));
@@ -972,22 +995,27 @@ $('#profile-export').addEventListener('click', exportPlayerBackup);
 $('#profile-import-button').addEventListener('click', () => $('#profile-import').click());
 $('#profile-import').addEventListener('change', importPlayerBackup);
 
-$('#profile-reset').addEventListener('click', () => {
-  const confirmed = window.confirm('EXCLUIR TODO O PROGRESSO?\\n\\nEsta ação apagará o cadastro, a admissão, os resultados, as estatísticas e o histórico deste navegador. Não será possível recuperar os dados sem um backup.\\n\\nDeseja excluir tudo e começar novamente?');
+$('#profile-reset').addEventListener('click', async () => {
+  const confirmed = await confirmInApp({
+    title: 'Excluir todo o progresso',
+    message: 'Esta operação apagará o cadastro, a admissão, os resultados, as estatísticas e o histórico deste navegador. Não será possível recuperar os dados sem um backup. Deseja excluir tudo e voltar ao início?',
+    confirmLabel: 'Excluir e reiniciar'
+  });
   if (!confirmed) return;
   [playerProfileKey, legacyProfileKey, campaignKey, campaignResultKey, reportSequenceKey].forEach((key) => {
     try { localStorage.removeItem(key); } catch {}
   });
-  playerProfile = createPlayerProfile();
+  playerProfile = null;
   campaign = [];
   campaignIndex = 0;
   campaignCorrect = 0;
   game = null;
-  renderPlayerProfile();
-  $('#profile-reset-feedback').textContent = 'PROGRESSO EXCLUÍDO. UM NOVO REGISTRO SERÁ CRIADO NA PRÓXIMA ADMISSÃO.';
-  $('#profile-reset-feedback').className = 'feedback-row is-success';
+  reviewingCampaign = false;
+  admissionReviewInProgress = false;
+  navigate('opening');
+  document.body.classList.add('is-opening');
+  startOpeningSequence();
 });
-
 document.querySelectorAll('[data-difficulty]').forEach((button) => button.addEventListener('click', () => beginQuiz(button.dataset.difficulty)));
 document.querySelectorAll('[data-score-regime]').forEach((button) => button.addEventListener('click', () => openScoreRegime(button.dataset.scoreRegime, button)));
 document.querySelectorAll('[data-score-modal-close]').forEach((element) => element.addEventListener('click', closeScoreRegulation));
