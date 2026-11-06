@@ -501,3 +501,17 @@ body.is-shift-intro{overflow:hidden}
 .profile-backup .button-row{margin-top:1rem}
 .review-modal-open{overflow:hidden}
 @media(max-width:520px){.profile-details,.profile-stats{grid-template-columns:1fr}.player-record-actions .button{width:100%}}
+
+/* Transcrição permanente da entrevista e parecer comportamental. */
+.interview-recorded-answer{display:grid;gap:.55rem;padding:1rem;border:1px solid rgba(196,169,125,.4);background:rgba(0,0,0,.14)}
+.interview-recorded-answer span{font-size:.55rem;letter-spacing:.14em;color:var(--dim)}
+.interview-recorded-answer strong{font-size:.88rem;font-weight:400;line-height:1.7;color:var(--ink)}
+.profile-interview{display:grid;gap:0}
+.profile-interview-item{display:grid;gap:.35rem;padding:1rem 0;border-bottom:1px solid var(--line)}
+.profile-interview-item:last-child{border-bottom:0}
+.profile-interview-item strong{font-size:.76rem;font-weight:500;line-height:1.6}
+.profile-interview-item p{margin:0;color:var(--ink);font-size:.75rem;line-height:1.7}
+.profile-interview-item small{color:var(--dim);font-size:.66rem;line-height:1.7}
+.result-interview-note{margin:1rem 0;padding:1rem 1.1rem;border:1px solid var(--line);background:rgba(0,0,0,.12)}
+.result-interview-note .eyebrow{margin:0 0 .6rem}
+.result-interview-note p:last-child{margin:0;font-size:.78rem;line-height:1.8;color:var(--ink)}
