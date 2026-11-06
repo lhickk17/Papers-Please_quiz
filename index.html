@@ -73,11 +73,23 @@
     <div class="contract-heading"><span>REPÚBLICA DE ARSTOTZKA</span><strong>MINISTÉRIO DA ADMISSÃO</strong><small>TERMO DE DESIGNAÇÃO E REGISTRO DO SERVIDOR</small></div>
     <div class="contract-grid">
       <label class="contract-field contract-field-wide">Nome completo do contratado<input id="candidate-name" maxlength="48" autocomplete="name" placeholder="Digite seu nome" required></label>
-      <label class="contract-field">Sexo declarado<select id="candidate-sex" required><option value="">Selecione</option><option value="Masculino">Masculino</option><option value="Feminino">Feminino</option></select></label>
-      <label class="contract-field">Nacionalidade<select id="candidate-nationality" required><option value="">Selecione</option><option value="Arstotzka">Arstotzkana</option><option value="Antegria">Antegria</option><option value="Impor">Impor</option><option value="Kolechia">Kolechia</option><option value="Obristan">Obristan</option><option value="Republia">Republia</option><option value="United Federation">Federação Unida</option></select></label>
-      <label class="contract-field">Estado civil<select id="candidate-marital-status" required><option value="">Selecione</option><option value="Solteiro(a)">Solteiro(a)</option><option value="Casado(a)">Casado(a)</option><option value="Divorciado(a)">Divorciado(a)</option><option value="Viúvo(a)">Viúvo(a)</option></select></label>
-      <label class="contract-field">Dependentes<select id="candidate-dependents"><option value="0">Nenhum</option><option value="1">1 dependente</option><option value="2">2 dependentes</option><option value="3">3 ou mais</option></select></label>
-      <label class="contract-field contract-field-wide">Ocupação anterior<select id="candidate-occupation"><option value="">Não declarada</option><option value="Trabalhador industrial">Trabalhador industrial</option><option value="Agricultor">Agricultor</option><option value="Comerciante">Comerciante</option><option value="Funcionário público">Funcionário público</option><option value="Desempregado">Desempregado</option><option value="Outra">Outra</option></select></label>
+      <div class="contract-field"><span>Sexo declarado</span><div class="contract-choices" role="group" aria-label="Sexo declarado">
+        <label class="contract-choice"><input type="radio" name="candidate-sex" value="Masculino" required><span>Masculino</span></label>
+        <label class="contract-choice"><input type="radio" name="candidate-sex" value="Feminino" required><span>Feminino</span></label>
+      </div></div>
+      <div class="contract-field"><span>Nacionalidade</span><strong>Arstotzkana</strong></div>
+      <div class="contract-field"><span>Estado civil</span><div class="contract-choices" role="group" aria-label="Estado civil">
+        <label class="contract-choice"><input type="radio" name="candidate-marital-status" value="Solteiro(a)" required><span>Solteiro(a)</span></label>
+        <label class="contract-choice"><input type="radio" name="candidate-marital-status" value="Casado(a)" required><span>Casado(a)</span></label>
+        <label class="contract-choice"><input type="radio" name="candidate-marital-status" value="Divorciado(a)" required><span>Divorciado(a)</span></label>
+        <label class="contract-choice"><input type="radio" name="candidate-marital-status" value="Viúvo(a)" required><span>Viúvo(a)</span></label>
+      </div></div>
+      <div class="contract-field"><span>Dependentes</span><div class="contract-choices" role="group" aria-label="Número de dependentes">
+        <label class="contract-choice"><input type="radio" name="candidate-dependents" value="0"><span>Nenhum</span></label>
+        <label class="contract-choice"><input type="radio" name="candidate-dependents" value="1"><span>1</span></label>
+        <label class="contract-choice"><input type="radio" name="candidate-dependents" value="2"><span>2</span></label>
+        <label class="contract-choice"><input type="radio" name="candidate-dependents" value="3"><span>3 ou mais</span></label>
+      </div></div>
       <div class="contract-field"><span>Código de identificação</span><strong id="candidate-code">AR-82-000000</strong></div>
       <div class="contract-field"><span>Unidade de lotação</span><strong>Posto Fronteiriço de Grestin</strong></div>
       <div class="contract-field"><span>Endereço funcional</span><strong>Bloco habitacional 6 · Grestin Leste</strong></div>
@@ -85,7 +97,7 @@
       <div class="contract-field"><span>Cargo</span><strong>Inspetor de fronteira · Classe III</strong></div>
       <div class="contract-field"><span>Data de admissão</span><strong>04 de outubro de 1982</strong></div>
     </div>
-    <div class="contract-notice"><strong>DECLARAÇÃO DE CONFORMIDADE ADMINISTRATIVA</strong><p>O Ministério informa que os dados abaixo já constam nos registros centrais. O preenchimento deste formulário constitui mera confirmação cadastral, exigida para regularização do processo.</p><p>Eventuais divergências deverão ser comunicadas por escrito. A ausência de manifestação será interpretada como concordância integral com os registros existentes.</p></div>
+    <div class="contract-notice"><strong>AVISO AO CONTRATADO</strong><p>As informações deste contrato já foram registradas pelo Ministério. Confira os dados e assinale as opções solicitadas para concluir sua admissão.</p><p>Qualquer divergência deverá ser comunicada ao Departamento de Pessoal antes da assinatura.</p></div>
     <p class="contract-terms">O contratado declara ciência de que a designação é compulsória, que a residência funcional está vinculada ao exercício do cargo e que os registros de desempenho serão mantidos pelo Ministério. A assinatura confirma a exatidão das informações declaradas, ainda que sua origem administrativa seja anterior a este procedimento.</p>
     <div class="contract-signature"><span>Assinatura do contratado</span><span>Departamento de pessoal</span></div>
     <div class="contract-actions"><p id="registration-feedback" class="feedback-row" aria-live="polite"></p><button id="registration-submit" class="button button-primary" type="button">Assinar e registrar →</button></div>
