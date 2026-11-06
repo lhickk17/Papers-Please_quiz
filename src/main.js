@@ -321,26 +321,58 @@ function renderQuestion(panel, question, options, callback) {
 }
 
 const interviewQuestions = [
-  { question: 'Por que acredita estar apto a servir no posto de Grestin?', context: 'O Ministério procura candidatos capazes de seguir procedimentos sob pressão.', options: ['Tenho facilidade em seguir regulamentos.', 'Considero o serviço uma obrigação do Estado.', 'Preciso de estabilidade e moradia.'], feedback: ['Uma resposta objetiva. O cumprimento de normas será observado.', 'O dever cívico foi devidamente registrado.', 'O Ministério oferece alojamento funcional aos servidores designados.'] },
-  { question: 'Como reagiria diante de um documento cuja procedência desconhece?', context: 'A fronteira exige atenção, disciplina e consulta aos registros oficiais.', options: ['Consultaria o manual e os registros disponíveis.', 'Decidiria com base na experiência pessoal.', 'Solicitaria orientação ao supervisor.'], feedback: ['Procedimento adequado. A consulta é preferível à suposição.', 'A experiência não substitui os regulamentos oficiais.', 'A supervisão está disponível para casos excepcionais.'] },
-  { question: 'Compreende que a designação para Grestin é compulsória?', context: 'A loteria de trabalho determina a alocação inicial dos servidores.', options: ['Compreendo. Cumprirei a designação.', 'Tenho reservas, mas compreendo.', 'Solicito que a decisão seja reconsiderada.'], feedback: ['Declaração registrada. Prossigamos com o cadastro.', 'As reservas foram anotadas sem efeito sobre a designação.', 'O pedido será arquivado. A designação permanece vigente.'] }
+  { id: 'motivation', question: 'Qual considera ser a principal razão para assumir suas funções no Ministério?', context: 'A Diretoria procura compreender as circunstâncias que acompanham a designação de cada servidor.', options: ['A estabilidade oferecida pelo serviço público.', 'O dever de contribuir para a segurança de Arstotzka.', 'A necessidade de sustentar minha família.', 'Não considero necessário justificar uma designação oficial.'], feedback: ['Uma motivação prática. A estabilidade funcional é um benefício concedido conforme as necessidades do Estado.', 'O compromisso cívico foi registrado. O Ministério espera que essa disposição se mantenha durante o serviço.', 'Circunstâncias pessoais não alteram os termos da designação. O alojamento funcional será disponibilizado conforme previsto.', 'Compreendo. A Diretoria não exige justificativas adicionais para uma determinação oficial.'] },
+  { id: 'authority', question: 'Caso receba uma instrução cuja finalidade não compreenda, como deverá proceder?', context: 'A execução dos procedimentos depende da observância da hierarquia e das instruções vigentes.', options: ['Cumprirei as instruções conforme foram transmitidas.', 'Solicitarei esclarecimentos antes de prosseguir.', 'Considerarei as circunstâncias antes de decidir.', 'Avaliarei a situação por conta própria.'], feedback: ['Uma postura direta. A execução sem demora é valorizada pela supervisão.', 'Uma preocupação compreensível. Naturalmente, nem toda instrução exige explicações adicionais. O senhor aprenderá a distinguir essas situações.', 'A interpretação das circunstâncias deve permanecer dentro dos limites estabelecidos pelo regulamento.', 'A iniciativa individual pode ser útil, desde que não substitua as determinações oficiais.'] },
+  { id: 'discretion', question: 'Como entende o dever de discrição no exercício de suas funções?', context: 'O acesso a informações administrativas constitui responsabilidade funcional, não privilégio pessoal.', options: ['Informações oficiais devem permanecer sob sigilo.', 'Compartilharei informações somente quando necessário.', 'A população deve ser informada sobre irregularidades.', 'Não discutirei assuntos funcionais fora do ambiente de trabalho.'], feedback: ['Correto. A preservação das informações oficiais é uma obrigação permanente.', 'Uma interpretação razoável. A necessidade de compartilhamento será determinada pelos canais autorizados.', 'A comunicação de irregularidades deve seguir os procedimentos internos. A divulgação pública não é atribuição do inspetor.', 'A discrição fora do posto é recomendável. Dentro dele, os canais de comunicação devem permanecer disponíveis.'] },
+  { id: 'assignment', question: 'O Ministério esclarece que sua designação não depende de manifestação voluntária. Como recebe essa determinação?', context: 'A loteria de trabalho estabelece a alocação inicial. A recusa não constitui recurso administrativo válido.', options: ['Não tenho objeções.', 'Compreendo e cumprirei minha designação.', 'Gostaria de conhecer melhor as condições do posto.', 'Não tive oportunidade de escolher minha função.'], feedback: ['Registro de conformidade recebido. Prossigamos.', 'Declaração registrada. O Ministério espera cumprimento integral das atribuições.', 'As condições funcionais constam dos documentos de designação. Poderão ser consultadas após o registro.', 'A ausência de escolha é inerente ao procedimento de loteria. A designação permanece válida.'] }
 ];
 
+let interviewReviewMode = false;
+
 function beginInterview() {
+  playerProfile = createPlayerProfile();
+  interviewReviewMode = reviewingCampaign;
   interviewIndex = 0;
-  interviewAnswers = [];
+  if (interviewReviewMode) {
+    interviewAnswers = Array.isArray(playerProfile.interview) ? playerProfile.interview : [];
+  } else {
+    interviewAnswers = [];
+  }
   renderInterviewQuestion();
   navigate('interview');
 }
 
 function renderInterviewQuestion() {
   const item = interviewQuestions[interviewIndex];
+  const saved = interviewAnswers[interviewIndex];
+  const options = $('#interview-options');
   $('#interview-question').textContent = item.question;
-  $('#interview-context').textContent = item.context;
+  $('#interview-context').textContent = interviewReviewMode
+    ? 'REGISTRO ORIGINAL · RESPOSTA PRESERVADA. Esta entrevista está disponível apenas para consulta.'
+    : item.context;
   $('#interview-feedback').textContent = '';
   $('#interview-next').hidden = true;
-  const options = $('#interview-options');
   options.replaceChildren();
+
+  if (interviewReviewMode) {
+    if (!saved || typeof saved !== 'object' || typeof saved.selectedOption !== 'number') {
+      $('#interview-feedback').textContent = 'REGISTRO ANTERIOR INDISPONÍVEL OU INCOMPLETO. Nenhuma nova resposta será solicitada durante a revisão.';
+    } else {
+      const answer = document.createElement('div');
+      answer.className = 'interview-recorded-answer';
+      const label = document.createElement('span');
+      label.textContent = 'RESPOSTA REGISTRADA';
+      const value = document.createElement('strong');
+      value.textContent = saved.selectedOptionText || item.options[saved.selectedOption] || 'Resposta não identificada';
+      answer.append(label, value);
+      options.append(answer);
+      $('#interview-feedback').textContent = saved.feedback || item.feedback[saved.selectedOption] || '';
+    }
+    $('#interview-next').hidden = false;
+    $('#interview-next').textContent = interviewIndex === interviewQuestions.length - 1 ? 'Continuar para o contrato →' : 'Próximo registro →';
+    return;
+  }
+
   item.options.forEach((option, index) => {
     const button = document.createElement('button');
     button.type = 'button';
@@ -348,14 +380,28 @@ function renderInterviewQuestion() {
     button.textContent = option;
     button.addEventListener('click', () => {
       [...options.children].forEach((entry) => { entry.disabled = true; });
-      interviewAnswers.push(index);
-      $('#interview-feedback').textContent = item.feedback[index];
+      const feedback = item.feedback[index];
+      interviewAnswers.push({ questionId: item.id, question: item.question, selectedOption: index, selectedOptionText: option, feedback });
+      $('#interview-feedback').textContent = feedback;
       $('#interview-next').hidden = false;
       $('#interview-next').textContent = interviewIndex === interviewQuestions.length - 1 ? 'Concluir entrevista →' : 'Próxima pergunta →';
       play('inspectOpen', 0.18);
     });
     options.append(button);
   });
+}
+
+function completeInterview() {
+  if (interviewReviewMode) {
+    interviewReviewMode = false;
+    prepareRegistration();
+    return;
+  }
+  playerProfile = createPlayerProfile();
+  playerProfile.interview = interviewAnswers.map((answer) => ({ ...answer }));
+  playerProfile.interviewCompletedAt = playerProfile.interviewCompletedAt || new Date().toISOString();
+  persistPlayerProfile();
+  prepareRegistration();
 }
 
 function createPlayerProfile() {
@@ -400,13 +446,18 @@ function prepareRegistration() {
     input.checked = input.value === String(playerProfile.dependents ?? '0');
     input.disabled = admissionReviewInProgress;
   });
-  $('#registration-submit').textContent = playerProfile.name ? 'Confirmar registro →' : 'Assinar e registrar →';
+  $('#registration-submit').textContent = admissionReviewInProgress ? 'Consultar orientação →' : playerProfile.name ? 'Confirmar registro →' : 'Assinar e registrar →';
   $('#registration-feedback').textContent = '';
   $('#registration-feedback').className = 'feedback-row';
   navigate('registration');
 }
 
 function saveRegistration() {
+  if (admissionReviewInProgress) {
+    admissionReviewInProgress = false;
+    navigate('orientation');
+    return;
+  }
   const name = $('#candidate-name').value.trim().replace(/\s+/g, ' ');
   const sex = document.querySelector('input[name="candidate-sex"]:checked')?.value || '';
   const maritalStatus = document.querySelector('input[name="candidate-marital-status"]:checked')?.value || '';
@@ -428,7 +479,7 @@ function saveRegistration() {
     nationality: 'Arstotzka',
     maritalStatus: admissionReviewInProgress ? playerProfile.maritalStatus : maritalStatus,
     dependents: admissionReviewInProgress ? playerProfile.dependents : dependents,
-    interview: interviewAnswers.length ? interviewAnswers : (playerProfile?.interview || [])
+    interview: Array.isArray(playerProfile?.interview) ? playerProfile.interview : []
   };
   persistPlayerProfile();
   admissionReviewInProgress = false;
@@ -483,6 +534,28 @@ function finishCampaign() {
   showCampaignResult(campaignCorrect, true);
 }
 
+function buildInterviewAssessment(answers) {
+  if (!Array.isArray(answers) || answers.length !== interviewQuestions.length || typeof answers[0] !== 'object') {
+    return 'Não há transcrição comportamental completa disponível para este processo.';
+  }
+  const selected = Object.fromEntries(answers.map((answer) => [answer.questionId, answer.selectedOption]));
+  const notes = [];
+  if (selected.motivation === 0 || selected.motivation === 2) notes.push('O candidato apresentou motivação de natureza pessoal e material.');
+  else if (selected.motivation === 1) notes.push('O candidato declarou compromisso com os objetivos institucionais.');
+  else if (selected.motivation === 3) notes.push('O candidato não apresentou justificativa pessoal para a designação.');
+  if (selected.authority === 0) notes.push('Demonstrou disposição para executar instruções sem questionamento prévio.');
+  else if (selected.authority === 1) notes.push('Manifestou preferência por esclarecimentos antes da execução de instruções desconhecidas.');
+  else if (selected.authority === 2) notes.push('Indicou que considera as circunstâncias antes de aplicar instruções.');
+  else if (selected.authority === 3) notes.push('Demonstrou inclinação à interpretação individual de procedimentos.');
+  if (selected.discretion === 0 || selected.discretion === 3) notes.push('A resposta indica compreensão restritiva do dever de discrição funcional.');
+  else if (selected.discretion === 1) notes.push('Reconhece o compartilhamento condicionado de informações pelos canais necessários.');
+  else if (selected.discretion === 2) notes.push('A resposta exige orientação quanto aos canais autorizados para comunicação de irregularidades.');
+  if (selected.assignment === 0 || selected.assignment === 1) notes.push('Não apresentou objeção formal à designação compulsória.');
+  else if (selected.assignment === 2) notes.push('Solicitou informações adicionais sobre as condições funcionais.');
+  else if (selected.assignment === 3) notes.push('Registrou insatisfação quanto à ausência de escolha da função.');
+  return notes.join(' ');
+}
+
 function showCampaignResult(correct, persist = false) {
   const outcome = campaignOutcome(correct);
   $('#result-plaque').hidden = false;
@@ -508,6 +581,8 @@ function showCampaignResult(correct, persist = false) {
     : outcome === 'pass'
       ? 'Sua avaliação atende ao mínimo exigido. O Ministério espera maior precisão no próximo turno.'
       : 'Seu desempenho ficou abaixo do padrão. A supervisão registrou ressalvas. Consulte o manual e aguarde as instruções de M. Vonel.';
+  const interviewAssessment = buildInterviewAssessment(createPlayerProfile().interview);
+  $('#result-interview-assessment').textContent = interviewAssessment;
   $('#result-retry').hidden = true;
   $('#result-menu').textContent = 'Consultar ordem de designação →';
   navigate('campaign-result');
@@ -755,6 +830,32 @@ function finishQuiz() {
   navigate('report');
 }
 
+function renderInterviewProfile(profile) {
+  const container = $('#profile-interview');
+  if (!container) return;
+  container.replaceChildren();
+  const answers = Array.isArray(profile.interview) ? profile.interview : [];
+  if (!answers.length || typeof answers[0] !== 'object') {
+    const empty = document.createElement('p');
+    empty.className = 'body-copy';
+    empty.textContent = 'Nenhuma transcrição de entrevista disponível neste arquivo.';
+    container.append(empty);
+    return;
+  }
+  answers.forEach((answer, index) => {
+    const item = document.createElement('article');
+    item.className = 'profile-interview-item';
+    const question = document.createElement('strong');
+    question.textContent = answer.question || interviewQuestions[index]?.question || 'Pergunta não identificada';
+    const response = document.createElement('p');
+    response.textContent = answer.selectedOptionText || 'Resposta não registrada';
+    const feedback = document.createElement('small');
+    feedback.textContent = answer.feedback || '';
+    item.append(question, response, feedback);
+    container.append(item);
+  });
+}
+
 function renderPlayerProfile() {
   playerProfile = createPlayerProfile();
   const profile = playerProfile;
@@ -765,6 +866,7 @@ function renderPlayerProfile() {
   $('#profile-nationality').textContent = profile.nationality || 'NÃO REGISTRADA';
   $('#profile-marital-status').textContent = profile.maritalStatus || 'NÃO REGISTRADO';
   $('#profile-dependents').textContent = profile.dependents ?? '0';
+  renderInterviewProfile(profile);
   let admissionResult = null;
   try { admissionResult = JSON.parse(localStorage.getItem(campaignResultKey) || 'null'); } catch {}
   $('#profile-campaign-result').textContent = admissionResult && Number.isInteger(admissionResult.correct)
@@ -941,7 +1043,7 @@ function continueFromOpening() {
 }
 
 $('#opening').addEventListener('click', continueFromOpening);
-$('#interview-next').addEventListener('click', () => { interviewIndex += 1; if (interviewIndex < interviewQuestions.length) renderInterviewQuestion(); else prepareRegistration(); });
+$('#interview-next').addEventListener('click', () => { interviewIndex += 1; if (interviewIndex < interviewQuestions.length) renderInterviewQuestion(); else completeInterview(); });
 $('#registration-submit').addEventListener('click', saveRegistration);
 $('#candidate-name').addEventListener('keydown', (event) => { if (event.key === 'Enter') saveRegistration(); });
 $('#shift-intro-skip').addEventListener('click', finishShiftIntro);
