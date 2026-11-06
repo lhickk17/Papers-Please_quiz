@@ -47,6 +47,7 @@ export function createInspectorDraft({
     code: makeInspectorCode(random),
     createdAt,
     interviewAnswers: [...interviewAnswers],
+    statistics: emptyInspectorStatistics(),
     status: 'active'
   };
 }
