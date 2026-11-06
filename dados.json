@@ -2,57 +2,120 @@
   {
     "pais": "Antegria",
     "cidades": [
-      { "nome": "São Marmero", "curiosidade": "Cidade administrativa de perfil estável. Viajantes de rotina, sem histórico de incidentes." },
-      { "nome": "Glorian", "curiosidade": "Centro urbano moderado. Ausência de conflitos registrados. Considerada zona de baixo risco." },
-      { "nome": "Perdiz", "curiosidade": "Cidade periférica. Ocorrências variadas, sem padrão definido. Mantém o perfil neutro do país." }
+      {
+        "nome": "São Marmero",
+        "curiosidade": "Centro administrativo de porte médio. Concentra repartições públicas e serviços civis, com movimentação regular de viajantes."
+      },
+      {
+        "nome": "Glorian",
+        "curiosidade": "Núcleo urbano de atividade comercial moderada. O fluxo de visitantes é constante, sem registros recentes de incidentes relevantes."
+      },
+      {
+        "nome": "Perdiz",
+        "curiosidade": "Localidade periférica com atividade econômica diversificada. Os relatórios apontam ocorrências esporádicas, sem tendência predominante."
+      }
     ]
   },
   {
     "pais": "Arstotzka",
     "cidades": [
-      { "nome": "Orvech Vonor", "curiosidade": "Centro administrativo. Núcleo político e militar do estado arstotziano." },
-      { "nome": "Grestin Leste", "curiosidade": "Cidade dividida. Lado oriental sob jurisdição de Arstotzka desde o armistício de 1979." },
-      { "nome": "Paradizna", "curiosidade": "Região de alta incidência criminal. Presença recorrente em boletins de suspeitos." }
+      {
+        "nome": "Orvech Vonor",
+        "curiosidade": "Núcleo administrativo e institucional de grande porte. Reúne órgãos de governo e instalações estratégicas."
+      },
+      {
+        "nome": "Grestin Leste",
+        "curiosidade": "Setor oriental de uma cidade atravessada por uma antiga divisão territorial. A circulação entre os dois lados permanece sujeita a controles rigorosos."
+      },
+      {
+        "nome": "Paradizna",
+        "curiosidade": "Região urbana frequentemente citada em relatórios de segurança. As autoridades mantêm atenção especial sobre ocorrências locais."
+      }
     ]
   },
   {
     "pais": "Impor",
     "cidades": [
-      { "nome": "Enkyo", "curiosidade": "Cidade secundária de Impor. Perfil consistente com o padrão nacional. Sem histórico de conflitos." },
-      { "nome": "Haihan", "curiosidade": "Cidade de perfil disciplinado. Documentação geralmente em ordem. Baixo índice de irregularidades." },
-      { "nome": "Tsunkeido", "curiosidade": "Centro urbano funcional. Sistema rígido e estável. Raramente associada a infrações." }
+      {
+        "nome": "Enkyo",
+        "curiosidade": "Cidade de porte intermediário, conhecida por sua atividade industrial e por uma rotina urbana bastante organizada."
+      },
+      {
+        "nome": "Haihan",
+        "curiosidade": "Centro urbano com forte presença de instituições públicas. Os registros destacam procedimentos administrativos rigorosos."
+      },
+      {
+        "nome": "Tsunkeido",
+        "curiosidade": "Polo regional de comércio e transporte. A circulação de mercadorias sustenta boa parte da atividade local."
+      }
     ]
   },
   {
     "pais": "Kolechia",
     "cidades": [
-      { "nome": "Yurkópolis", "curiosidade": "Principal centro urbano de Kolechia. Alta frequência de solicitações de entrada. Tensão histórica com Arstotzka." },
-      { "nome": "Vedor", "curiosidade": "Cidade marcada pela instabilidade regional. Associada a fluxos migratórios em contexto de crise." },
-      { "nome": "Grestin Oeste", "curiosidade": "Lado ocidental da cidade dividida. Território kolechiano desde o armistício de 1979. Espelho direto de Grestin Leste." }
+      {
+        "nome": "Yurkópolis",
+        "curiosidade": "Grande centro urbano, com intensa atividade comercial e elevado volume de deslocamentos internacionais."
+      },
+      {
+        "nome": "Vedor",
+        "curiosidade": "Cidade afetada por períodos de instabilidade econômica. A região registra movimentos migratórios sazonais e mudanças frequentes na população."
+      },
+      {
+        "nome": "Grestin Oeste",
+        "curiosidade": "Setor ocidental de uma cidade atravessada por uma antiga divisão territorial. A circulação entre os dois lados permanece sujeita a controles rigorosos."
+      }
     ]
   },
   {
     "pais": "Obristão",
     "cidades": [
-      { "nome": "Skal", "curiosidade": "Cidade de alta emigração. Origem frequente de solicitantes recorrentes. Associada a contextos de necessidade econômica." },
-      { "nome": "Lorndaz", "curiosidade": "Centro urbano de perfil modesto. Fluxo migratório constante. Histórias de saída difícil." },
-      { "nome": "Mergerous", "curiosidade": "Cidade periférica de Obristão. Padrão de emigração forçada. Presença menor, mas consistente nos registros." }
+      {
+        "nome": "Skal",
+        "curiosidade": "Cidade de origem de numerosos trabalhadores migrantes. As condições econômicas locais influenciam o fluxo constante de partidas."
+      },
+      {
+        "nome": "Lorndaz",
+        "curiosidade": "Centro urbano de economia modesta. O deslocamento de moradores em busca de trabalho aparece com frequência nos registros."
+      },
+      {
+        "nome": "Mergerous",
+        "curiosidade": "Localidade periférica marcada pela redução de oportunidades de emprego. Há registros recorrentes de famílias que deixam a região."
+      }
     ]
   },
   {
     "pais": "Republia",
     "cidades": [
-      { "nome": "Glorian Real", "curiosidade": "Capital de Republia. Nome de conotação nacionalista. Cidadãos geralmente documentados e sem ocorrências." },
-      { "nome": "Lesrenadi", "curiosidade": "Cidade estável. Presença consistente nos registros de entrada. Sem histórico de irregularidades." },
-      { "nome": "Bostan", "curiosidade": "Centro urbano de perfil confiável. Baixo índice de infrações. Contraste favorável com países vizinhos." }
+      {
+        "nome": "Glorian Real",
+        "curiosidade": "Capital de grande peso político e administrativo. A cidade concentra instituições nacionais e cerimônias oficiais."
+      },
+      {
+        "nome": "Lesrenadi",
+        "curiosidade": "Cidade de atividade econômica estável, com fluxo regular de visitantes e serviços voltados ao comércio regional."
+      },
+      {
+        "nome": "Bostan",
+        "curiosidade": "Centro urbano de perfil comercial. A movimentação cotidiana é impulsionada por mercados, oficinas e transporte de cargas."
+      }
     ]
   },
   {
     "pais": "Federação Unida",
     "cidades": [
-      { "nome": "Grão Rapid", "curiosidade": "Principal centro urbano da Federação. Cidadãos bem documentados. Processo migratório de baixo risco." },
-      { "nome": "Shingleton", "curiosidade": "Cidade de padrão confiável. Ausência de ocorrências graves. Referência de normalidade nos registros." },
-      { "nome": "Koristópolis", "curiosidade": "Centro urbano de perfil variado. Reputação neutra mantida apesar de contextos diversos." }
+      {
+        "nome": "Grão Rapid",
+        "curiosidade": "Principal centro urbano de uma região metropolitana extensa. Reúne serviços, comércio e conexões estratégicas de transporte."
+      },
+      {
+        "nome": "Shingleton",
+        "curiosidade": "Cidade de porte médio, com infraestrutura consolidada e atividade econômica concentrada em serviços e comércio."
+      },
+      {
+        "nome": "Koristópolis",
+        "curiosidade": "Centro urbano de composição econômica variada. Pequenas indústrias, comércio e serviços dividem espaço na rotina local."
+      }
     ]
   }
 ]

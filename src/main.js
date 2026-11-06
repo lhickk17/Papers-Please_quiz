@@ -2,15 +2,16 @@ import './style.css';
 import { createRound, campaignOutcome, scoreAnswer, classifyScore, applyScoreDelta } from './core.js';
 
 const $ = (selector) => document.querySelector(selector);
-const screenIds = ['opening', 'interview', 'registration', 'orientation', 'campaign', 'campaign-result', 'designation', 'menu', 'quiz', 'report'];
+const screenIds = ['opening', 'interview', 'registration', 'orientation', 'campaign', 'campaign-result', 'designation', 'menu', 'profile', 'quiz', 'report'];
 const campaignKey = 'ppquiz.campaign.v3';
 const campaignResultKey = 'ppquiz.campaign.result.v2';
-const profileKey = 'ppquiz.inspector.profile.v1';
+const playerProfileKey = 'ppquiz.player.profile.v1';
+const legacyProfileKey = 'ppquiz.inspector.profile.v1';
 const audioSettingsKey = 'ppquiz.audio.settings.v1';
 const reportSequenceKey = 'ppquiz.report.sequence.v1';
 let interviewIndex = 0;
 let interviewAnswers = [];
-let inspectorProfile = null;
+let playerProfile = null;
 let roundStartedAt = 0;
 let campaign = [];
 let campaignIndex = 0;
@@ -31,6 +32,8 @@ let keyboardOptions = null;
 let keyboardSelection = -1;
 let openingReady = false;
 let reviewingCampaign = false;
+let admissionReviewInProgress = false;
+let admissionReviewSession = false;
 let openingTimer = null;
 let typingTimer = null;
 let shiftIntroTimer = null;
@@ -319,26 +322,58 @@ function renderQuestion(panel, question, options, callback) {
 }
 
 const interviewQuestions = [
-  { question: 'Por que acredita estar apto a servir no posto de Grestin?', context: 'O Ministério procura candidatos capazes de seguir procedimentos sob pressão.', options: ['Tenho facilidade em seguir regulamentos.', 'Considero o serviço uma obrigação do Estado.', 'Preciso de estabilidade e moradia.'], feedback: ['Uma resposta objetiva. O cumprimento de normas será observado.', 'O dever cívico foi devidamente registrado.', 'O Ministério oferece alojamento funcional aos servidores designados.'] },
-  { question: 'Como reagiria diante de um documento cuja procedência desconhece?', context: 'A fronteira exige atenção, disciplina e consulta aos registros oficiais.', options: ['Consultaria o manual e os registros disponíveis.', 'Decidiria com base na experiência pessoal.', 'Solicitaria orientação ao supervisor.'], feedback: ['Procedimento adequado. A consulta é preferível à suposição.', 'A experiência não substitui os regulamentos oficiais.', 'A supervisão está disponível para casos excepcionais.'] },
-  { question: 'Compreende que a designação para Grestin é compulsória?', context: 'A loteria de trabalho determina a alocação inicial dos servidores.', options: ['Compreendo. Cumprirei a designação.', 'Tenho reservas, mas compreendo.', 'Solicito que a decisão seja reconsiderada.'], feedback: ['Declaração registrada. Prossigamos com o cadastro.', 'As reservas foram anotadas sem efeito sobre a designação.', 'O pedido será arquivado. A designação permanece vigente.'] }
+  { id: 'motivation', question: 'Qual considera ser a principal razão para assumir suas funções no Ministério?', context: 'A Diretoria procura compreender as circunstâncias que acompanham a designação de cada servidor.', options: ['A estabilidade oferecida pelo serviço público.', 'O dever de contribuir para a segurança de Arstotzka.', 'A necessidade de sustentar minha família.', 'Não considero necessário justificar uma designação oficial.'], feedback: ['Uma motivação prática. A estabilidade funcional é um benefício concedido conforme as necessidades do Estado.', 'O compromisso cívico foi registrado. O Ministério espera que essa disposição se mantenha durante o serviço.', 'Circunstâncias pessoais não alteram os termos da designação. O alojamento funcional será disponibilizado conforme previsto.', 'Compreendo. A Diretoria não exige justificativas adicionais para uma determinação oficial.'] },
+  { id: 'authority', question: 'Caso receba uma instrução cuja finalidade não compreenda, como deverá proceder?', context: 'A execução dos procedimentos depende da observância da hierarquia e das instruções vigentes.', options: ['Cumprirei as instruções conforme foram transmitidas.', 'Solicitarei esclarecimentos antes de prosseguir.', 'Considerarei as circunstâncias antes de decidir.', 'Avaliarei a situação por conta própria.'], feedback: ['Uma postura direta. A execução sem demora é valorizada pela supervisão.', 'Uma preocupação compreensível. Naturalmente, nem toda instrução exige explicações adicionais. O senhor aprenderá a distinguir essas situações.', 'A interpretação das circunstâncias deve permanecer dentro dos limites estabelecidos pelo regulamento.', 'A iniciativa individual pode ser útil, desde que não substitua as determinações oficiais.'] },
+  { id: 'discretion', question: 'Como entende o dever de discrição no exercício de suas funções?', context: 'O acesso a informações administrativas constitui responsabilidade funcional, não privilégio pessoal.', options: ['Informações oficiais devem permanecer sob sigilo.', 'Compartilharei informações somente quando necessário.', 'A população deve ser informada sobre irregularidades.', 'Não discutirei assuntos funcionais fora do ambiente de trabalho.'], feedback: ['Correto. A preservação das informações oficiais é uma obrigação permanente.', 'Uma interpretação razoável. A necessidade de compartilhamento será determinada pelos canais autorizados.', 'A comunicação de irregularidades deve seguir os procedimentos internos. A divulgação pública não é atribuição do inspetor.', 'A discrição fora do posto é recomendável. Dentro dele, os canais de comunicação devem permanecer disponíveis.'] },
+  { id: 'assignment', question: 'O Ministério esclarece que sua designação não depende de manifestação voluntária. Como recebe essa determinação?', context: 'A loteria de trabalho estabelece a alocação inicial. A recusa não constitui recurso administrativo válido.', options: ['Não tenho objeções.', 'Compreendo e cumprirei minha designação.', 'Gostaria de conhecer melhor as condições do posto.', 'Não tive oportunidade de escolher minha função.'], feedback: ['Registro de conformidade recebido. Prossigamos.', 'Declaração registrada. O Ministério espera cumprimento integral das atribuições.', 'As condições funcionais constam dos documentos de designação. Poderão ser consultadas após o registro.', 'A ausência de escolha é inerente ao procedimento de loteria. A designação permanece válida.'] }
 ];
 
+let interviewReviewMode = false;
+
 function beginInterview() {
+  playerProfile = createPlayerProfile();
+  interviewReviewMode = admissionReviewSession || reviewingCampaign;
   interviewIndex = 0;
-  interviewAnswers = [];
+  if (interviewReviewMode) {
+    interviewAnswers = Array.isArray(playerProfile.interview) ? playerProfile.interview : [];
+  } else {
+    interviewAnswers = [];
+  }
   renderInterviewQuestion();
   navigate('interview');
 }
 
 function renderInterviewQuestion() {
   const item = interviewQuestions[interviewIndex];
+  const saved = interviewAnswers[interviewIndex];
+  const options = $('#interview-options');
   $('#interview-question').textContent = item.question;
-  $('#interview-context').textContent = item.context;
+  $('#interview-context').textContent = interviewReviewMode
+    ? 'REGISTRO ORIGINAL · RESPOSTA PRESERVADA. Esta entrevista está disponível apenas para consulta.'
+    : item.context;
   $('#interview-feedback').textContent = '';
   $('#interview-next').hidden = true;
-  const options = $('#interview-options');
   options.replaceChildren();
+
+  if (interviewReviewMode) {
+    if (!saved || typeof saved !== 'object' || typeof saved.selectedOption !== 'number') {
+      $('#interview-feedback').textContent = 'REGISTRO ANTERIOR INDISPONÍVEL OU INCOMPLETO. Nenhuma nova resposta será solicitada durante a revisão.';
+    } else {
+      const answer = document.createElement('div');
+      answer.className = 'interview-recorded-answer';
+      const label = document.createElement('span');
+      label.textContent = 'RESPOSTA REGISTRADA';
+      const value = document.createElement('strong');
+      value.textContent = saved.selectedOptionText || item.options[saved.selectedOption] || 'Resposta não identificada';
+      answer.append(label, value);
+      options.append(answer);
+      $('#interview-feedback').textContent = saved.feedback || item.feedback[saved.selectedOption] || '';
+    }
+    $('#interview-next').hidden = false;
+    $('#interview-next').textContent = interviewIndex === interviewQuestions.length - 1 ? 'Continuar para o contrato →' : 'Próximo registro →';
+    return;
+  }
+
   item.options.forEach((option, index) => {
     const button = document.createElement('button');
     button.type = 'button';
@@ -346,8 +381,11 @@ function renderInterviewQuestion() {
     button.textContent = option;
     button.addEventListener('click', () => {
       [...options.children].forEach((entry) => { entry.disabled = true; });
-      interviewAnswers.push(index);
-      $('#interview-feedback').textContent = item.feedback[index];
+      const feedback = item.feedback[index];
+      interviewAnswers.push({ questionId: item.id, question: item.question, selectedOption: index, selectedOptionText: option, feedback });
+      playerProfile.interview = interviewAnswers.map((answer) => ({ ...answer }));
+      persistPlayerProfile();
+      $('#interview-feedback').textContent = feedback;
       $('#interview-next').hidden = false;
       $('#interview-next').textContent = interviewIndex === interviewQuestions.length - 1 ? 'Concluir entrevista →' : 'Próxima pergunta →';
       play('inspectOpen', 0.18);
@@ -356,44 +394,215 @@ function renderInterviewQuestion() {
   });
 }
 
-function createInspectorProfile() {
-  try {
-    const saved = JSON.parse(localStorage.getItem(profileKey) || 'null');
-    if (saved?.code) return saved;
-  } catch {}
+function completeInterview() {
+  if (interviewReviewMode) {
+    interviewReviewMode = false;
+    reviewingCampaign = false;
+    prepareRegistration();
+    return;
+  }
+  playerProfile = createPlayerProfile();
+  playerProfile.interview = interviewAnswers.map((answer) => ({ ...answer }));
+  playerProfile.interviewCompletedAt = playerProfile.interviewCompletedAt || new Date().toISOString();
+  persistPlayerProfile();
+  prepareRegistration();
+}
+
+function createPlayerProfile() {
+  let saved = null;
+  try { saved = JSON.parse(localStorage.getItem(playerProfileKey) || localStorage.getItem(legacyProfileKey) || 'null'); } catch {}
   const serial = Math.floor(100000 + Math.random() * 900000);
-  return { name: '', code: `AR-82-${serial}`, createdAt: '1982-10-04', interview: [] };
+  const defaults = {
+    name: '', code: `AR-82-${serial}`, createdAt: '1982-10-04', interview: [],
+    sex: '', nationality: 'Arstotzka', maritalStatus: '', dependents: '0',
+    stats: { rounds: 0, correct: 0, questions: 0, bestScore: 0, bestStreak: 0 },
+    history: [], functionalRecords: []
+  };
+  if (!saved || typeof saved !== 'object' || !saved.code) return defaults;
+  try { if (!localStorage.getItem(playerProfileKey)) localStorage.setItem(playerProfileKey, JSON.stringify(saved)); } catch {}
+  return {
+    ...defaults, ...saved,
+    nationality: 'Arstotzka',
+    stats: { ...defaults.stats, ...(saved.stats || {}) },
+    history: Array.isArray(saved.history) ? saved.history : [],
+    interview: Array.isArray(saved.interview) ? saved.interview : [],
+    functionalRecords: Array.isArray(saved.functionalRecords) ? saved.functionalRecords : []
+  };
+}
+
+function persistPlayerProfile() {
+  try { localStorage.setItem(playerProfileKey, JSON.stringify(playerProfile)); } catch {}
+}
+
+
+function getAdmissionOutcomeLabel(outcome) {
+  return ({ distinction: 'DISTINÇÃO CONCEDIDA', pass: 'APROVADO COM RESSALVAS', retry: 'AVALIAÇÃO INSATISFATÓRIA' })[outcome] || 'RESULTADO REGISTRADO';
+}
+
+function buildAdmissionRecord(profile, result) {
+  const outcome = result.outcome || campaignOutcome(result.correct);
+  const interview = Array.isArray(profile.interview) ? profile.interview.map((answer) => ({ ...answer })) : [];
+  const interviewAssessment = buildInterviewAssessment(interview);
+  const vonelOpinion = ({
+    distinction: 'O supervisor Vonel reconhece seu desempenho excepcional. Mantenha esse padrão de conformidade.',
+    pass: 'Sua avaliação atende ao mínimo exigido. O Ministério espera maior precisão no próximo turno.',
+    retry: 'Seu desempenho ficou abaixo do padrão. A supervisão registrou ressalvas. Consulte o manual e aguarde as instruções de M. Vonel.'
+  })[outcome] || 'O resultado foi encaminhado à supervisão para registro administrativo.';
+  return {
+    id: `ING-${profile.code}-001`, number: 1, type: 'admission',
+    title: 'Registro de Ingresso no Serviço Público',
+    issuedAt: new Date().toISOString(), entryDate: profile.createdAt || '1982-10-04',
+    functionalCode: profile.code,
+    candidate: { name: profile.name || '', sex: profile.sex || '', nationality: profile.nationality || 'Arstotzka', maritalStatus: profile.maritalStatus || '', dependents: String(profile.dependents ?? '0') },
+    interview, interviewAssessment,
+    evaluation: { correct: result.correct, total: 10, outcome, classification: getAdmissionOutcomeLabel(outcome) },
+    vonelOpinion
+  };
+}
+
+function ensureAdmissionRecord() {
+  playerProfile = createPlayerProfile();
+  if (!Array.isArray(playerProfile.functionalRecords)) playerProfile.functionalRecords = [];
+  if (playerProfile.functionalRecords.some((record) => record?.type === 'admission') || !playerProfile.name) return playerProfile;
+  let result = null;
+  try { result = JSON.parse(localStorage.getItem(campaignResultKey) || 'null'); } catch {}
+  if (!result || !Number.isInteger(result.correct)) return playerProfile;
+  playerProfile.functionalRecords.unshift(buildAdmissionRecord(playerProfile, result));
+  persistPlayerProfile();
+  return playerProfile;
+}
+
+function renderFunctionalRecords(profile) {
+  const container = $('#profile-records');
+  container.replaceChildren();
+  const records = Array.isArray(profile.functionalRecords) ? profile.functionalRecords : [];
+  if (!records.length) {
+    const empty = document.createElement('p');
+    empty.className = 'body-copy';
+    empty.textContent = 'Nenhum registro funcional emitido. O Registro de Ingresso será incorporado após a conclusão do processo admissional.';
+    container.append(empty);
+    return;
+  }
+  records.forEach((record) => {
+    const details = document.createElement('details');
+    details.className = 'functional-record';
+    const summary = document.createElement('summary');
+    const heading = document.createElement('span');
+    heading.className = 'functional-record-title';
+    heading.textContent = record.title || 'Registro funcional';
+    const metadata = document.createElement('span');
+    metadata.className = 'functional-record-meta';
+    metadata.textContent = `Nº ${String(record.number || 1).padStart(3, '0')} · ${record.type === 'admission' ? 'ADMISSÃO ORIGINAL' : 'REGISTRO COMPLEMENTAR'}`;
+    summary.append(heading, metadata);
+    details.append(summary);
+    const body = document.createElement('div');
+    body.className = 'functional-record-document';
+    const addField = (label, value) => {
+      const row = document.createElement('div');
+      row.className = 'functional-record-field';
+      const name = document.createElement('span');
+      name.textContent = label;
+      const content = document.createElement('strong');
+      content.textContent = value || 'NÃO REGISTRADO';
+      row.append(name, content);
+      body.append(row);
+    };
+    addField('Nome completo', record.candidate?.name);
+    addField('Sexo declarado', record.candidate?.sex);
+    addField('Nacionalidade', record.candidate?.nationality);
+    addField('Estado civil', record.candidate?.maritalStatus);
+    addField('Dependentes', record.candidate?.dependents);
+    addField('Número de identificação funcional', record.functionalCode);
+    addField('Data de ingresso', record.entryDate ? new Date(`${record.entryDate}T12:00:00`).toLocaleDateString('pt-BR') : '');
+    const interviewHeading = document.createElement('h3');
+    interviewHeading.textContent = 'Transcrição da entrevista';
+    body.append(interviewHeading);
+    if (Array.isArray(record.interview) && record.interview.length) {
+      record.interview.forEach((answer,index) => {
+        const item=document.createElement('article'); item.className='functional-interview-item';
+        const question=document.createElement('strong'); question.textContent=answer.question || interviewQuestions[index]?.question || 'Pergunta não identificada';
+        const response=document.createElement('p'); response.textContent=answer.selectedOptionText || 'Resposta não registrada';
+        const feedback=document.createElement('small'); feedback.textContent=answer.feedback || '';
+        item.append(question,response,feedback); body.append(item);
+      });
+    } else addField('Transcrição','Não disponível no arquivo anterior');
+    addField('Observação comportamental',record.interviewAssessment);
+    const evaluationHeading=document.createElement('h3');
+    evaluationHeading.textContent='Resultado da avaliação admissional'; body.append(evaluationHeading);
+    addField('Pontuação',`${record.evaluation?.correct ?? '—'} / ${record.evaluation?.total ?? 10} acertos`);
+    addField('Classificação técnica',record.evaluation?.classification);
+    const opinionHeading=document.createElement('h3'); opinionHeading.textContent='Parecer de M. Vonel'; body.append(opinionHeading);
+    const opinion=document.createElement('p'); opinion.className='functional-record-opinion';
+    opinion.textContent=record.vonelOpinion || 'Parecer não disponível no arquivo anterior.'; body.append(opinion);
+    details.append(body); container.append(details);
+  });
 }
 
 function prepareRegistration() {
-  inspectorProfile = createInspectorProfile();
-  $('#candidate-code').textContent = inspectorProfile.code;
-  $('#candidate-name').value = inspectorProfile.name || '';
+  playerProfile = createPlayerProfile();
+  $('#candidate-code').textContent = playerProfile.code;
+  $('#candidate-name').value = playerProfile.name || '';
+  $('#candidate-name').readOnly = admissionReviewInProgress;
+  document.querySelectorAll('input[name="candidate-sex"]').forEach((input) => {
+    input.checked = input.value === (playerProfile.sex || '');
+    input.disabled = admissionReviewInProgress;
+  });
+  document.querySelectorAll('input[name="candidate-marital-status"]').forEach((input) => {
+    input.checked = input.value === (playerProfile.maritalStatus || '');
+    input.disabled = admissionReviewInProgress;
+  });
+  document.querySelectorAll('input[name="candidate-dependents"]').forEach((input) => {
+    input.checked = input.value === String(playerProfile.dependents ?? '0');
+    input.disabled = admissionReviewInProgress;
+  });
+  $('#registration-submit').textContent = admissionReviewInProgress ? 'Consultar orientação →' : playerProfile.name ? 'Confirmar registro →' : 'Assinar e registrar →';
   $('#registration-feedback').textContent = '';
+  $('#registration-feedback').className = 'feedback-row';
   navigate('registration');
 }
 
 function saveRegistration() {
+  if (admissionReviewInProgress) {
+    admissionReviewInProgress = false;
+    navigate('orientation');
+    return;
+  }
   const name = $('#candidate-name').value.trim().replace(/\s+/g, ' ');
+  const sex = document.querySelector('input[name="candidate-sex"]:checked')?.value || '';
+  const maritalStatus = document.querySelector('input[name="candidate-marital-status"]:checked')?.value || '';
+  const dependents = document.querySelector('input[name="candidate-dependents"]:checked')?.value ?? '';
   if (name.length < 2) {
     $('#registration-feedback').textContent = 'INFORME UM NOME COM PELO MENOS DOIS CARACTERES.';
     $('#registration-feedback').className = 'feedback-row is-error';
     $('#candidate-name').focus();
     return;
   }
-  inspectorProfile = { ...inspectorProfile, name, interview: interviewAnswers };
-  try { localStorage.setItem(profileKey, JSON.stringify(inspectorProfile)); } catch {}
-  $('#registration-feedback').textContent = 'REGISTRO ACEITO. IDENTIFICAÇÃO FUNCIONAL EMITIDA.';
+  if (!sex || !maritalStatus || dependents === '') {
+    $('#registration-feedback').textContent = 'ASSINALE TODAS AS OPÇÕES EXIGIDAS NO FORMULÁRIO.';
+    $('#registration-feedback').className = 'feedback-row is-error';
+    return;
+  }
+  playerProfile = {
+    ...createPlayerProfile(), ...playerProfile, name,
+    sex: admissionReviewInProgress ? playerProfile.sex : sex,
+    nationality: 'Arstotzka',
+    maritalStatus: admissionReviewInProgress ? playerProfile.maritalStatus : maritalStatus,
+    dependents: admissionReviewInProgress ? playerProfile.dependents : dependents,
+    interview: Array.isArray(playerProfile?.interview) ? playerProfile.interview : []
+  };
+  persistPlayerProfile();
+  admissionReviewInProgress = false;
+  $('#registration-feedback').textContent = 'DECLARAÇÕES REGISTRADAS. O MINISTÉRIO AGRADECE A COLABORAÇÃO.';
   $('#registration-feedback').className = 'feedback-row is-success';
   $('#designation-name').textContent = name;
-  $('#designation-code').textContent = inspectorProfile.code;
+  $('#designation-code').textContent = playerProfile.code;
   window.setTimeout(() => navigate('orientation'), 350);
 }
 
 function showDesignation() {
-  try { inspectorProfile = JSON.parse(localStorage.getItem(profileKey) || 'null'); } catch {}
-  $('#designation-name').textContent = inspectorProfile?.name || 'Servidor não identificado';
-  $('#designation-code').textContent = inspectorProfile?.code || 'AR-82-PENDENTE';
+  try { playerProfile = JSON.parse(localStorage.getItem(playerProfileKey) || localStorage.getItem(legacyProfileKey) || 'null'); } catch {}
+  $('#designation-name').textContent = playerProfile?.name || 'Servidor não identificado';
+  $('#designation-code').textContent = playerProfile?.code || 'AR-82-PENDENTE';
   navigate('designation');
 }
 
@@ -402,7 +611,7 @@ function beginCampaign() {
   campaignIndex = 0;
   campaignCorrect = 0;
   navigate('campaign');
-  startShiftIntro(() => renderCampaignQuestion());
+  renderCampaignQuestion();
 }
 
 function renderCampaignQuestion() {
@@ -434,14 +643,37 @@ function finishCampaign() {
   showCampaignResult(campaignCorrect, true);
 }
 
+function buildInterviewAssessment(answers) {
+  if (!Array.isArray(answers) || answers.length !== interviewQuestions.length || typeof answers[0] !== 'object') {
+    return 'Não há transcrição comportamental completa disponível para este processo.';
+  }
+  const selected = Object.fromEntries(answers.map((answer) => [answer.questionId, answer.selectedOption]));
+  const notes = [];
+  if (selected.motivation === 0 || selected.motivation === 2) notes.push('O candidato apresentou motivação de natureza pessoal e material.');
+  else if (selected.motivation === 1) notes.push('O candidato declarou compromisso com os objetivos institucionais.');
+  else if (selected.motivation === 3) notes.push('O candidato não apresentou justificativa pessoal para a designação.');
+  if (selected.authority === 0) notes.push('Demonstrou disposição para executar instruções sem questionamento prévio.');
+  else if (selected.authority === 1) notes.push('Manifestou preferência por esclarecimentos antes da execução de instruções desconhecidas.');
+  else if (selected.authority === 2) notes.push('Indicou que considera as circunstâncias antes de aplicar instruções.');
+  else if (selected.authority === 3) notes.push('Demonstrou inclinação à interpretação individual de procedimentos.');
+  if (selected.discretion === 0 || selected.discretion === 3) notes.push('A resposta indica compreensão restritiva do dever de discrição funcional.');
+  else if (selected.discretion === 1) notes.push('Reconhece o compartilhamento condicionado de informações pelos canais necessários.');
+  else if (selected.discretion === 2) notes.push('A resposta exige orientação quanto aos canais autorizados para comunicação de irregularidades.');
+  if (selected.assignment === 0 || selected.assignment === 1) notes.push('Não apresentou objeção formal à designação compulsória.');
+  else if (selected.assignment === 2) notes.push('Solicitou informações adicionais sobre as condições funcionais.');
+  else if (selected.assignment === 3) notes.push('Registrou insatisfação quanto à ausência de escolha da função.');
+  return notes.join(' ');
+}
+
 function showCampaignResult(correct, persist = false) {
   const outcome = campaignOutcome(correct);
   $('#result-plaque').hidden = false;
   $('.result-layout').classList.remove('is-legacy');
-  if (persist) {
+  if (persist && !admissionReviewSession) {
     try {
       localStorage.setItem(campaignKey, 'true');
       localStorage.setItem(campaignResultKey, JSON.stringify({ correct, outcome }));
+      ensureAdmissionRecord();
     } catch {}
   }
   const plaqueByOutcome = {
@@ -459,8 +691,11 @@ function showCampaignResult(correct, persist = false) {
     : outcome === 'pass'
       ? 'Sua avaliação atende ao mínimo exigido. O Ministério espera maior precisão no próximo turno.'
       : 'Seu desempenho ficou abaixo do padrão. A supervisão registrou ressalvas. Consulte o manual e aguarde as instruções de M. Vonel.';
+  const interviewAssessment = buildInterviewAssessment(createPlayerProfile().interview);
+  $('#result-interview-assessment').textContent = interviewAssessment;
   $('#result-retry').hidden = true;
   $('#result-menu').textContent = 'Consultar ordem de designação →';
+  admissionReviewSession = false;
   navigate('campaign-result');
 }
 
@@ -579,7 +814,7 @@ function populateReportIdentification() {
   }
 
   let profile = null;
-  try { profile = JSON.parse(localStorage.getItem(profileKey) || 'null'); } catch {}
+  try { profile = JSON.parse(localStorage.getItem(playerProfileKey) || localStorage.getItem(legacyProfileKey) || 'null'); } catch {}
   const serial = String(sequence).padStart(6, '0');
   const inspector = profile?.name
     ? `${profile.name} · ${profile.code || 'SEM MATRÍCULA'}`
@@ -593,6 +828,25 @@ function populateReportIdentification() {
 
 function finishQuiz() {
   clearInterval(timerId);
+  if (game && !game.profileRecorded) {
+    playerProfile = createPlayerProfile();
+    const stats = playerProfile.stats;
+    stats.rounds += 1;
+    stats.correct += game.correct;
+    stats.questions += game.questions.length;
+    stats.bestScore = Math.max(stats.bestScore, game.points);
+    stats.bestStreak = Math.max(stats.bestStreak, game.bestStreak);
+    playerProfile.history.unshift({
+      date: new Date().toISOString(),
+      difficulty: game.difficulty,
+      correct: game.correct,
+      score: game.points,
+      bestStreak: game.bestStreak
+    });
+    playerProfile.history = playerProfile.history.slice(0, 30);
+    game.profileRecorded = true;
+    persistPlayerProfile();
+  }
   populateReportIdentification();
   const elapsedSeconds = Math.max(0, Math.floor((performance.now() - roundStartedAt) / 1000));
   const elapsedMinutes = Math.floor(elapsedSeconds / 60);
@@ -687,15 +941,119 @@ function finishQuiz() {
   navigate('report');
 }
 
+function renderPlayerProfile() {
+  playerProfile = ensureAdmissionRecord();
+  const profile = playerProfile;
+  $('#profile-name').textContent = profile.name || 'CANDIDATO NÃO IDENTIFICADO';
+  $('#menu-player-name').textContent = profile.name || 'CANDIDATO NÃO IDENTIFICADO';
+  $('#profile-code').textContent = profile.code || 'SEM IDENTIFICAÇÃO';
+  $('#profile-status').textContent = profile.functionalRecords?.some((record) => record.type === 'admission') ? 'EM EXERCÍCIO' : 'ADMISSÃO PENDENTE';
+  renderFunctionalRecords(profile);
+  const stats = profile.stats || {};
+  const accuracy = stats.questions ? Math.round((stats.correct / stats.questions) * 100) : 0;
+  $('#profile-stats').replaceChildren();
+  [['Turnos realizados',stats.rounds||0],['Precisão acumulada',accuracy+'%'],['Melhor pontuação',stats.bestScore||0],['Melhor sequência',stats.bestStreak||0]].forEach(([label,value])=>{
+    const item=document.createElement('div'); item.className='profile-stat';
+    const name=document.createElement('span'); name.textContent=label;
+    const result=document.createElement('strong'); result.textContent=String(value);
+    item.append(name,result); $('#profile-stats').append(item);
+  });
+  const history=$('#profile-history'); history.replaceChildren();
+  if(!profile.history.length){
+    const empty=document.createElement('p'); empty.className='body-copy';
+    empty.textContent='Nenhum turno registrado. O histórico será atualizado após suas primeiras inspeções.';
+    history.append(empty);
+  } else profile.history.forEach((entry)=>{
+    const item=document.createElement('div'); item.className='profile-history-item';
+    const date=document.createElement('span'); date.textContent=new Date(entry.date).toLocaleDateString('pt-BR');
+    const mode=document.createElement('span'); mode.textContent=String(entry.difficulty||'').toUpperCase();
+    const result=document.createElement('strong'); result.textContent=`${entry.correct}/10 · ${entry.score} PTS`;
+    item.append(date,mode,result); history.append(item);
+  });
+}
+function exportPlayerBackup() {
+  playerProfile = ensureAdmissionRecord();
+  const backup = {
+    format: 'tgif-player-backup',
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    profile: playerProfile,
+    campaignCompleted: localStorage.getItem(campaignKey) === 'true',
+    campaignResult: (() => { try { return JSON.parse(localStorage.getItem(campaignResultKey) || 'null'); } catch { return null; } })(),
+    reportSequence: Number(localStorage.getItem(reportSequenceKey) || 0)
+  };
+  const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `tgif-backup-${new Date().toISOString().slice(0, 10)}.json`;
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+function confirmInApp({ title, message, confirmLabel = 'Confirmar' }) {
+  return new Promise((resolve) => {
+    const modal = $('#profile-confirm-modal');
+    $('#profile-confirm-title').textContent = title;
+    $('#profile-confirm-message').textContent = message;
+    $('#profile-confirm-accept').textContent = confirmLabel;
+    const finish = (accepted) => {
+      modal.hidden = true;
+      document.body.classList.remove('review-modal-open');
+      $('#profile-confirm-accept').removeEventListener('click', accept);
+      $('#profile-confirm-cancel').removeEventListener('click', cancel);
+      resolve(accepted);
+    };
+    const accept = () => finish(true);
+    const cancel = () => finish(false);
+    $('#profile-confirm-accept').addEventListener('click', accept);
+    $('#profile-confirm-cancel').addEventListener('click', cancel);
+    modal.hidden = false;
+    document.body.classList.add('review-modal-open');
+    $('#profile-confirm-cancel').focus();
+  });
+}
+
+async function importPlayerBackup(event) {
+  const file = event.target.files?.[0];
+  event.target.value = '';
+  if (!file) return;
+  try {
+    const backup = JSON.parse(await file.text());
+    if (backup?.format !== 'tgif-player-backup' || backup.version !== 1 ||
+        !backup.profile || typeof backup.profile !== 'object' ||
+        typeof backup.profile.code !== 'string' || typeof backup.profile.name !== 'string') {
+      throw new Error('Formato de backup inválido.');
+    }
+    if (!await confirmInApp({ title: 'Substituir arquivo pessoal', message: 'A importação substituirá o perfil e todo o progresso local deste navegador. Deseja continuar?', confirmLabel: 'Importar backup' })) return;
+    localStorage.setItem(playerProfileKey, JSON.stringify(backup.profile));
+    localStorage.setItem(campaignKey, backup.campaignCompleted ? 'true' : 'false');
+    if (backup.campaignResult) localStorage.setItem(campaignResultKey, JSON.stringify(backup.campaignResult));
+    else localStorage.removeItem(campaignResultKey);
+    localStorage.setItem(reportSequenceKey, String(Number(backup.reportSequence) || 0));
+    playerProfile = createPlayerProfile();
+    renderPlayerProfile();
+    $('#profile-backup-feedback').textContent = 'BACKUP IMPORTADO E VALIDADO.';
+    $('#profile-backup-feedback').className = 'feedback-row is-success';
+  } catch (error) {
+    $('#profile-backup-feedback').textContent = error.message || 'NÃO FOI POSSÍVEL IMPORTAR O BACKUP.';
+    $('#profile-backup-feedback').className = 'feedback-row is-error';
+  }
+}
+
 const openingText = `Ministério da Admissão — Circular Interna Nº 7
 
-Todo inspetor de fronteira deve demonstrar conhecimento geográfico básico antes de assumir o posto.
+Conforme os resultados da Loteria do Trabalho de Outubro de 1982, seu nome foi selecionado para ocupar uma posição no Posto Fronteiriço de Grestin.
 
-Você foi designado ao Posto Fronteiriço de Grestin. Sua participação é compulsória — você foi selecionado pela Loteria do Trabalho de Outubro de 1982 e não pode recusar esta designação.
+A convocação possui caráter compulsório. A recusa, ausência ou tentativa de evasão será considerada infração administrativa.
 
-Antes de assumir suas funções, deve demonstrar conhecimentos geográficos básicos sobre os países e as cidades da região.
+Antes da efetivação da designação, o convocado deverá submeter-se à entrevista admissional, prestar as informações necessárias ao registro funcional e realizar a avaliação geográfica oficial, abrangendo países, territórios e cidades da região.
 
-Este teste é obrigatório. Resultados serão arquivados.
+As declarações e os resultados obtidos serão registrados permanentemente em seu arquivo funcional e considerados para fins de avaliação e classificação administrativa.
+
+Concluídos os procedimentos, será emitido o parecer admissional e, conforme determinação da Diretoria de Pessoal, formalizada a ordem de designação.
+
+O cumprimento das determinações é obrigatório.
 
 Glória a Arstotzka.`
 
@@ -737,8 +1095,7 @@ function continueFromOpening() {
   play('page', 0.24);
   play('theme', 0.14);
   if (reviewingCampaign) {
-    reviewingCampaign = false;
-    showSavedCampaignResult();
+    beginInterview();
     return;
   }
   let completed = false;
@@ -747,11 +1104,17 @@ function continueFromOpening() {
 }
 
 $('#opening').addEventListener('click', continueFromOpening);
-$('#interview-next').addEventListener('click', () => { interviewIndex += 1; if (interviewIndex < interviewQuestions.length) renderInterviewQuestion(); else prepareRegistration(); });
+$('#interview-next').addEventListener('click', () => { interviewIndex += 1; if (interviewIndex < interviewQuestions.length) renderInterviewQuestion(); else completeInterview(); });
 $('#registration-submit').addEventListener('click', saveRegistration);
 $('#candidate-name').addEventListener('keydown', (event) => { if (event.key === 'Enter') saveRegistration(); });
 $('#shift-intro-skip').addEventListener('click', finishShiftIntro);
-$('#orientation-start').addEventListener('click', beginCampaign);
+$('#orientation-start').addEventListener('click', () => {
+  if (admissionReviewSession) {
+    showSavedCampaignResult();
+    return;
+  }
+  beginCampaign();
+});
 $('#designation-enter').addEventListener('click', () => navigate('menu'));
 $('#campaign-next').addEventListener('click', () => { campaignIndex += 1; renderCampaignQuestion(); });
 $('#result-menu').addEventListener('click', () => showDesignation());
@@ -773,13 +1136,57 @@ function showSavedCampaignResult() {
 }
 
 function reviewCampaign() {
-  reviewingCampaign = true;
-  navigate('opening');
-  document.body.classList.add('is-opening');
-startOpeningSequence();
+  $('#admission-review-modal').hidden = false;
+  document.body.classList.add('review-modal-open');
+  $('#review-confirm').focus();
+}
+function closeAdmissionReview() {
+  $('#admission-review-modal').hidden = true;
+  document.body.classList.remove('review-modal-open');
+  $('#menu-review').focus();
 }
 $('#menu-review').addEventListener('click', reviewCampaign);
-$('#menu-reset').addEventListener('click', () => beginQuiz('facil'));
+$('#review-cancel').addEventListener('click', closeAdmissionReview);
+$('#review-confirm').addEventListener('click', () => {
+  closeAdmissionReview();
+  reviewingCampaign = true;
+  admissionReviewInProgress = true;
+  admissionReviewSession = true;
+  navigate('opening');
+  document.body.classList.add('is-opening');
+  startOpeningSequence();
+});
+$('#menu-profile').addEventListener('click', () => {
+  renderPlayerProfile();
+  navigate('profile');
+});
+$('#profile-back').addEventListener('click', () => navigate('menu'));
+$('#profile-export').addEventListener('click', exportPlayerBackup);
+$('#profile-import-button').addEventListener('click', () => $('#profile-import').click());
+$('#profile-import').addEventListener('change', importPlayerBackup);
+
+$('#profile-reset').addEventListener('click', async () => {
+  const confirmed = await confirmInApp({
+    title: 'Excluir todo o progresso',
+    message: 'Esta operação apagará o cadastro, a admissão, os resultados, as estatísticas e o histórico deste navegador. Não será possível recuperar os dados sem um backup. Deseja excluir tudo e voltar ao início?',
+    confirmLabel: 'Excluir e reiniciar'
+  });
+  if (!confirmed) return;
+  [playerProfileKey, legacyProfileKey, campaignKey, campaignResultKey, reportSequenceKey].forEach((key) => {
+    try { localStorage.removeItem(key); } catch {}
+  });
+  playerProfile = null;
+  campaign = [];
+  campaignIndex = 0;
+  campaignCorrect = 0;
+  game = null;
+  reviewingCampaign = false;
+  admissionReviewInProgress = false;
+  admissionReviewSession = false;
+  navigate('opening');
+  document.body.classList.add('is-opening');
+  startOpeningSequence();
+});
 document.querySelectorAll('[data-difficulty]').forEach((button) => button.addEventListener('click', () => beginQuiz(button.dataset.difficulty)));
 document.querySelectorAll('[data-score-regime]').forEach((button) => button.addEventListener('click', () => openScoreRegime(button.dataset.scoreRegime, button)));
 document.querySelectorAll('[data-score-modal-close]').forEach((element) => element.addEventListener('click', closeScoreRegulation));
@@ -832,6 +1239,8 @@ $('#effects-volume').addEventListener('input', (event) => {
   persistAudioSettings();
   updateAudioSettingsUI();
 });
+playerProfile = createPlayerProfile();
+$('#menu-player-name').textContent = playerProfile.name || 'CANDIDATO NÃO IDENTIFICADO';
 updateAudioSettingsUI();
 startOpeningSequence();
 

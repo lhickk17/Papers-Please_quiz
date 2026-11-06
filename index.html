@@ -62,8 +62,8 @@
 <div class="screen-content narrow admission-screen">
   <div class="section-heading"><div><p class="eyebrow">Diretoria de pessoal · Entrevista</p><h1>Entrevista de admissão</h1></div><span class="status-stamp">SALA 03</span></div>
   <article class="interview-card">
-    <div class="vonel-portrait" aria-label="Identificação de M. Vonel"><span>M.V.</span><small>SUPERVISOR</small></div>
-    <div class="interview-content"><p class="eyebrow">M. Vonel · Supervisor de recrutamento</p><h2 id="interview-question">Sente-se. Vamos começar.</h2><p id="interview-context" class="body-copy">Responda com sinceridade. Suas respostas serão anexadas à ficha de admissão, mas não alteram a avaliação técnica.</p><div id="interview-options" class="interview-options"></div><p id="interview-feedback" class="feedback-row" aria-live="polite"></p><button id="interview-next" class="button button-primary" type="button" hidden>Continuar entrevista →</button></div>
+    <figure class="vonel-portrait"><img src="./assets/intro/MVonel.png" alt="Retrato em pixel art do supervisor M. Vonel, usando uniforme e quepe, sob iluminação de foco." loading="eager" decoding="async"><figcaption> M. VONEL · SUPERVISOR </figcaption></figure>
+    <div class="interview-content"><p class="eyebrow">M. Vonel · Supervisor de recrutamento</p><h2 id="interview-question">Sente-se. Vamos começar.</h2><p id="interview-context" class="body-copy">Responda com sinceridade. Suas respostas serão anexadas à ficha de admissão.</p><div id="interview-options" class="interview-options"></div><p id="interview-feedback" class="feedback-row" aria-live="polite"></p><button id="interview-next" class="button button-primary" type="button" hidden>Continuar entrevista →</button></div>
   </article>
 </div></section>
 <section id="registration" class="screen" aria-hidden="true" inert>
@@ -72,7 +72,24 @@
   <article class="contract-document">
     <div class="contract-heading"><span>REPÚBLICA DE ARSTOTZKA</span><strong>MINISTÉRIO DA ADMISSÃO</strong><small>TERMO DE DESIGNAÇÃO E REGISTRO DO SERVIDOR</small></div>
     <div class="contract-grid">
-      <label class="contract-field contract-field-wide">Nome completo do contratado<input id="candidate-name" maxlength="32" autocomplete="off" placeholder="Digite seu nome" required></label>
+      <label class="contract-field contract-field-wide">Nome completo do contratado<input id="candidate-name" maxlength="48" autocomplete="name" placeholder="Digite seu nome" required></label>
+      <div class="contract-field"><span>Sexo declarado</span><div class="contract-choices" role="group" aria-label="Sexo declarado">
+        <label class="contract-choice"><input type="radio" name="candidate-sex" value="Masculino" required><span>Masculino</span></label>
+        <label class="contract-choice"><input type="radio" name="candidate-sex" value="Feminino" required><span>Feminino</span></label>
+      </div></div>
+      <div class="contract-field"><span>Nacionalidade</span><strong>Arstotzkana</strong></div>
+      <div class="contract-field"><span>Estado civil</span><div class="contract-choices" role="group" aria-label="Estado civil">
+        <label class="contract-choice"><input type="radio" name="candidate-marital-status" value="Solteiro(a)" required><span>Solteiro(a)</span></label>
+        <label class="contract-choice"><input type="radio" name="candidate-marital-status" value="Casado(a)" required><span>Casado(a)</span></label>
+        
+        <label class="contract-choice"><input type="radio" name="candidate-marital-status" value="Viúvo(a)" required><span>Viúvo(a)</span></label>
+      </div></div>
+      <div class="contract-field"><span>Dependentes</span><div class="contract-choices" role="group" aria-label="Número de dependentes">
+        <label class="contract-choice"><input type="radio" name="candidate-dependents" value="0"><span>Nenhum</span></label>
+        <label class="contract-choice"><input type="radio" name="candidate-dependents" value="1"><span>1</span></label>
+        <label class="contract-choice"><input type="radio" name="candidate-dependents" value="2"><span>2</span></label>
+        <label class="contract-choice"><input type="radio" name="candidate-dependents" value="3"><span>3 ou mais</span></label>
+      </div></div>
       <div class="contract-field"><span>Código de identificação</span><strong id="candidate-code">AR-82-000000</strong></div>
       <div class="contract-field"><span>Unidade de lotação</span><strong>Posto Fronteiriço de Grestin</strong></div>
       <div class="contract-field"><span>Endereço funcional</span><strong>Bloco habitacional 6 · Grestin Leste</strong></div>
@@ -80,7 +97,8 @@
       <div class="contract-field"><span>Cargo</span><strong>Inspetor de fronteira · Classe III</strong></div>
       <div class="contract-field"><span>Data de admissão</span><strong>04 de outubro de 1982</strong></div>
     </div>
-    <p class="contract-terms">O contratado declara ciência de que a designação é compulsória, que a residência funcional está vinculada ao exercício do cargo e que os registros de desempenho serão mantidos pelo Ministério. O número de identificação é fictício e exclusivo deste registro.</p>
+    
+    <p class="contract-terms">O contratado declara ciência de que a designação é compulsória, que a residência funcional está vinculada ao exercício do cargo e que os registros de desempenho serão mantidos pelo Ministério. A assinatura confirma a exatidão das informações declaradas, ainda que sua origem administrativa seja anterior a este procedimento.</p>
     <div class="contract-signature"><span>Assinatura do contratado</span><span>Departamento de pessoal</span></div>
     <div class="contract-actions"><p id="registration-feedback" class="feedback-row" aria-live="polite"></p><button id="registration-submit" class="button button-primary" type="button">Assinar e registrar →</button></div>
   </article>
@@ -99,7 +117,7 @@
   <article class="designation-document">
     <div class="designation-stamp">DESIGNAÇÃO<br>EFETIVADA</div>
     <p class="eyebrow">República de Arstotzka · Diretoria de pessoal</p><h1>Ordem oficial de designação</h1>
-    <p>Por determinação do Ministério, fica formalizada a admissão do servidor abaixo identificado para exercício imediato de suas funções.</p>
+    <p>Por determinação do Ministério, fica formalizada a admissão do servidor abaixo identificado para exercício imediato de suas funções. A integração ao quadro funcional é compulsória, independentemente do resultado da avaliação admissional.</p>
     <div class="designation-record"><span>Servidor</span><strong id="designation-name">Candidato registrado</strong><span>Identificação funcional</span><strong id="designation-code">AR-82-000000</strong><span>Posto de serviço</span><strong>Grestin · Setor de inspeção de entrada</strong><span>Residência funcional</span><strong>Bloco habitacional 6 · Grestin Leste</strong><span>Superior imediato</span><strong>M. Vonel · Supervisão de fronteira</strong></div>
     <p class="designation-warning">Apresente-se ao posto no próximo turno. Ausências, recusas de serviço e abandono de função serão tratados conforme regulamento interno.</p>
     <div class="designation-footer"><span>Glória a Arstotzka.</span><span>ARQUIVO FUNCIONAL · 1982</span></div>
@@ -113,7 +131,7 @@
 <article id="campaign-panel" class="document-card question-panel"><div class="document-card-inner"><div class="document-header">Ministério da Admissão · Documento de viagem</div><p class="question-prompt">Identifique o país de emissão deste documento.</p><h2 class="question-title question-city">Carregando registro...</h2><div id="campaign-options" class="options-grid"></div><p class="keyboard-hint">ATALHO DE TECLADO: 1–4 SELECIONAR · ENTER CONFIRMAR</p><p id="campaign-feedback" class="feedback-row" aria-live="polite"></p><p id="campaign-curiosity" class="curiosity-note"></p><button id="campaign-next" class="button button-primary" type="button" hidden>Próximo documento →</button></div></article>
 </div></section>
 <section id="campaign-result" class="screen" aria-hidden="true" inert><div class="screen-content narrow"><p class="eyebrow">Parecer do supervisor · M. Vonel</p><div class="result-layout">
-<img id="result-plaque" class="result-plaque" src="./assets/papers/PlaqueOneInner.png" alt="Placa de avaliação"><div><span class="status-stamp">REGISTRO ARQUIVADO</span><h1 id="result-heading" class="question-title">Parecer final</h1><p id="result-score" class="kicker">0 / 10 acertos</p><p id="result-message" class="result-copy"></p><div class="result-evaluation-record"><span>Unidade avaliadora</span><strong>Diretoria de pessoal · Grestin</strong><span>Responsável pelo parecer</span><strong>M. Vonel · Supervisor</strong><span>Referência</span><strong>Processo seletivo 1982/10-04</strong></div><div class="button-row"><button id="result-menu" class="button button-primary" type="button">Consultar ordem de designação →</button><a class="button steam-button" href="https://store.steampowered.com/app/239030/Papers_Please/" target="_blank" rel="noopener noreferrer">Jogue Papers, Please ↗</a><button id="result-retry" class="button" type="button" hidden>Refazer avaliação</button></div></div>
+<img id="result-plaque" class="result-plaque" src="./assets/papers/PlaqueOneInner.png" alt="Placa de avaliação"><div><span class="status-stamp">REGISTRO ARQUIVADO</span><h1 id="result-heading" class="question-title">Parecer final</h1><p id="result-score" class="kicker">0 / 10 acertos</p><p id="result-message" class="result-copy"></p><div class="result-evaluation-record"><span>Unidade avaliadora</span><strong>Diretoria de pessoal · Grestin</strong><span>Responsável pelo parecer</span><strong>M. Vonel · Supervisor</strong><span>Referência</span><strong>Processo seletivo 1982/10-04</strong></div><section class="result-interview-note"><p class="eyebrow">Entrevista · Observação comportamental</p><p id="result-interview-assessment"></p></section><div class="button-row"><button id="result-menu" class="button button-primary" type="button">Consultar ordem de designação →</button><a class="button steam-button" href="https://store.steampowered.com/app/239030/Papers_Please/" target="_blank" rel="noopener noreferrer">Jogue Papers, Please ↗</a><button id="result-retry" class="button" type="button" hidden>Refazer avaliação</button></div></div>
 </div></div></section>
 <section id="menu" class="screen" aria-hidden="true" inert><div class="screen-content">
 <div class="section-heading"><div><p class="eyebrow">Posto fronteiriço de Grestin</p><h1>Teste geográfico para inspetores</h1></div><span class="status-stamp is-success">DESIGNAÇÃO ATIVA</span></div>
@@ -125,7 +143,27 @@
   <div class="ministry-bulletin-footer"><span class="bulletin-state-mark"><img src="./assets/intro/Arstotzka.png" alt="" aria-hidden="true"> REPÚBLICA DE ARSTOTZKA</span><span>USO INTERNO</span></div>
 </article>
 <div class="menu-modes"><button class="mode-card" type="button" data-difficulty="facil"><span class="mode-number">01 / TREINAMENTO</span><strong>Adaptação</strong><span>Sem limite de tempo. Familiarize-se com os procedimentos e regulamentos do posto.</span></button><button class="mode-card" type="button" data-difficulty="normal"><span class="mode-number">02 / SERVIÇO REGULAR</span><strong>Protocolo padrão</strong><span>Oito segundos por documento. Bonificações por velocidade e sequência de acertos.</span></button><button class="mode-card" type="button" data-difficulty="dificil"><span class="mode-number">03 / REGIME DE EXCEÇÃO</span><strong>Inspeção rigorosa</strong><span>Cinco segundos por documento. Janela de bônus de velocidade reduzida e penalidades ampliadas.</span></button></div>
-<div class="report-grid"><section class="report-panel score-regulation-panel"><p class="eyebrow">Regulamento de pontuação</p><h2 class="score-regulation-heading">Pontuação por regime</h2><p class="score-regulation-intro">Consulte as regras específicas de cada modalidade.</p><div class="score-regime-tabs" role="group" aria-label="Consultar regras de pontuação"><button class="score-regime-tab" type="button" data-score-regime="facil"><span>01</span> Treinamento</button><button class="score-regime-tab" type="button" data-score-regime="normal"><span>02</span> Serviço regular</button><button class="score-regime-tab" type="button" data-score-regime="dificil"><span>03</span> Regime de exceção</button></div></section><div class="report-panel"><p class="eyebrow">Arquivo pessoal</p><p class="body-copy">A campanha fica concluída após a primeira avaliação, independentemente da nota. É possível revê-la pelo menu; você não precisa refazer dez perguntas a cada visita.</p><div class="button-row"><button id="menu-review" class="button" type="button">Rever campanha</button><button id="menu-reset" class="button button-danger" type="button">Realizar avaliação individual</button></div></div></div></div></section>
+<div class="report-grid"><section class="report-panel score-regulation-panel"><p class="eyebrow">Regulamento de pontuação</p><h2 class="score-regulation-heading">Pontuação por regime</h2><p class="score-regulation-intro">Consulte as regras específicas de cada modalidade.</p><div class="score-regime-tabs" role="group" aria-label="Consultar regras de pontuação"><button class="score-regime-tab" type="button" data-score-regime="facil"><span>01</span> Treinamento</button><button class="score-regime-tab" type="button" data-score-regime="normal"><span>02</span> Serviço regular</button><button class="score-regime-tab" type="button" data-score-regime="dificil"><span>03</span> Regime de exceção</button></div></section><section class="report-panel player-record-panel"><p class="eyebrow">Arquivo pessoal</p><h2 class="score-regulation-heading">Registro do jogador</h2><p id="menu-player-name" class="score-regulation-intro player-record-name">Candidato não identificado</p><div class="player-record-actions"><button id="menu-review" class="button" type="button">Rever admissão</button><button id="menu-profile" class="button" type="button">Consultar perfil →</button></div></section></div></div></section>
+<section id="profile" class="screen" aria-hidden="true" inert>
+  <div class="screen-content narrow">
+    <div class="section-heading"><div><p class="eyebrow">Arquivo pessoal · Dossiê funcional</p><h1>Perfil funcional</h1></div><span class="status-stamp">DADOS LOCAIS</span></div>
+    <article class="profile-identity report-panel">
+      <p class="eyebrow">Identificação do servidor</p><h2 id="profile-name">CANDIDATO NÃO IDENTIFICADO</h2>
+      <p id="profile-code" class="profile-code">SEM IDENTIFICAÇÃO</p>
+      <div class="profile-status-line"><span>Situação funcional</span><strong id="profile-status">ADMISSÃO PENDENTE</strong></div>
+    </article>
+    <section class="report-panel profile-functional-records">
+      <p class="eyebrow">Arquivo do Ministério</p><h2>Registros funcionais</h2>
+      <p class="body-copy">Documentos emitidos durante a campanha. Registros anteriores permanecem preservados.</p>
+      <div id="profile-records" class="profile-record-list"></div>
+    </section>
+    <section class="report-panel profile-performance"><p class="eyebrow">Desempenho acumulado</p><h2>Estatísticas de serviço</h2><div id="profile-stats" class="profile-stats"></div></section>
+    <section class="report-panel"><p class="eyebrow">Atividade operacional</p><h2>Histórico de turnos</h2><div id="profile-history" class="profile-history"></div></section>
+    <section class="report-panel profile-backup"><p class="eyebrow">Preservação de dados</p><h2>Backup do arquivo pessoal</h2><p class="body-copy">Exporte uma cópia do seu progresso para restaurá-lo em outro navegador ou dispositivo. Guarde o arquivo em local seguro.</p><div class="button-row"><button id="profile-export" class="button button-primary" type="button">Exportar backup JSON</button><button id="profile-import-button" class="button" type="button">Importar backup</button><input id="profile-import" type="file" accept="application/json,.json" hidden></div><p id="profile-backup-feedback" class="feedback-row" aria-live="polite"></p></section>
+    <section class="report-panel profile-reset"><p class="eyebrow">Controle do arquivo</p><h2>Excluir progresso</h2><p class="body-copy">Apaga o cadastro, a admissão, os resultados, as estatísticas e o histórico deste navegador. O próximo acesso começará do zero.</p><div class="button-row"><button id="profile-reset" class="button" type="button">Excluir todo o progresso</button></div><p id="profile-reset-feedback" class="feedback-row" aria-live="polite"></p></section>
+    <div class="button-row"><button id="profile-back" class="button" type="button">← Voltar ao menu</button></div>
+  </div>
+</section>
 <section id="quiz" class="screen" aria-hidden="true" inert>
   <div class="screen-content">
     <div class="section-heading">
@@ -179,7 +217,26 @@
   </div>
 </div>
 </div></section>
-</main><footer class="site-footer"><span class="footer-disclaimer">T.G.I.F. é um fan game independente, inspirado em <em>Papers, Please</em>. Não oficial e sem vínculo com Lucas Pope ou 3909 LLC.</span><a class="footer-steam-link" href="https://store.steampowered.com/app/239030/Papers_Please/" target="_blank" rel="noopener noreferrer">Conheça o jogo original na Steam ↗</a><span>Glória a Arstotzka</span></footer></div><div id="score-regulation-modal" class="score-modal" hidden>
+</main><footer class="site-footer"><span class="footer-disclaimer">T.G.I.F. é um fan game independente, inspirado em <em>Papers, Please</em>. Não oficial e sem vínculo com Lucas Pope ou 3909 LLC.</span><a class="footer-steam-link" href="https://store.steampowered.com/app/239030/Papers_Please/" target="_blank" rel="noopener noreferrer">Conheça o jogo original na Steam ↗</a><span>Glória a Arstotzka</span></footer></div><div id="admission-review-modal" class="score-modal" hidden>
+  <div class="score-modal-backdrop"></div>
+  <section class="score-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="review-modal-title">
+    <p class="eyebrow">Ministério da Admissão · Requerimento 07-C</p>
+    <h2 id="review-modal-title">Revisão do processo de admissão</h2>
+    <p class="score-modal-overview">A reapresentação do processo é exclusivamente administrativa. Seu registro pessoal, resultados, histórico e identificação funcional serão preservados. Nenhum novo inspetor será registrado.</p>
+    <p class="score-modal-comparison">O procedimento reapresentará a abertura, entrevista, contrato, orientação e avaliação inicial. Os dados cadastrais já declarados serão recuperados automaticamente.</p>
+    <div class="button-row"><button id="review-cancel" class="button" type="button">Cancelar</button><button id="review-confirm" class="button button-primary" type="button">Confirmar revisão →</button></div>
+  </section>
+</div>
+<div id="profile-confirm-modal" class="score-modal" hidden>
+  <div class="score-modal-backdrop"></div>
+  <section class="score-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="profile-confirm-title" aria-describedby="profile-confirm-message">
+    <p class="eyebrow">Ministério da Admissão · Confirmação</p>
+    <h2 id="profile-confirm-title">Confirmar operação</h2>
+    <p id="profile-confirm-message" class="score-modal-overview"></p>
+    <div class="button-row"><button id="profile-confirm-cancel" class="button" type="button">Cancelar</button><button id="profile-confirm-accept" class="button button-primary" type="button">Confirmar</button></div>
+  </section>
+</div>
+<div id="score-regulation-modal" class="score-modal" hidden>
   <div class="score-modal-backdrop" data-score-modal-close></div>
   <section class="score-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="score-modal-title" aria-describedby="score-modal-overview" tabindex="-1">
     <button id="score-modal-close" class="score-modal-close" type="button" data-score-modal-close aria-label="Fechar regulamento">FECHAR <span aria-hidden="true">×</span></button>
