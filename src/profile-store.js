@@ -8,6 +8,19 @@ const INSPECTOR_LAST_NAMES = [
   'Varga', 'Volkov', 'Zoric', 'Keller', 'Orlov', 'Dragun'
 ];
 
+function emptyInspectorStatistics() {
+  return {
+    campaignsCompleted: 0,
+    turnsCompleted: 0,
+    correctAnswers: 0,
+    questionsAnswered: 0,
+    totalPoints: 0,
+    bestScore: 0,
+    bestStreak: 0,
+    lastPlayedAt: null
+  };
+}
+
 function makeId(prefix, random) {
   return `${prefix}-${Math.floor(random() * Number.MAX_SAFE_INTEGER).toString(36)}`;
 }
@@ -67,6 +80,10 @@ export function normalizeIdentityStore(value) {
     inspectors: inspectors.map((inspector) => ({
       ...inspector,
       interviewAnswers: Array.isArray(inspector.interviewAnswers) ? inspector.interviewAnswers : [],
+      statistics: {
+        ...emptyInspectorStatistics(),
+        ...(inspector.statistics && typeof inspector.statistics === 'object' ? inspector.statistics : {})
+      },
       status: inspector.id === activeInspectorId ? 'active' : 'archived'
     })),
     activeInspectorId,
@@ -135,4 +152,43 @@ export function registerNewInspector(store, {
 export function getActiveInspector(store) {
   if (!store?.activeInspectorId || !Array.isArray(store.inspectors)) return null;
   return store.inspectors.find((inspector) => inspector.id === store.activeInspectorId) ?? null;
+}
+
+
+export function recordInspectorPerformance(store, {
+  inspectorId = store?.activeInspectorId,
+  type = 'turn',
+  correct = 0,
+  questions = 10,
+  points = 0,
+  bestStreak = 0,
+  recordedAt = new Date().toISOString()
+} = {}) {
+  const current = normalizeIdentityStore(store);
+  const safeQuestions = Math.max(0, Number.isFinite(questions) ? Math.floor(questions) : 0);
+  const safeCorrect = Math.max(0, Math.min(safeQuestions, Number.isFinite(correct) ? Math.floor(correct) : 0));
+  const safePoints = Math.max(0, Number.isFinite(points) ? Math.floor(points) : 0);
+  const safeBestStreak = Math.max(0, Number.isFinite(bestStreak) ? Math.floor(bestStreak) : 0);
+
+  return {
+    ...current,
+    inspectors: current.inspectors.map((inspector) => {
+      if (inspector.id !== inspectorId) return inspector;
+      const statistics = { ...emptyInspectorStatistics(), ...inspector.statistics };
+      return {
+        ...inspector,
+        statistics: {
+          ...statistics,
+          campaignsCompleted: statistics.campaignsCompleted + Number(type === 'campaign'),
+          turnsCompleted: statistics.turnsCompleted + Number(type === 'turn'),
+          correctAnswers: statistics.correctAnswers + safeCorrect,
+          questionsAnswered: statistics.questionsAnswered + safeQuestions,
+          totalPoints: statistics.totalPoints + (type === 'turn' ? safePoints : 0),
+          bestScore: Math.max(statistics.bestScore, type === 'turn' ? safePoints : 0),
+          bestStreak: Math.max(statistics.bestStreak, safeBestStreak),
+          lastPlayedAt: recordedAt
+        }
+      };
+    })
+  };
 }
