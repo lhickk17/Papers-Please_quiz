@@ -332,7 +332,7 @@ let interviewReviewMode = false;
 
 function beginInterview() {
   playerProfile = createPlayerProfile();
-  interviewReviewMode = reviewingCampaign;
+  interviewReviewMode = admissionReviewSession || reviewingCampaign;
   interviewIndex = 0;
   if (interviewReviewMode) {
     interviewAnswers = Array.isArray(playerProfile.interview) ? playerProfile.interview : [];
@@ -1037,7 +1037,6 @@ function continueFromOpening() {
   play('page', 0.24);
   play('theme', 0.14);
   if (reviewingCampaign) {
-    reviewingCampaign = false;
     beginInterview();
     return;
   }
@@ -1051,7 +1050,13 @@ $('#interview-next').addEventListener('click', () => { interviewIndex += 1; if (
 $('#registration-submit').addEventListener('click', saveRegistration);
 $('#candidate-name').addEventListener('keydown', (event) => { if (event.key === 'Enter') saveRegistration(); });
 $('#shift-intro-skip').addEventListener('click', finishShiftIntro);
-$('#orientation-start').addEventListener('click', beginCampaign);
+$('#orientation-start').addEventListener('click', () => {
+  if (admissionReviewSession) {
+    showSavedCampaignResult();
+    return;
+  }
+  beginCampaign();
+});
 $('#designation-enter').addEventListener('click', () => navigate('menu'));
 $('#campaign-next').addEventListener('click', () => { campaignIndex += 1; renderCampaignQuestion(); });
 $('#result-menu').addEventListener('click', () => showDesignation());
