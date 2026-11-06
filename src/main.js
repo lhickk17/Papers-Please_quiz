@@ -5,12 +5,13 @@ const $ = (selector) => document.querySelector(selector);
 const screenIds = ['opening', 'interview', 'registration', 'orientation', 'campaign', 'campaign-result', 'designation', 'menu', 'profile', 'quiz', 'report'];
 const campaignKey = 'ppquiz.campaign.v3';
 const campaignResultKey = 'ppquiz.campaign.result.v2';
-const profileKey = 'ppquiz.inspector.profile.v1';
+const playerProfileKey = 'ppquiz.player.profile.v1';
+const legacyProfileKey = 'ppquiz.inspector.profile.v1';
 const audioSettingsKey = 'ppquiz.audio.settings.v1';
 const reportSequenceKey = 'ppquiz.report.sequence.v1';
 let interviewIndex = 0;
 let interviewAnswers = [];
-let inspectorProfile = null;
+let playerProfile = null;
 let roundStartedAt = 0;
 let campaign = [];
 let campaignIndex = 0;
@@ -357,9 +358,9 @@ function renderInterviewQuestion() {
   });
 }
 
-function createInspectorProfile() {
+function createPlayerProfile() {
   let saved = null;
-  try { saved = JSON.parse(localStorage.getItem(profileKey) || 'null'); } catch {}
+  try { saved = JSON.parse(localStorage.getItem(playerProfileKey) || localStorage.getItem(legacyProfileKey) || 'null'); } catch {}
   const serial = Math.floor(100000 + Math.random() * 900000);
   const defaults = {
     name: '', code: `AR-82-${serial}`, createdAt: '1982-10-04', interview: [],
@@ -368,6 +369,7 @@ function createInspectorProfile() {
     history: []
   };
   if (!saved || typeof saved !== 'object' || !saved.code) return defaults;
+  try { if (!localStorage.getItem(playerProfileKey)) localStorage.setItem(playerProfileKey, JSON.stringify(saved)); } catch {}
   return {
     ...defaults, ...saved,
     stats: { ...defaults.stats, ...(saved.stats || {}) },
@@ -376,20 +378,20 @@ function createInspectorProfile() {
   };
 }
 
-function persistInspectorProfile() {
-  try { localStorage.setItem(profileKey, JSON.stringify(inspectorProfile)); } catch {}
+function persistPlayerProfile() {
+  try { localStorage.setItem(playerProfileKey, JSON.stringify(playerProfile)); } catch {}
 }
 
 function prepareRegistration() {
-  inspectorProfile = createInspectorProfile();
-  $('#candidate-code').textContent = inspectorProfile.code;
-  $('#candidate-name').value = inspectorProfile.name || '';
-  $('#candidate-sex').value = inspectorProfile.sex || '';
-  $('#candidate-nationality').value = inspectorProfile.nationality || '';
-  $('#candidate-marital-status').value = inspectorProfile.maritalStatus || '';
-  $('#candidate-dependents').value = inspectorProfile.dependents ?? '0';
-  $('#candidate-occupation').value = inspectorProfile.previousOccupation || '';
-  $('#registration-submit').textContent = inspectorProfile.name ? 'Confirmar registro →' : 'Assinar e registrar →';
+  playerProfile = createPlayerProfile();
+  $('#candidate-code').textContent = playerProfile.code;
+  $('#candidate-name').value = playerProfile.name || '';
+  $('#candidate-sex').value = playerProfile.sex || '';
+  $('#candidate-nationality').value = playerProfile.nationality || '';
+  $('#candidate-marital-status').value = playerProfile.maritalStatus || '';
+  $('#candidate-dependents').value = playerProfile.dependents ?? '0';
+  $('#candidate-occupation').value = playerProfile.previousOccupation || '';
+  $('#registration-submit').textContent = playerProfile.name ? 'Confirmar registro →' : 'Assinar e registrar →';
   $('#registration-feedback').textContent = '';
   $('#registration-feedback').className = 'feedback-row';
   navigate('registration');
@@ -416,27 +418,27 @@ function saveRegistration() {
       return;
     }
   }
-  inspectorProfile = {
-    ...createInspectorProfile(), ...inspectorProfile, name,
+  playerProfile = {
+    ...createPlayerProfile(), ...playerProfile, name,
     sex: $('#candidate-sex').value,
     nationality: $('#candidate-nationality').value,
     maritalStatus: $('#candidate-marital-status').value,
     dependents: $('#candidate-dependents').value,
     previousOccupation: $('#candidate-occupation').value,
-    interview: interviewAnswers.length ? interviewAnswers : (inspectorProfile?.interview || [])
+    interview: interviewAnswers.length ? interviewAnswers : (playerProfile?.interview || [])
   };
-  persistInspectorProfile();
+  persistPlayerProfile();
   $('#registration-feedback').textContent = 'DECLARAÇÕES REGISTRADAS. O MINISTÉRIO AGRADECE A COLABORAÇÃO.';
   $('#registration-feedback').className = 'feedback-row is-success';
   $('#designation-name').textContent = name;
-  $('#designation-code').textContent = inspectorProfile.code;
+  $('#designation-code').textContent = playerProfile.code;
   window.setTimeout(() => navigate('orientation'), 350);
 }
 
 function showDesignation() {
-  try { inspectorProfile = JSON.parse(localStorage.getItem(profileKey) || 'null'); } catch {}
-  $('#designation-name').textContent = inspectorProfile?.name || 'Servidor não identificado';
-  $('#designation-code').textContent = inspectorProfile?.code || 'AR-82-PENDENTE';
+  try { playerProfile = JSON.parse(localStorage.getItem(playerProfileKey) || localStorage.getItem(legacyProfileKey) || 'null'); } catch {}
+  $('#designation-name').textContent = playerProfile?.name || 'Servidor não identificado';
+  $('#designation-code').textContent = playerProfile?.code || 'AR-82-PENDENTE';
   navigate('designation');
 }
 
@@ -622,7 +624,7 @@ function populateReportIdentification() {
   }
 
   let profile = null;
-  try { profile = JSON.parse(localStorage.getItem(profileKey) || 'null'); } catch {}
+  try { profile = JSON.parse(localStorage.getItem(playerProfileKey) || localStorage.getItem(legacyProfileKey) || 'null'); } catch {}
   const serial = String(sequence).padStart(6, '0');
   const inspector = profile?.name
     ? `${profile.name} · ${profile.code || 'SEM MATRÍCULA'}`
@@ -637,23 +639,23 @@ function populateReportIdentification() {
 function finishQuiz() {
   clearInterval(timerId);
   if (game && !game.profileRecorded) {
-    inspectorProfile = createInspectorProfile();
-    const stats = inspectorProfile.stats;
+    playerProfile = createPlayerProfile();
+    const stats = playerProfile.stats;
     stats.rounds += 1;
     stats.correct += game.correct;
     stats.questions += game.questions.length;
     stats.bestScore = Math.max(stats.bestScore, game.points);
     stats.bestStreak = Math.max(stats.bestStreak, game.bestStreak);
-    inspectorProfile.history.unshift({
+    playerProfile.history.unshift({
       date: new Date().toISOString(),
       difficulty: game.difficulty,
       correct: game.correct,
       score: game.points,
       bestStreak: game.bestStreak
     });
-    inspectorProfile.history = inspectorProfile.history.slice(0, 30);
+    playerProfile.history = playerProfile.history.slice(0, 30);
     game.profileRecorded = true;
-    persistInspectorProfile();
+    persistPlayerProfile();
   }
   populateReportIdentification();
   const elapsedSeconds = Math.max(0, Math.floor((performance.now() - roundStartedAt) / 1000));
@@ -750,8 +752,8 @@ function finishQuiz() {
 }
 
 function renderPlayerProfile() {
-  inspectorProfile = createInspectorProfile();
-  const profile = inspectorProfile;
+  playerProfile = createPlayerProfile();
+  const profile = playerProfile;
   $('#profile-name').textContent = profile.name || 'CANDIDATO NÃO IDENTIFICADO';
   $('#menu-player-name').textContent = profile.name || 'CANDIDATO NÃO IDENTIFICADO';
   $('#profile-code').textContent = profile.code || 'SEM IDENTIFICAÇÃO';
@@ -807,12 +809,12 @@ function renderPlayerProfile() {
 }
 
 function exportPlayerBackup() {
-  inspectorProfile = createInspectorProfile();
+  playerProfile = createPlayerProfile();
   const backup = {
     format: 'tgif-player-backup',
     version: 1,
     exportedAt: new Date().toISOString(),
-    profile: inspectorProfile,
+    profile: playerProfile,
     campaignCompleted: localStorage.getItem(campaignKey) === 'true',
     campaignResult: (() => { try { return JSON.parse(localStorage.getItem(campaignResultKey) || 'null'); } catch { return null; } })(),
     reportSequence: Number(localStorage.getItem(reportSequenceKey) || 0)
@@ -838,12 +840,12 @@ async function importPlayerBackup(event) {
       throw new Error('Formato de backup inválido.');
     }
     if (!window.confirm('A importação substituirá o perfil e o progresso local deste navegador. Deseja continuar?')) return;
-    localStorage.setItem(profileKey, JSON.stringify(backup.profile));
+    localStorage.setItem(playerProfileKey, JSON.stringify(backup.profile));
     localStorage.setItem(campaignKey, backup.campaignCompleted ? 'true' : 'false');
     if (backup.campaignResult) localStorage.setItem(campaignResultKey, JSON.stringify(backup.campaignResult));
     else localStorage.removeItem(campaignResultKey);
     localStorage.setItem(reportSequenceKey, String(Number(backup.reportSequence) || 0));
-    inspectorProfile = createInspectorProfile();
+    playerProfile = createPlayerProfile();
     renderPlayerProfile();
     $('#profile-backup-feedback').textContent = 'BACKUP IMPORTADO E VALIDADO.';
     $('#profile-backup-feedback').className = 'feedback-row is-success';
@@ -1026,8 +1028,8 @@ $('#effects-volume').addEventListener('input', (event) => {
   persistAudioSettings();
   updateAudioSettingsUI();
 });
-inspectorProfile = createInspectorProfile();
-$('#menu-player-name').textContent = inspectorProfile.name || 'CANDIDATO NÃO IDENTIFICADO';
+playerProfile = createPlayerProfile();
+$('#menu-player-name').textContent = playerProfile.name || 'CANDIDATO NÃO IDENTIFICADO';
 updateAudioSettingsUI();
 startOpeningSequence();
 
