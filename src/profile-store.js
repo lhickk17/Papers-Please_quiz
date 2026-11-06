@@ -86,7 +86,7 @@ export function createInitialIdentityStore({
   random = Math.random,
   inspectorDraft = null
 } = {}) {
-  const normalizedName = String(playerName ?? '').trim().replace(/\\s+/g, ' ');
+  const normalizedName = String(playerName ?? '').trim().replace(/\s+/g, ' ');
   if (normalizedName.length < 2) throw new Error('O nome do jogador deve ter pelo menos dois caracteres.');
 
   const inspector = inspectorDraft
@@ -115,7 +115,7 @@ export function registerNewInspector(store, {
 } = {}) {
   const current = normalizeIdentityStore(store);
   if (!current.player) throw new Error('Não existe um perfil de jogador registrado.');
-  const normalizedName = String(name ?? '').trim().replace(/\\s+/g, ' ');
+  const normalizedName = String(name ?? '').trim().replace(/\s+/g, ' ');
   if (normalizedName.length < 2) throw new Error('O nome do inspetor deve ter pelo menos dois caracteres.');
 
   const inspectors = current.inspectors.map((inspector) => ({ ...inspector, status: 'archived' }));
