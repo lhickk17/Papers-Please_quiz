@@ -972,6 +972,22 @@ $('#profile-export').addEventListener('click', exportPlayerBackup);
 $('#profile-import-button').addEventListener('click', () => $('#profile-import').click());
 $('#profile-import').addEventListener('change', importPlayerBackup);
 
+$('#profile-reset').addEventListener('click', () => {
+  const confirmed = window.confirm('EXCLUIR TODO O PROGRESSO?\\n\\nEsta ação apagará o cadastro, a admissão, os resultados, as estatísticas e o histórico deste navegador. Não será possível recuperar os dados sem um backup.\\n\\nDeseja excluir tudo e começar novamente?');
+  if (!confirmed) return;
+  [playerProfileKey, legacyProfileKey, campaignKey, campaignResultKey, reportSequenceKey].forEach((key) => {
+    try { localStorage.removeItem(key); } catch {}
+  });
+  playerProfile = createPlayerProfile();
+  campaign = [];
+  campaignIndex = 0;
+  campaignCorrect = 0;
+  game = null;
+  renderPlayerProfile();
+  $('#profile-reset-feedback').textContent = 'PROGRESSO EXCLUÍDO. UM NOVO REGISTRO SERÁ CRIADO NA PRÓXIMA ADMISSÃO.';
+  $('#profile-reset-feedback').className = 'feedback-row is-success';
+});
+
 document.querySelectorAll('[data-difficulty]').forEach((button) => button.addEventListener('click', () => beginQuiz(button.dataset.difficulty)));
 document.querySelectorAll('[data-score-regime]').forEach((button) => button.addEventListener('click', () => openScoreRegime(button.dataset.scoreRegime, button)));
 document.querySelectorAll('[data-score-modal-close]').forEach((element) => element.addEventListener('click', closeScoreRegulation));
