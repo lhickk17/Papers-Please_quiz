@@ -493,7 +493,6 @@ body.is-shift-intro{overflow:hidden}
 .profile-history{display:grid}
 .profile-backup .button-row{margin-top:1rem}
 .review-modal-open{overflow:hidden}
-.filer-expanded.is-closing{animation:filer-close .24s ease-in both;pointer-events:none}
-@keyframes filer-close{to{opacity:0;transform:translateY(-8px);filter:blur(2px)}}
+.filer-expanded.is-closing{animation:screen-in .28s var(--ease) reverse both;pointer-events:none}
 @media(max-width:520px){.profile-details,.profile-stats{grid-template-columns:1fr}.player-record-actions .button{width:100%}}
 @media(prefers-reduced-motion:reduce){.filer-expanded.is-closing{animation:none;opacity:0}}
