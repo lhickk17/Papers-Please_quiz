@@ -363,7 +363,7 @@ function createInspectorProfile() {
   const serial = Math.floor(100000 + Math.random() * 900000);
   const defaults = {
     name: '', code: `AR-82-${serial}`, createdAt: '1982-10-04', interview: [],
-    sex: '', nationality: 'Arstotzka', maritalStatus: '', dependents: '0',
+    sex: '', nationality: '', maritalStatus: '', dependents: '0',
     previousOccupation: '', stats: { rounds: 0, correct: 0, questions: 0, bestScore: 0, bestStreak: 0 },
     history: []
   };
@@ -385,7 +385,7 @@ function prepareRegistration() {
   $('#candidate-code').textContent = inspectorProfile.code;
   $('#candidate-name').value = inspectorProfile.name || '';
   $('#candidate-sex').value = inspectorProfile.sex || '';
-  $('#candidate-nationality').value = inspectorProfile.nationality || 'Arstotzka';
+  $('#candidate-nationality').value = inspectorProfile.nationality || '';
   $('#candidate-marital-status').value = inspectorProfile.maritalStatus || '';
   $('#candidate-dependents').value = inspectorProfile.dependents ?? '0';
   $('#candidate-occupation').value = inspectorProfile.previousOccupation || '';
@@ -760,6 +760,11 @@ function renderPlayerProfile() {
   $('#profile-marital-status').textContent = profile.maritalStatus || 'NÃO REGISTRADO';
   $('#profile-dependents').textContent = profile.dependents ?? '0';
   $('#profile-occupation').textContent = profile.previousOccupation || 'NÃO INFORMADA';
+  let admissionResult = null;
+  try { admissionResult = JSON.parse(localStorage.getItem(campaignResultKey) || 'null'); } catch {}
+  $('#profile-campaign-result').textContent = admissionResult && Number.isInteger(admissionResult.correct)
+    ? `${admissionResult.correct}/10 · ${String(admissionResult.outcome || 'REGISTRADO').toUpperCase()}`
+    : (localStorage.getItem(campaignKey) === 'true' ? 'RESULTADO ANTERIOR INDISPONÍVEL' : 'AVALIAÇÃO PENDENTE');
   const stats = profile.stats || {};
   const accuracy = stats.questions ? Math.round((stats.correct / stats.questions) * 100) : 0;
   $('#profile-stats').innerHTML = '';
@@ -809,7 +814,7 @@ function exportPlayerBackup() {
     exportedAt: new Date().toISOString(),
     profile: inspectorProfile,
     campaignCompleted: localStorage.getItem(campaignKey) === 'true',
-    campaignResult: JSON.parse(localStorage.getItem(campaignResultKey) || 'null'),
+    campaignResult: (() => { try { return JSON.parse(localStorage.getItem(campaignResultKey) || 'null'); } catch { return null; } })(),
     reportSequence: Number(localStorage.getItem(reportSequenceKey) || 0)
   };
   const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
