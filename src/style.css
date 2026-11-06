@@ -160,6 +160,15 @@ body.is-opening .opening-screen{display:flex;align-items:stretch;justify-content
   color:#211e17;font:inherit;font-size:.9rem;outline-offset:3px;
 }
 .contract-field input::placeholder{color:rgba(41,36,24,.48)}
+
+.contract-choices{display:flex;flex-wrap:wrap;gap:.35rem .8rem;padding-top:.2rem}
+.contract-choice{display:inline-flex;align-items:center;gap:.38rem;font-size:.7rem;line-height:1.5;color:#292418;cursor:pointer}
+.contract-choice input{appearance:none;width:14px;height:14px;flex:0 0 14px;margin:0;border:1px solid #665334;background:rgba(255,255,255,.2);display:grid;place-items:center;cursor:pointer}
+.contract-choice input:checked::after{content:"X";font-family:Georgia,serif;font-size:12px;font-weight:700;line-height:1;color:#211e17}
+.contract-choice input:disabled{opacity:1;cursor:default}
+.contract-choice:has(input:disabled){cursor:default}
+.contract-field input:read-only{background:transparent;border-bottom-style:dotted;color:#292418}
+
 .contract-terms{font-size:.68rem;line-height:1.9;color:#55452c;border-top:1px solid rgba(53,39,20,.25);padding-top:1rem}
 .contract-signature{display:flex;justify-content:space-between;gap:2rem;margin:2rem 0 1rem}
 .contract-signature span{width:48%;padding-top:.55rem;border-top:1px solid rgba(53,39,20,.55);font-size:.58rem;color:#665334}
