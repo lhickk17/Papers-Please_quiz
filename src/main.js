@@ -765,7 +765,6 @@ function renderPlayerProfile() {
   $('#profile-nationality').textContent = profile.nationality || 'NÃO REGISTRADA';
   $('#profile-marital-status').textContent = profile.maritalStatus || 'NÃO REGISTRADO';
   $('#profile-dependents').textContent = profile.dependents ?? '0';
-  $('#profile-occupation').textContent = profile.previousOccupation || 'NÃO INFORMADA';
   let admissionResult = null;
   try { admissionResult = JSON.parse(localStorage.getItem(campaignResultKey) || 'null'); } catch {}
   $('#profile-campaign-result').textContent = admissionResult && Number.isInteger(admissionResult.correct)
