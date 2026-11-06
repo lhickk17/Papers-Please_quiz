@@ -163,10 +163,12 @@ body.is-opening .opening-screen{display:flex;align-items:stretch;justify-content
 
 .contract-choices{display:flex;flex-wrap:wrap;gap:.35rem .8rem;padding-top:.2rem}
 .contract-choice{display:inline-flex;align-items:center;gap:.38rem;font-size:.7rem;line-height:1.5;color:#292418;cursor:pointer}
-.contract-choice input{appearance:none;position:relative;width:14px;height:16px;flex:0 0 14px;margin:0;border:0;background:transparent;cursor:pointer}
-.contract-choice input:checked::after{content:"";position:absolute;inset:2px;background:linear-gradient(45deg,transparent 44%,#211e17 45%,#211e17 54%,transparent 55%),linear-gradient(-45deg,transparent 44%,#211e17 45%,#211e17 54%,transparent 55%)}
-.contract-choice input:disabled{opacity:1;cursor:default}
+.contract-choice{position:relative;gap:.28rem}
+.contract-choice input{position:absolute;width:1px;height:1px;margin:0;opacity:0;pointer-events:none}
+.contract-choice:before{content:"";display:inline-block;width:.85rem;height:1rem;flex:0 0 .85rem}
+.contract-choice:has(input:checked):before{content:"×";font-family:Georgia,serif;font-size:1.15rem;font-weight:700;line-height:.9;text-align:center;color:#211e17}
 .contract-choice:has(input:disabled){cursor:default}
+.contract-choice:has(input:focus-visible){outline:2px solid #8b6c3e;outline-offset:3px}
 .contract-field input:read-only{background:transparent;border-bottom-style:dotted;color:#292418}
 
 .contract-terms{font-size:.68rem;line-height:1.9;color:#55452c;border-top:1px solid rgba(53,39,20,.25);padding-top:1rem}
