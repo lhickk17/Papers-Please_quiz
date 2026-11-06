@@ -35,7 +35,7 @@ test('first admission creates one permanent player and one active inspector', ()
   assert.equal(store.statistics.inspectorsCreated, 1);
   assert.equal(inspector.status, 'active');
   assert.deepEqual(inspector.interviewAnswers, [0, 2, 1]);
-  assert.match(inspector.code, /^AR-82-\\d{6}$/);
+  assert.match(inspector.code, /^AR-82-\d{6}$/);
   assert.notEqual(inspector.name, store.player.name);
 });
 
