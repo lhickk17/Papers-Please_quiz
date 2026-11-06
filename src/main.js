@@ -416,7 +416,7 @@ function createPlayerProfile() {
     name: '', code: `AR-82-${serial}`, createdAt: '1982-10-04', interview: [],
     sex: '', nationality: 'Arstotzka', maritalStatus: '', dependents: '0',
     stats: { rounds: 0, correct: 0, questions: 0, bestScore: 0, bestStreak: 0 },
-    history: []
+    history: [], functionalRecords: []
   };
   if (!saved || typeof saved !== 'object' || !saved.code) return defaults;
   try { if (!localStorage.getItem(playerProfileKey)) localStorage.setItem(playerProfileKey, JSON.stringify(saved)); } catch {}
@@ -425,12 +425,117 @@ function createPlayerProfile() {
     nationality: 'Arstotzka',
     stats: { ...defaults.stats, ...(saved.stats || {}) },
     history: Array.isArray(saved.history) ? saved.history : [],
-    interview: Array.isArray(saved.interview) ? saved.interview : []
+    interview: Array.isArray(saved.interview) ? saved.interview : [],
+    functionalRecords: Array.isArray(saved.functionalRecords) ? saved.functionalRecords : []
   };
 }
 
 function persistPlayerProfile() {
   try { localStorage.setItem(playerProfileKey, JSON.stringify(playerProfile)); } catch {}
+}
+
+
+function getAdmissionOutcomeLabel(outcome) {
+  return ({ distinction: 'DISTINÇÃO CONCEDIDA', pass: 'APROVADO COM RESSALVAS', retry: 'AVALIAÇÃO INSATISFATÓRIA' })[outcome] || 'RESULTADO REGISTRADO';
+}
+
+function buildAdmissionRecord(profile, result) {
+  const outcome = result.outcome || campaignOutcome(result.correct);
+  const interview = Array.isArray(profile.interview) ? profile.interview.map((answer) => ({ ...answer })) : [];
+  const interviewAssessment = buildInterviewAssessment(interview);
+  const vonelOpinion = ({
+    distinction: 'O supervisor Vonel reconhece seu desempenho excepcional. Mantenha esse padrão de conformidade.',
+    pass: 'Sua avaliação atende ao mínimo exigido. O Ministério espera maior precisão no próximo turno.',
+    retry: 'Seu desempenho ficou abaixo do padrão. A supervisão registrou ressalvas. Consulte o manual e aguarde as instruções de M. Vonel.'
+  })[outcome] || 'O resultado foi encaminhado à supervisão para registro administrativo.';
+  return {
+    id: `ING-${profile.code}-001`, number: 1, type: 'admission',
+    title: 'Registro de Ingresso no Serviço Público',
+    issuedAt: new Date().toISOString(), entryDate: profile.createdAt || '1982-10-04',
+    functionalCode: profile.code,
+    candidate: { name: profile.name || '', sex: profile.sex || '', nationality: profile.nationality || 'Arstotzka', maritalStatus: profile.maritalStatus || '', dependents: String(profile.dependents ?? '0') },
+    interview, interviewAssessment,
+    evaluation: { correct: result.correct, total: 10, outcome, classification: getAdmissionOutcomeLabel(outcome) },
+    vonelOpinion
+  };
+}
+
+function ensureAdmissionRecord() {
+  playerProfile = createPlayerProfile();
+  if (!Array.isArray(playerProfile.functionalRecords)) playerProfile.functionalRecords = [];
+  if (playerProfile.functionalRecords.some((record) => record?.type === 'admission') || !playerProfile.name || !playerProfile.interview?.length) return playerProfile;
+  let result = null;
+  try { result = JSON.parse(localStorage.getItem(campaignResultKey) || 'null'); } catch {}
+  if (!result || !Number.isInteger(result.correct)) return playerProfile;
+  playerProfile.functionalRecords.unshift(buildAdmissionRecord(playerProfile, result));
+  persistPlayerProfile();
+  return playerProfile;
+}
+
+function renderFunctionalRecords(profile) {
+  const container = $('#profile-records');
+  container.replaceChildren();
+  const records = Array.isArray(profile.functionalRecords) ? profile.functionalRecords : [];
+  if (!records.length) {
+    const empty = document.createElement('p');
+    empty.className = 'body-copy';
+    empty.textContent = 'Nenhum registro funcional emitido. O Registro de Ingresso será incorporado após a conclusão do processo admissional.';
+    container.append(empty);
+    return;
+  }
+  records.forEach((record) => {
+    const details = document.createElement('details');
+    details.className = 'functional-record';
+    const summary = document.createElement('summary');
+    const heading = document.createElement('span');
+    heading.className = 'functional-record-title';
+    heading.textContent = record.title || 'Registro funcional';
+    const metadata = document.createElement('span');
+    metadata.className = 'functional-record-meta';
+    metadata.textContent = `Nº ${String(record.number || 1).padStart(3, '0')} · ${record.type === 'admission' ? 'ADMISSÃO ORIGINAL' : 'REGISTRO COMPLEMENTAR'}`;
+    summary.append(heading, metadata);
+    details.append(summary);
+    const body = document.createElement('div');
+    body.className = 'functional-record-document';
+    const addField = (label, value) => {
+      const row = document.createElement('div');
+      row.className = 'functional-record-field';
+      const name = document.createElement('span');
+      name.textContent = label;
+      const content = document.createElement('strong');
+      content.textContent = value || 'NÃO REGISTRADO';
+      row.append(name, content);
+      body.append(row);
+    };
+    addField('Nome completo', record.candidate?.name);
+    addField('Sexo declarado', record.candidate?.sex);
+    addField('Nacionalidade', record.candidate?.nationality);
+    addField('Estado civil', record.candidate?.maritalStatus);
+    addField('Dependentes', record.candidate?.dependents);
+    addField('Número de identificação funcional', record.functionalCode);
+    addField('Data de ingresso', record.entryDate ? new Date(`${record.entryDate}T12:00:00`).toLocaleDateString('pt-BR') : '');
+    const interviewHeading = document.createElement('h3');
+    interviewHeading.textContent = 'Transcrição da entrevista';
+    body.append(interviewHeading);
+    if (Array.isArray(record.interview) && record.interview.length) {
+      record.interview.forEach((answer,index) => {
+        const item=document.createElement('article'); item.className='functional-interview-item';
+        const question=document.createElement('strong'); question.textContent=answer.question || interviewQuestions[index]?.question || 'Pergunta não identificada';
+        const response=document.createElement('p'); response.textContent=answer.selectedOptionText || 'Resposta não registrada';
+        const feedback=document.createElement('small'); feedback.textContent=answer.feedback || '';
+        item.append(question,response,feedback); body.append(item);
+      });
+    } else addField('Transcrição','Não disponível no arquivo anterior');
+    addField('Observação comportamental',record.interviewAssessment);
+    const evaluationHeading=document.createElement('h3');
+    evaluationHeading.textContent='Resultado da avaliação admissional'; body.append(evaluationHeading);
+    addField('Pontuação',`${record.evaluation?.correct ?? '—'} / ${record.evaluation?.total ?? 10} acertos`);
+    addField('Classificação técnica',record.evaluation?.classification);
+    const opinionHeading=document.createElement('h3'); opinionHeading.textContent='Parecer de M. Vonel'; body.append(opinionHeading);
+    const opinion=document.createElement('p'); opinion.className='functional-record-opinion';
+    opinion.textContent=record.vonelOpinion || 'Parecer não disponível no arquivo anterior.'; body.append(opinion);
+    details.append(body); container.append(details);
+  });
 }
 
 function prepareRegistration() {
@@ -568,6 +673,7 @@ function showCampaignResult(correct, persist = false) {
     try {
       localStorage.setItem(campaignKey, 'true');
       localStorage.setItem(campaignResultKey, JSON.stringify({ correct, outcome }));
+      ensureAdmissionRecord();
     } catch {}
   }
   const plaqueByOutcome = {
@@ -862,64 +968,37 @@ function renderInterviewProfile(profile) {
 }
 
 function renderPlayerProfile() {
-  playerProfile = createPlayerProfile();
+  playerProfile = ensureAdmissionRecord();
   const profile = playerProfile;
   $('#profile-name').textContent = profile.name || 'CANDIDATO NÃO IDENTIFICADO';
   $('#menu-player-name').textContent = profile.name || 'CANDIDATO NÃO IDENTIFICADO';
   $('#profile-code').textContent = profile.code || 'SEM IDENTIFICAÇÃO';
-  $('#profile-sex').textContent = profile.sex || 'NÃO DECLARADO';
-  $('#profile-nationality').textContent = profile.nationality || 'NÃO REGISTRADA';
-  $('#profile-marital-status').textContent = profile.maritalStatus || 'NÃO REGISTRADO';
-  $('#profile-dependents').textContent = profile.dependents ?? '0';
-  renderInterviewProfile(profile);
-  let admissionResult = null;
-  try { admissionResult = JSON.parse(localStorage.getItem(campaignResultKey) || 'null'); } catch {}
-  $('#profile-campaign-result').textContent = admissionResult && Number.isInteger(admissionResult.correct)
-    ? `${admissionResult.correct}/10 · ${String(admissionResult.outcome || 'REGISTRADO').toUpperCase()}`
-    : (localStorage.getItem(campaignKey) === 'true' ? 'RESULTADO ANTERIOR INDISPONÍVEL' : 'AVALIAÇÃO PENDENTE');
+  $('#profile-status').textContent = profile.functionalRecords?.some((record) => record.type === 'admission') ? 'EM EXERCÍCIO' : 'ADMISSÃO PENDENTE';
+  renderFunctionalRecords(profile);
   const stats = profile.stats || {};
   const accuracy = stats.questions ? Math.round((stats.correct / stats.questions) * 100) : 0;
-  $('#profile-stats').innerHTML = '';
-  [
-    ['Turnos realizados', stats.rounds || 0],
-    ['Precisão acumulada', accuracy + '%'],
-    ['Melhor pontuação', stats.bestScore || 0],
-    ['Melhor sequência', stats.bestStreak || 0]
-  ].forEach(([label, value]) => {
-    const item = document.createElement('div');
-    item.className = 'profile-stat';
-    const name = document.createElement('span');
-    name.textContent = label;
-    const result = document.createElement('strong');
-    result.textContent = String(value);
-    item.append(name, result);
-    $('#profile-stats').append(item);
+  $('#profile-stats').replaceChildren();
+  [['Turnos realizados',stats.rounds||0],['Precisão acumulada',accuracy+'%'],['Melhor pontuação',stats.bestScore||0],['Melhor sequência',stats.bestStreak||0]].forEach(([label,value])=>{
+    const item=document.createElement('div'); item.className='profile-stat';
+    const name=document.createElement('span'); name.textContent=label;
+    const result=document.createElement('strong'); result.textContent=String(value);
+    item.append(name,result); $('#profile-stats').append(item);
   });
-  const history = $('#profile-history');
-  history.replaceChildren();
-  if (!profile.history.length) {
-    const empty = document.createElement('p');
-    empty.className = 'body-copy';
-    empty.textContent = 'Nenhum turno registrado. O histórico será atualizado após suas primeiras inspeções.';
+  const history=$('#profile-history'); history.replaceChildren();
+  if(!profile.history.length){
+    const empty=document.createElement('p'); empty.className='body-copy';
+    empty.textContent='Nenhum turno registrado. O histórico será atualizado após suas primeiras inspeções.';
     history.append(empty);
-  } else {
-    profile.history.forEach((entry) => {
-      const item = document.createElement('div');
-      item.className = 'profile-history-item';
-      const date = document.createElement('span');
-      date.textContent = new Date(entry.date).toLocaleDateString('pt-BR');
-      const mode = document.createElement('span');
-      mode.textContent = String(entry.difficulty || '').toUpperCase();
-      const result = document.createElement('strong');
-      result.textContent = `${entry.correct}/10 · ${entry.score} PTS`;
-      item.append(date, mode, result);
-      history.append(item);
-    });
-  }
+  } else profile.history.forEach((entry)=>{
+    const item=document.createElement('div'); item.className='profile-history-item';
+    const date=document.createElement('span'); date.textContent=new Date(entry.date).toLocaleDateString('pt-BR');
+    const mode=document.createElement('span'); mode.textContent=String(entry.difficulty||'').toUpperCase();
+    const result=document.createElement('strong'); result.textContent=`${entry.correct}/10 · ${entry.score} PTS`;
+    item.append(date,mode,result); history.append(item);
+  });
 }
-
 function exportPlayerBackup() {
-  playerProfile = createPlayerProfile();
+  playerProfile = ensureAdmissionRecord();
   const backup = {
     format: 'tgif-player-backup',
     version: 1,
