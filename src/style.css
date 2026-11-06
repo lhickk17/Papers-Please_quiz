@@ -494,5 +494,7 @@ body.is-shift-intro{overflow:hidden}
 .profile-backup .button-row{margin-top:1rem}
 .review-modal-open{overflow:hidden}
 .filer-expanded{will-change:opacity,transform}
+.filer-expanded.is-closing{animation:filer-screen-out .28s var(--ease) both;pointer-events:none}
+@keyframes filer-screen-out{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(8px)}}
 @media(max-width:520px){.profile-details,.profile-stats{grid-template-columns:1fr}.player-record-actions .button{width:100%}}
 @media(prefers-reduced-motion:reduce){.filer-expanded{will-change:auto}}
