@@ -1,16 +1,38 @@
 import './style.css';
 import { createRound, campaignOutcome, scoreAnswer, classifyScore, applyScoreDelta } from './core.js';
+import {
+  createInitialIdentityStore,
+  createInspectorDraft,
+  getActiveInspector,
+  normalizeIdentityStore,
+  registerNewInspector
+} from './profile-store.js';
 
 const $ = (selector) => document.querySelector(selector);
 const screenIds = ['opening', 'interview', 'registration', 'orientation', 'campaign', 'campaign-result', 'designation', 'menu', 'quiz', 'report'];
 const campaignKey = 'ppquiz.campaign.v3';
 const campaignResultKey = 'ppquiz.campaign.result.v2';
-const profileKey = 'ppquiz.inspector.profile.v1';
+const identityStoreKey = 'ppquiz.identity.store.v1';
 const audioSettingsKey = 'ppquiz.audio.settings.v1';
 const reportSequenceKey = 'ppquiz.report.sequence.v1';
 let interviewIndex = 0;
 let interviewAnswers = [];
-let inspectorProfile = null;
+function loadIdentityStore() {
+  try {
+    return normalizeIdentityStore(JSON.parse(localStorage.getItem(identityStoreKey) || 'null'));
+  } catch {
+    return normalizeIdentityStore(null);
+  }
+}
+
+function persistIdentityStore(store) {
+  localStorage.setItem(identityStoreKey, JSON.stringify(store));
+}
+
+let identityStore = loadIdentityStore();
+let inspectorProfile = getActiveInspector(identityStore);
+let isInitialRegistration = !identityStore.player;
+let registrationDraft = null;
 let roundStartedAt = 0;
 let campaign = [];
 let campaignIndex = 0;
@@ -356,20 +378,24 @@ function renderInterviewQuestion() {
   });
 }
 
-function createInspectorProfile() {
-  try {
-    const saved = JSON.parse(localStorage.getItem(profileKey) || 'null');
-    if (saved?.code) return saved;
-  } catch {}
-  const serial = Math.floor(100000 + Math.random() * 900000);
-  return { name: '', code: `AR-82-${serial}`, createdAt: '1982-10-04', interview: [] };
-}
-
 function prepareRegistration() {
-  inspectorProfile = createInspectorProfile();
-  $('#candidate-code').textContent = inspectorProfile.code;
-  $('#candidate-name').value = inspectorProfile.name || '';
+  identityStore = loadIdentityStore();
+  isInitialRegistration = !identityStore.player;
+  registrationDraft = createInspectorDraft({ interviewAnswers });
+  inspectorProfile = registrationDraft;
+
+  $('#candidate-code').textContent = registrationDraft.code;
+  $('#candidate-name').value = '';
+  $('#candidate-name-label').textContent = isInitialRegistration
+    ? 'Nome do responsável pelo registro'
+    : 'Nome completo do novo inspetor';
+  $('#candidate-name').placeholder = isInitialRegistration ? 'Nome do jogador' : 'Nome do inspetor';
+  $('#candidate-inspector-preview').hidden = !isInitialRegistration;
+  $('#candidate-player-preview').hidden = isInitialRegistration;
+  $('#candidate-inspector-name').textContent = registrationDraft.name;
+  $('#candidate-player-name').textContent = identityStore.player?.name || '';
   $('#registration-feedback').textContent = '';
+  $('#registration-feedback').className = 'feedback-row';
   navigate('registration');
 }
 
@@ -381,20 +407,38 @@ function saveRegistration() {
     $('#candidate-name').focus();
     return;
   }
-  inspectorProfile = { ...inspectorProfile, name, interview: interviewAnswers };
-  try { localStorage.setItem(profileKey, JSON.stringify(inspectorProfile)); } catch {}
+
+  try {
+    identityStore = isInitialRegistration
+      ? createInitialIdentityStore({ playerName: name, interviewAnswers, inspectorDraft: registrationDraft })
+      : registerNewInspector(identityStore, { name, interviewAnswers, inspectorDraft: registrationDraft });
+    persistIdentityStore(identityStore);
+    inspectorProfile = getActiveInspector(identityStore);
+  } catch (error) {
+    $('#registration-feedback').textContent = 'NÃO FOI POSSÍVEL SALVAR O REGISTRO. VERIFIQUE O ARMAZENAMENTO DO NAVEGADOR.';
+    $('#registration-feedback').className = 'feedback-row is-error';
+    console.error('[T.G.I.F. perfil]', error);
+    return;
+  }
+
   $('#registration-feedback').textContent = 'REGISTRO ACEITO. IDENTIFICAÇÃO FUNCIONAL EMITIDA.';
   $('#registration-feedback').className = 'feedback-row is-success';
-  $('#designation-name').textContent = name;
+  $('#designation-name').textContent = inspectorProfile.name;
   $('#designation-code').textContent = inspectorProfile.code;
   window.setTimeout(() => navigate('orientation'), 350);
 }
 
 function showDesignation() {
-  try { inspectorProfile = JSON.parse(localStorage.getItem(profileKey) || 'null'); } catch {}
+  identityStore = loadIdentityStore();
+  inspectorProfile = getActiveInspector(identityStore);
   $('#designation-name').textContent = inspectorProfile?.name || 'Servidor não identificado';
   $('#designation-code').textContent = inspectorProfile?.code || 'AR-82-PENDENTE';
   navigate('designation');
+}
+
+function beginNewInspectorAdmission() {
+  identityStore = loadIdentityStore();
+  beginInterview();
 }
 
 function beginCampaign() {
@@ -578,12 +622,12 @@ function populateReportIdentification() {
     sequence = Math.floor(Date.now() / 1000) % 999999 + 1;
   }
 
-  let profile = null;
-  try { profile = JSON.parse(localStorage.getItem(profileKey) || 'null'); } catch {}
+  identityStore = loadIdentityStore();
+  inspectorProfile = getActiveInspector(identityStore);
   const serial = String(sequence).padStart(6, '0');
-  const inspector = profile?.name
-    ? `${profile.name} · ${profile.code || 'SEM MATRÍCULA'}`
-    : profile?.code || 'NÃO IDENTIFICADO';
+  const inspector = inspectorProfile?.name
+    ? `${inspectorProfile.name} · ${inspectorProfile.code || 'SEM MATRÍCULA'}`
+    : inspectorProfile?.code || 'NÃO IDENTIFICADO';
 
   $('#report-protocol').textContent = `GRE-821004-${serial}`;
   $('#report-date').textContent = '04 OUT 1982';
@@ -743,12 +787,13 @@ function continueFromOpening() {
   }
   let completed = false;
   try { completed = localStorage.getItem(campaignKey) === 'true'; } catch {}
-  completed ? navigate('menu') : beginInterview();
+  completed && identityStore.player ? navigate('menu') : beginInterview();
 }
 
 $('#opening').addEventListener('click', continueFromOpening);
 $('#interview-next').addEventListener('click', () => { interviewIndex += 1; if (interviewIndex < interviewQuestions.length) renderInterviewQuestion(); else prepareRegistration(); });
 $('#registration-submit').addEventListener('click', saveRegistration);
+$('#menu-new-inspector').addEventListener('click', beginNewInspectorAdmission);
 $('#candidate-name').addEventListener('keydown', (event) => { if (event.key === 'Enter') saveRegistration(); });
 $('#shift-intro-skip').addEventListener('click', finishShiftIntro);
 $('#orientation-start').addEventListener('click', beginCampaign);
