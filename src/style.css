@@ -494,6 +494,6 @@ body.is-shift-intro{overflow:hidden}
 .profile-backup .button-row{margin-top:1rem}
 .review-modal-open{overflow:hidden}
 .filer-expanded{transition:opacity .28s var(--ease),transform .28s var(--ease)}
-.filer-expanded.is-closing{opacity:0;transform:translateY(8px);pointer-events:none}
+.filer-expanded.is-closing{animation:none;opacity:0;transform:translateY(8px);pointer-events:none}
 @media(max-width:520px){.profile-details,.profile-stats{grid-template-columns:1fr}.player-record-actions .button{width:100%}}
 @media(prefers-reduced-motion:reduce){.filer-expanded{transition:none}.filer-expanded.is-closing{opacity:0;transform:none}}
