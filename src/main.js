@@ -1043,13 +1043,17 @@ async function importPlayerBackup(event) {
 
 const openingText = `Ministério da Admissão — Circular Interna Nº 7
 
-Todo inspetor de fronteira deve demonstrar conhecimento geográfico básico antes de assumir o posto.
+Conforme os resultados da Loteria do Trabalho de Outubro de 1982, seu nome foi selecionado para ocupar uma posição no Posto Fronteiriço de Grestin.
 
-Você foi designado ao Posto Fronteiriço de Grestin. Sua participação é compulsória — você foi selecionado pela Loteria do Trabalho de Outubro de 1982 e não pode recusar esta designação.
+A convocação possui caráter compulsório. A recusa, ausência ou tentativa de evasão será considerada infração administrativa.
 
-Antes de assumir suas funções, deve demonstrar conhecimentos geográficos básicos sobre os países e as cidades da região.
+Antes da efetivação da designação, o convocado deverá submeter-se à entrevista admissional, prestar as informações necessárias ao registro funcional e realizar a avaliação geográfica oficial, abrangendo países, territórios e cidades da região.
 
-Este teste é obrigatório. Resultados serão arquivados.
+As declarações e os resultados obtidos serão registrados permanentemente em seu arquivo funcional e considerados para fins de avaliação e classificação administrativa.
+
+Concluídos os procedimentos, será emitido o parecer admissional e, conforme determinação da Diretoria de Pessoal, formalizada a ordem de designação.
+
+O cumprimento das determinações é obrigatório.
 
 Glória a Arstotzka.`
 
