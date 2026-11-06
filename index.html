@@ -150,7 +150,8 @@
     <article class="profile-identity report-panel"><p class="eyebrow">Identificação civil</p><h2 id="profile-name">CANDIDATO NÃO IDENTIFICADO</h2><p id="profile-code" class="profile-code">SEM IDENTIFICAÇÃO</p><div class="profile-details"><div><span>Sexo declarado</span><strong id="profile-sex">NÃO DECLARADO</strong></div><div><span>Nacionalidade</span><strong id="profile-nationality">NÃO REGISTRADA</strong></div><div><span>Estado civil</span><strong id="profile-marital-status">NÃO REGISTRADO</strong></div><div><span>Dependentes</span><strong id="profile-dependents">0</strong></div><div><span>Avaliação de admissão</span><strong id="profile-campaign-result">AVALIAÇÃO PENDENTE</strong></div></div></article>
     <section class="report-panel profile-performance"><p class="eyebrow">Desempenho acumulado</p><h2>Estatísticas de serviço</h2><div id="profile-stats" class="profile-stats"></div></section>
     <section class="report-panel"><p class="eyebrow">Histórico funcional</p><h2>Turnos recentes</h2><div id="profile-history" class="profile-history"></div></section>
-    <section class="report-panel profile-backup"><p class="eyebrow">Preservação de dados</p><h2>Backup do arquivo pessoal</h2><p class="body-copy">Exporte uma cópia do seu progresso para restaurá-lo em outro navegador ou dispositivo. Guarde o arquivo em local seguro.</p><div class="button-row"><button id="profile-export" class="button button-primary" type="button">Exportar backup JSON</button><button id="profile-import-button" class="button" type="button">Importar backup</button><input id="profile-import" type="file" accept="application/json,.json" hidden></div><p id="profile-backup-feedback" class="feedback-row" aria-live="polite"></p></section>\n    <section class="report-panel profile-reset"><p class="eyebrow">Controle do arquivo</p><h2>Excluir progresso</h2><p class="body-copy">Apaga o cadastro, a avaliação admissional, as estatísticas, o histórico de turnos e os resultados salvos neste navegador. O próximo acesso começará do zero.</p><div class="button-row"><button id="profile-reset" class="button" type="button">Excluir todo o progresso</button></div><p id="profile-reset-feedback" class="feedback-row" aria-live="polite"></p></section>
+    <section class="report-panel profile-backup"><p class="eyebrow">Preservação de dados</p><h2>Backup do arquivo pessoal</h2><p class="body-copy">Exporte uma cópia do seu progresso para restaurá-lo em outro navegador ou dispositivo. Guarde o arquivo em local seguro.</p><div class="button-row"><button id="profile-export" class="button button-primary" type="button">Exportar backup JSON</button><button id="profile-import-button" class="button" type="button">Importar backup</button><input id="profile-import" type="file" accept="application/json,.json" hidden></div><p id="profile-backup-feedback" class="feedback-row" aria-live="polite"></p></section>
+    <section class="report-panel profile-reset"><p class="eyebrow">Controle do arquivo</p><h2>Excluir progresso</h2><p class="body-copy">Apaga o cadastro, a avaliação admissional, as estatísticas, o histórico de turnos e os resultados salvos neste navegador. O próximo acesso começará do zero.</p><div class="button-row"><button id="profile-reset" class="button" type="button">Excluir todo o progresso</button></div><p id="profile-reset-feedback" class="feedback-row" aria-live="polite"></p></section>
     <div class="button-row"><button id="profile-back" class="button" type="button">← Voltar ao menu</button></div>
   </div>
 </section>
@@ -215,6 +216,15 @@
     <p class="score-modal-overview">A reapresentação do processo é exclusivamente administrativa. Seu registro pessoal, resultados, histórico e identificação funcional serão preservados. Nenhum novo inspetor será registrado.</p>
     <p class="score-modal-comparison">O procedimento reapresentará a abertura, entrevista, contrato, orientação e avaliação inicial. Os dados cadastrais já declarados serão recuperados automaticamente.</p>
     <div class="button-row"><button id="review-cancel" class="button" type="button">Cancelar</button><button id="review-confirm" class="button button-primary" type="button">Confirmar revisão →</button></div>
+  </section>
+</div>
+<div id="profile-confirm-modal" class="score-modal" hidden>
+  <div class="score-modal-backdrop"></div>
+  <section class="score-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="profile-confirm-title" aria-describedby="profile-confirm-message">
+    <p class="eyebrow">Ministério da Admissão · Confirmação</p>
+    <h2 id="profile-confirm-title">Confirmar operação</h2>
+    <p id="profile-confirm-message" class="score-modal-overview"></p>
+    <div class="button-row"><button id="profile-confirm-cancel" class="button" type="button">Cancelar</button><button id="profile-confirm-accept" class="button button-primary" type="button">Confirmar</button></div>
   </section>
 </div>
 <div id="score-regulation-modal" class="score-modal" hidden>
