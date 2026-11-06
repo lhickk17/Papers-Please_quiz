@@ -451,7 +451,7 @@ function beginCampaign() {
   campaignIndex = 0;
   campaignCorrect = 0;
   navigate('campaign');
-  startShiftIntro(() => renderCampaignQuestion());
+  renderCampaignQuestion();
 }
 
 function renderCampaignQuestion() {
