@@ -32,6 +32,7 @@ let keyboardOptions = null;
 let keyboardSelection = -1;
 let openingReady = false;
 let reviewingCampaign = false;
+let admissionReviewInProgress = false;
 let openingTimer = null;
 let typingTimer = null;
 let shiftIntroTimer = null;
@@ -363,14 +364,15 @@ function createPlayerProfile() {
   const serial = Math.floor(100000 + Math.random() * 900000);
   const defaults = {
     name: '', code: `AR-82-${serial}`, createdAt: '1982-10-04', interview: [],
-    sex: '', nationality: '', maritalStatus: '', dependents: '0',
-    previousOccupation: '', stats: { rounds: 0, correct: 0, questions: 0, bestScore: 0, bestStreak: 0 },
+    sex: '', nationality: 'Arstotzka', maritalStatus: '', dependents: '0',
+    stats: { rounds: 0, correct: 0, questions: 0, bestScore: 0, bestStreak: 0 },
     history: []
   };
   if (!saved || typeof saved !== 'object' || !saved.code) return defaults;
   try { if (!localStorage.getItem(playerProfileKey)) localStorage.setItem(playerProfileKey, JSON.stringify(saved)); } catch {}
   return {
     ...defaults, ...saved,
+    nationality: 'Arstotzka',
     stats: { ...defaults.stats, ...(saved.stats || {}) },
     history: Array.isArray(saved.history) ? saved.history : [],
     interview: Array.isArray(saved.interview) ? saved.interview : []
@@ -385,11 +387,19 @@ function prepareRegistration() {
   playerProfile = createPlayerProfile();
   $('#candidate-code').textContent = playerProfile.code;
   $('#candidate-name').value = playerProfile.name || '';
-  $('#candidate-sex').value = playerProfile.sex || '';
-  $('#candidate-nationality').value = playerProfile.nationality || '';
-  $('#candidate-marital-status').value = playerProfile.maritalStatus || '';
-  $('#candidate-dependents').value = playerProfile.dependents ?? '0';
-  $('#candidate-occupation').value = playerProfile.previousOccupation || '';
+  $('#candidate-name').readOnly = admissionReviewInProgress;
+  document.querySelectorAll('input[name="candidate-sex"]').forEach((input) => {
+    input.checked = input.value === (playerProfile.sex || '');
+    input.disabled = admissionReviewInProgress;
+  });
+  document.querySelectorAll('input[name="candidate-marital-status"]').forEach((input) => {
+    input.checked = input.value === (playerProfile.maritalStatus || '');
+    input.disabled = admissionReviewInProgress;
+  });
+  document.querySelectorAll('input[name="candidate-dependents"]').forEach((input) => {
+    input.checked = input.value === String(playerProfile.dependents ?? '0');
+    input.disabled = admissionReviewInProgress;
+  });
   $('#registration-submit').textContent = playerProfile.name ? 'Confirmar registro →' : 'Assinar e registrar →';
   $('#registration-feedback').textContent = '';
   $('#registration-feedback').className = 'feedback-row';
@@ -398,35 +408,30 @@ function prepareRegistration() {
 
 function saveRegistration() {
   const name = $('#candidate-name').value.trim().replace(/\s+/g, ' ');
-  const requiredFields = [
-    ['candidate-sex', 'SELECIONE O SEXO DECLARADO.'],
-    ['candidate-nationality', 'SELECIONE A NACIONALIDADE.'],
-    ['candidate-marital-status', 'INFORME O ESTADO CIVIL.']
-  ];
+  const sex = document.querySelector('input[name="candidate-sex"]:checked')?.value || '';
+  const maritalStatus = document.querySelector('input[name="candidate-marital-status"]:checked')?.value || '';
+  const dependents = document.querySelector('input[name="candidate-dependents"]:checked')?.value ?? '';
   if (name.length < 2) {
     $('#registration-feedback').textContent = 'INFORME UM NOME COM PELO MENOS DOIS CARACTERES.';
     $('#registration-feedback').className = 'feedback-row is-error';
     $('#candidate-name').focus();
     return;
   }
-  for (const [id, message] of requiredFields) {
-    if (!$('#' + id).value) {
-      $('#registration-feedback').textContent = message;
-      $('#registration-feedback').className = 'feedback-row is-error';
-      $('#' + id).focus();
-      return;
-    }
+  if (!sex || !maritalStatus || dependents === '') {
+    $('#registration-feedback').textContent = 'ASSINALE TODAS AS OPÇÕES EXIGIDAS NO FORMULÁRIO.';
+    $('#registration-feedback').className = 'feedback-row is-error';
+    return;
   }
   playerProfile = {
     ...createPlayerProfile(), ...playerProfile, name,
-    sex: $('#candidate-sex').value,
-    nationality: $('#candidate-nationality').value,
-    maritalStatus: $('#candidate-marital-status').value,
-    dependents: $('#candidate-dependents').value,
-    previousOccupation: $('#candidate-occupation').value,
+    sex: admissionReviewInProgress ? playerProfile.sex : sex,
+    nationality: 'Arstotzka',
+    maritalStatus: admissionReviewInProgress ? playerProfile.maritalStatus : maritalStatus,
+    dependents: admissionReviewInProgress ? playerProfile.dependents : dependents,
     interview: interviewAnswers.length ? interviewAnswers : (playerProfile?.interview || [])
   };
   persistPlayerProfile();
+  admissionReviewInProgress = false;
   $('#registration-feedback').textContent = 'DECLARAÇÕES REGISTRADAS. O MINISTÉRIO AGRADECE A COLABORAÇÃO.';
   $('#registration-feedback').className = 'feedback-row is-success';
   $('#designation-name').textContent = name;
@@ -954,6 +959,7 @@ $('#review-cancel').addEventListener('click', closeAdmissionReview);
 $('#review-confirm').addEventListener('click', () => {
   closeAdmissionReview();
   reviewingCampaign = true;
+  admissionReviewInProgress = true;
   navigate('opening');
   document.body.classList.add('is-opening');
   startOpeningSequence();
