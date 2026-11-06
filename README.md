@@ -1,229 +1,264 @@
 # T.G.I.F. — Teste Geográfico para Inspetores de Fronteira
 
-Fan project inspirado no universo de **Papers, Please** (© 2013 Lucas Pope), transformando a geografia dos países e cidades do jogo em um quiz com campanha, modo livre, pontuação e relatórios.
+Fan game independente inspirado no universo de **Papers, Please**, de Lucas Pope. O projeto transforma a geografia dos países e cidades desse universo em uma experiência de inspeção de documentos, com campanha narrativa de admissão, modos livres, pontuação, relatórios e perfil funcional.
 
-## Reconstrução 2.0
+> **Aviso:** T.G.I.F. não é um produto oficial, não possui vínculo com Lucas Pope ou 3909 LLC e não é endossado por seus criadores. *Papers, Please* e seus elementos pertencem aos respectivos titulares.
 
-A branch `rebuild/vite-architecture` inicia uma reconstrução estrutural sem apagar os protótipos anteriores. A implementação usa JavaScript modular com Vite e mantém HTML/CSS próprios, sem framework de interface.
+## Visão geral
 
-### Decisões implementadas nesta primeira fatia
+A experiência se passa em **Grestin, em 1982**. O jogador é selecionado pela Loteria do Trabalho de Outubro de 1982 e convocado para uma vaga no posto fronteiriço. Antes de assumir as funções, passa por um processo administrativo que inclui entrevista, registro funcional e avaliação geográfica.
 
-- **Vite + JavaScript ES modules:** servidor de desenvolvimento e build de produção.
-- **Campanha de 10 questões:** mensagem institucional, dez documentos e parecer final.
-- **Progressão sem bloqueio:** nota baixa não impede o acesso ao menu. A campanha fica concluída após a primeira avaliação, independentemente da nota, e pode ser revista no menu.
-- **Faixas da campanha:** 0–6 acertos = avaliação insatisfatória; 7–8 = aprovação com ressalvas; 9–10 = distinção.
-- **Modo livre:** três dificuldades, pontuação, bônus, cronômetro e relatório de erros.
-- **Acessibilidade básica:** foco visível, regiões de feedback com `aria-live`, controles nativos e suporte a `prefers-reduced-motion`.
-- **Testes automatizados:** geração de perguntas, opções, cidades únicas e limites da campanha.
+Depois da admissão, o posto fica disponível para turnos de inspeção em três regimes de dificuldade. Cada turno gera um relatório arquivado pelo Filer e atualiza as estatísticas do perfil.
 
-## Direção visual
+O projeto é desenvolvido com **JavaScript ES modules, Vite, HTML e CSS**, sem framework de interface.
 
-A identidade continua inspirada no jogo original: paleta verde-escura, papel envelhecido, vermelho de carimbo, fonte Share Tech Mono, mapa e brasão. A composição foi ampliada para aproveitar telas largas, criar hierarquia entre conteúdo e indicadores e adaptar a interface a dispositivos menores.
+## Funcionalidades
 
-## Como executar
+### Campanha de admissão
 
-Requer Node.js 20.19+ ou 22.12+ conforme a versão atual do Vite.
+A primeira experiência do jogador é uma sequência narrativa e administrativa:
+
+1. **Comunicado de convocação:** apresenta a seleção pela Loteria do Trabalho e as obrigações do processo.
+2. **Entrevista com M. Vonel:** quatro perguntas sobre motivação, hierarquia, discrição e designação. As respostas são registradas e utilizadas na observação comportamental do parecer.
+3. **Cadastro funcional:** coleta os dados pessoais necessários, gera um código funcional e registra o vínculo do candidato.
+4. **Boletim e orientação:** contextualizam a situação regional e explicam o procedimento da avaliação.
+5. **Avaliação geográfica:** dez questões sobre países e cidades da região, com quatro alternativas por questão.
+6. **Parecer admissional:** apresenta a pontuação geográfica e a avaliação das respostas da entrevista.
+7. **Ordem de designação:** formaliza a admissão e a lotação no Posto Fronteiriço de Grestin.
+8. **Menu do posto:** libera os regimes de inspeção, o perfil funcional e a revisão da admissão.
+
+A avaliação geográfica gera uma classificação administrativa:
+- **0 a 6 acertos:** avaliação insatisfatória;
+- **7 a 8 acertos:** aprovação com ressalvas;
+- **9 a 10 acertos:** distinção.
+
+A classificação é registrada no processo, mas não impede a designação: a ordem oficial formaliza a admissão independentemente do resultado da avaliação.
+
+### Revisão da admissão
+
+A opção **Rever admissão**, disponível no menu, reapresenta o processo original para consulta.
+
+- A abertura, a entrevista, o cadastro e a orientação são exibidos novamente.
+- As respostas originais da entrevista são apresentadas em modo somente leitura.
+- O cadastro existente é recuperado, sem solicitar uma nova identificação.
+- A avaliação geográfica e o parecer são consultados a partir do resultado já registrado.
+- A revisão não cria outro perfil, não duplica a admissão e não sobrescreve as respostas ou os resultados originais.
+
+A revisão é uma consulta ao processo arquivado, não uma segunda tentativa de admissão.
+
+### Modos livres de inspeção
+
+Após a campanha, o jogador pode realizar turnos independentes de dez documentos. Cada rodada seleciona cidades do banco de dados e apresenta quatro alternativas de países.
+
+| Regime | Nome no menu | Tempo por documento | Penalidade por erro | Penalidade por tempo esgotado |
+|---|---|---:|---:|---:|
+| Treinamento | Adaptação | Sem limite | 0 | 0 |
+| Serviço regular | Protocolo padrão | 8 segundos | -25 | -50 |
+| Regime de exceção | Inspeção rigorosa | 5 segundos | -50 | -75 |
+
+Os regimes também diferenciam a bonificação por velocidade e por sequência de acertos.
+
+### Pontuação
+
+- Cada resposta correta concede **100 pontos-base**.
+- Um acerto dentro da janela de velocidade concede **+20 pontos**: até 5 segundos no Treinamento, 4 segundos no Serviço regular e 2,5 segundos no Regime de exceção.
+- No Serviço regular e no Regime de exceção, a sequência de acertos concede bônus progressivos: 3º acerto consecutivo = +10; 4º e 5º = +20; 6º e 7º = +30; 8º e 9º = +40; a partir do 10º = +50 por acerto.
+- O Treinamento registra sequências, mas não concede bônus por sequência.
+- Erros e tempos esgotados interrompem a sequência e não concedem bônus de velocidade.
+- A pontuação acumulada nunca fica negativa.
+- O Filer discrimina pontos-base, bônus, penalidades e estatísticas da rodada.
+
+A classificação dos turnos livres considera a pontuação final normalizada pelo máximo teórico do regime: **1.200 pontos no Treinamento** e **1.440 pontos** nos outros dois regimes.
+
+| Classificação | Índice normalizado |
+|---|---:|
+| Distinção | 95–100 |
+| Conforme | 80–94 |
+| Ressalvas | 60–79 |
+| Insatisfatório | Abaixo de 60 |
+
+A precisão percentual é exibida como estatística descritiva, mas não interfere na classificação.
+
+### Relatórios e Filer
+
+Ao terminar um turno livre, o jogo gera um relatório com:
+
+- protocolo sequencial e data diegética;
+- número do turno, nome do inspetor e unidade de serviço;
+- classificação e pontuação final;
+- acertos, erros, tempos esgotados e melhor sequência;
+- discriminação de bônus e penalidades;
+- relação de documentos respondidos incorretamente ou fora do tempo;
+- observações variáveis da supervisão.
+
+O relatório principal permanece na tela. O Filer pode ser aberto para consultar os documentos e as estatísticas arquivadas, e fechado sem substituir o relatório. A gaveta possui transição e efeitos sonoros próprios.
+
+### Perfil funcional e histórico
+
+A área **Perfil funcional** reúne os dados do jogador e seu vínculo com o posto em um único registro local.
+
+Inclui:
+- nome e código de identificação funcional;
+- situação da admissão;
+- documentos e registros emitidos durante a campanha;
+- quantidade de turnos realizados;
+- precisão acumulada;
+- melhor pontuação;
+- melhor sequência;
+- histórico dos turnos recentes, com regime, acertos e pontuação.
+
+O sistema reconhece a chave de perfil usada por versões anteriores e migra os dados legados para o perfil atual quando necessário.
+
+### Backup e gerenciamento de progresso
+
+O perfil oferece ferramentas para preservar ou reiniciar os dados:
+
+- **Exportar backup:** gera um arquivo JSON versionado com o perfil, o histórico, o estado da campanha, o resultado admissional e a sequência dos relatórios.
+- **Importar backup:** valida o formato do arquivo e solicita confirmação antes de substituir o progresso local atual.
+- **Excluir todo o progresso:** apaga o cadastro, a admissão, os resultados, as estatísticas e o histórico armazenados naquele navegador. Após a confirmação, o jogo retorna à abertura inicial.
+
+As confirmações de importação e exclusão são exibidas em janelas dentro do próprio jogo, sem depender dos alertas nativos do navegador.
+
+**Importante:** os dados são armazenados localmente no navegador. O backup JSON permite transferir manualmente o progresso para outro navegador ou dispositivo, mas não existe sincronização automática em nuvem, conta de usuário, autenticação ou recuperação remota. Limpar os dados do navegador pode apagar o progresso; exporte e guarde um backup antes de fazer isso.
+
+### Interface, áudio e acessibilidade
+
+- Interface responsiva, com identidade visual inspirada em documentos administrativos, papel envelhecido, carimbos e elementos institucionais de Arstotzka.
+- Abertura narrativa com texto digitado, efeitos sonoros e avanço por clique, Enter ou Espaço.
+- Apresentação de início de turno, que pode ser pulada. O cronômetro só começa quando a inspeção é liberada.
+- Alternativas selecionáveis por mouse ou teclado: teclas **1 a 4** selecionam as opções e **Enter** confirma ou avança após o feedback.
+- Painel de áudio com controles separados para música e efeitos, volumes individuais e opção de silenciar. As preferências são salvas no navegador.
+- Reprodução de áudio iniciada após interação do jogador, respeitando as políticas de autoplay dos navegadores.
+- Foco visível, regiões de feedback com `aria-live`, controles nativos e suporte a `prefers-reduced-motion`.
+
+### Comunicados do Ministério
+
+O menu apresenta uma central rotativa com **20 comunicados**: circulares, avisos operacionais e mensagens sobre disciplina, procedimentos, propaganda institucional, segurança de fronteira, administração e relações exteriores. A seleção evita repetir imediatamente o comunicado anterior durante a mesma sessão.
+
+## Tecnologias
+
+- **JavaScript ES modules** — lógica da campanha, navegação, perfil, pontuação e interação.
+- **Vite 7** — servidor de desenvolvimento e build de produção.
+- **HTML5 e CSS3** — estrutura, layout, responsividade e animações.
+- **Node.js test runner** — testes automatizados das regras centrais.
+- **localStorage** — persistência local de perfil, progresso e preferências.
+
+Não há framework de interface ou backend.
+
+## Como executar localmente
+
+Requisitos:
+- Node.js **20.19+** ou **22.12+**;
+- npm.
+
+Instale as dependências:
 
 ```bash
 npm install
+```
+
+Inicie o servidor de desenvolvimento:
+
+```bash
 npm run dev
 ```
 
-Para validar build e testes:
+O Vite exibirá no terminal o endereço local para abrir no navegador.
+
+### Testes e build
+
+Execute os testes automatizados:
 
 ```bash
 npm test
+```
+
+Gere a versão de produção:
+
+```bash
 npm run build
+```
+
+Para visualizar localmente o build:
+
+```bash
 npm run preview
 ```
 
-O servidor de desenvolvimento exibirá o endereço local no terminal. O build de produção é gerado em `dist/`.
+Os arquivos de produção são gerados em `dist/`, diretório que não deve ser versionado.
 
-## Estrutura
+## Estrutura do projeto
 
 ```
-index.html
-package.json
-vite.config.js
-dados.json                 # Banco de cidades existente, preservado
-assets/                    # Assets visuais existentes, preservados
-assets-sounds/             # Áudios existentes, preservados
-src/
-  core.js                  # Banco, geração de perguntas e pontuação
-  main.js                  # Campanha, modo livre e navegação
-  style.css                # Layout, componentes e animações
-tests/
-  core.test.js              # Testes de regras e geração de perguntas
-quiz.js                    # Protótipo anterior preservado
-style.css                  # Estilos anteriores preservados
+.
+├── index.html              # Estrutura da aplicação
+├── package.json            # Scripts e dependências
+├── package-lock.json       # Árvore de dependências travada
+├── vite.config.js          # Configuração do Vite
+├── dados.json              # Banco geográfico de países, cidades e curiosidades
+├── assets/                 # Imagens, documentos, ícones e elementos visuais
+├── assets-sounds/          # Música e efeitos sonoros
+├── src/
+│   ├── core.js             # Banco geográfico, perguntas e regras de pontuação
+│   ├── main.js             # Fluxos do jogo, campanha, perfil e interface
+│   └── style.css           # Layout, componentes e animações
+├── tests/
+│   └── core.test.js        # Testes automatizados das regras centrais
+├── quiz.js                 # Protótipo anterior preservado
+└── style.css               # Estilos do protótipo anterior preservados
 ```
 
-## Inventário e ideias futuras para assets
+Os arquivos do protótipo anterior permanecem no repositório como referência. A aplicação atual utiliza a estrutura modular em `src/`.
 
-Nenhum asset existente deve ser removido apenas por não estar em uso na versão atual. A pasta visual contém materiais para expandir o projeto:
+## Persistência local
 
-- **Passaportes:** identificar país, brasão ou tipo de documento.
-- **Mapa e emblemas:** modo de localização por país/cidade.
-- **Páginas do manual:** guia de regras com abas.
-- **Jornais e boletins:** manchetes e relatórios variáveis ao fim de cada turno.
-- **Citações, vistos e fichas:** registro visual de erros e histórico do inspetor.
-- **Placas e upgrades:** progressão, conquistas e modificadores desbloqueáveis.
-- **Carimbos:** decisões de aprovar/negar com feedback visual.
-- **Retratos e reações:** respostas contextuais do supervisor.
-- **Persianas e telas de dia:** transições diegéticas entre telas.
-- **Fotografias, desenhos e canções:** colecionáveis narrativos.
-- **Loc.csv e Text.xml**, quando disponíveis no acervo, podem ajudar a revisar nomes e conteúdo.
+As principais chaves utilizadas no navegador são:
 
-Ideias futuras não são consideradas concluídas até serem implementadas e verificadas.
+| Chave | Finalidade |
+|---|---|
+| `ppquiz.campaign.v3` | Estado de conclusão da campanha |
+| `ppquiz.campaign.result.v2` | Resultado da avaliação geográfica |
+| `ppquiz.player.profile.v1` | Perfil funcional, registros, estatísticas e histórico |
+| `ppquiz.inspector.profile.v1` | Chave legada reconhecida para migração |
+| `ppquiz.audio.settings.v1` | Preferências de áudio |
+| `ppquiz.report.sequence.v1` | Sequência dos protocolos de relatório |
+| `ppquiz.last.bulletin` | Último comunicado exibido |
 
-## Estado de validação
+Esses dados pertencem à instalação local do navegador. Não são compartilhados entre dispositivos automaticamente.
 
-Validação local realizada em 4 de novembro de 2026: `npm test` concluiu com **4/4 testes aprovados** e `npm run build` concluiu com sucesso usando Vite 7.3.7. O build gera os arquivos de produção em `dist/`, pasta ignorada pelo Git. Essa validação cobre as regras automatizadas e a compilação; não substitui testes manuais adicionais do fluxo completo em diferentes navegadores. Os assets e arquivos do protótipo original permanecem preservados na branch.
+## Validação e integração contínua
 
-## Aviso legal
+O projeto possui workflow de GitHub Actions para validar Pull Requests com:
 
-Projeto de fã não oficial e sem fins comerciais. **Papers, Please** pertence a Lucas Pope / 3909 LLC. Os assets visuais e sonoros pertencem aos respectivos titulares.
+1. instalação limpa das dependências usando `npm ci`;
+2. execução de `npm test`;
+3. compilação com `npm run build`.
 
+A publicação do site pelo GitHub Pages é vinculada à branch `main`.
 
-## Ajustes registrados após o primeiro teste local
+A aprovação dos testes e do build verifica as regras automatizadas e a compilação. Ela não substitui testes manuais do fluxo completo, especialmente em diferentes navegadores e dispositivos.
 
-- Corrigido o mapeamento de placas da campanha para seguir a correspondência do protótipo original: 9–10 acertos = `PlaqueOneInner` (distinção); 7–8 = `PlaqueTwoInner` (aprovação); 0–6 = `CitationInner` (resultado insatisfatório).
-- Restaurada a abertura narrativa com texto digitado, atraso inicial, efeito sonoro de buzina e instrução para continuar por clique ou Enter.
-- Adicionado controle de alternativas por teclado: teclas `1` a `4` selecionam a opção correspondente e `Enter` confirma.
-- **Ideia de UI registrada para etapa futura:** permitir recolher o menu principal e revelar o mapa de fundo como área interativa. Países/áreas clicáveis poderão abrir informações, iniciar desafios temáticos e servir de hub para modos futuros (passaportes, emblemas, localização de cidades e outros). A mecânica ainda não foi implementada: primeiro será necessário definir pontos clicáveis com precisão sobre a imagem do mapa e o comportamento de cada região.
+## Direção visual e conteúdo
 
+A identidade visual procura reproduzir a atmosfera burocrática e opressiva de *Papers, Please*, sem apresentar o projeto como oficial. A interface utiliza tons verdes escuros, papel envelhecido, vermelho de carimbo, tipografia monoespaçada, documentos, brasões e elementos gráficos próprios.
 
-## Correções após a rodada de testes de navegação
+O banco geográfico fica em `dados.json` e alimenta a geração de questões em `src/core.js`. Os assets existentes são preservados mesmo quando não utilizados diretamente pela versão atual, pois podem servir a futuras expansões.
 
-- **Rever campanha:** agora reapresenta o comunicado institucional e, em seguida, abre o parecer já registrado, sem iniciar novamente as dez perguntas. A pontuação da campanha passa a ser salva localmente para permitir a revisão; instalações antigas que só possuem a marca de conclusão exibem um aviso de que a nota anterior não foi armazenada.
-- **Avaliação individual:** o botão dedicado inicia um turno livre de dez documentos no modo fácil; os cartões Fácil, Normal e Difícil continuam disponíveis para escolher a dificuldade.
-- **Teclado:** as teclas 1 a 4 selecionam uma alternativa; Enter confirma a resposta e, depois do feedback, um segundo Enter aciona o botão de próxima questão/relatório. Os botões continuam clicáveis com o mouse.
-- **Pasta de arquivo (Filer):** restaurada no fim dos turnos livres, com boletim de erros e estatísticas do modo, acertos, erros, sequência máxima e, conforme a dificuldade, pontuação, tempo e penalidades. A pasta abre e fecha sem substituir o relatório principal.
+## Ideias para expansão
 
+Possíveis evoluções, ainda não consideradas implementadas:
 
-## Campanha — revisão da abertura e progressão
+- mapa interativo com regiões clicáveis e desafios temáticos;
+- modos de localização geográfica;
+- passaportes, emblemas e outros documentos colecionáveis;
+- expansão dos eventos narrativos, boletins e reações de personagens;
+- novas formas de progressão e objetivos de longo prazo;
+- sincronização de perfil entre dispositivos, mediante definição de uma arquitetura de conta e backend.
 
-- A abertura institucional fica isolada do posto principal, com o mapa, a barra superior e o rodapé ocultos.
-- A imagem de fundo ampliada e o retrato da imigração obristana foram retirados da abertura. O símbolo do Ministério foi reduzido a um selo tipográfico discreto; o fundo agora é uma composição própria em CSS.
-- O comunicado mantém o texto digitado e os efeitos sonoros; durante a digitação, clique, Enter ou Espaço revelam o texto completo. Uma nova interação avança para a próxima etapa.
-- A campanha completa agora inclui entrevista com M. Vonel, registro funcional, boletim político, orientação, avaliação geográfica, parecer e ordem de designação.
-- O retrato de M. Vonel é representado por um monograma visual porque o repositório não contém um asset de retrato identificável do supervisor.
+## Créditos e aviso legal
 
+T.G.I.F. é um projeto de fã, independente e sem fins comerciais, inspirado em **Papers, Please**.
 
-## Campanha de admissão — fluxo expandido
+*Papers, Please* foi criado por **Lucas Pope** e é publicado pela **3909 LLC**. O jogo original, suas marcas, personagens, elementos visuais e sonoros pertencem aos respectivos titulares. Este projeto não é afiliado, associado, autorizado ou endossado por Lucas Pope ou 3909 LLC.
 
-A campanha inicial agora segue uma sequência de integração antes de liberar o menu do posto:
-
-1. **Comunicado institucional:** abertura limpa, sem retrato da imigração obristana e sem imagem de fundo ampliada. O símbolo de Arstotzka foi reduzido a um selo tipográfico discreto; o fundo usa composição própria em tons escuros.
-2. **Entrevista com M. Vonel:** três perguntas narrativas de admissão. As respostas ficam associadas à ficha local e não alteram a pontuação geográfica.
-3. **Registro funcional:** formulário em formato de contrato. O único campo preenchido pelo jogador é o nome; o sistema emite um código fictício individual e apresenta cargo, posto, moradia funcional, endereço e data de admissão.
-4. **Boletim político e orientação:** notícia contextual sobre a situação regional e instruções para a avaliação.
-5. **Avaliação geográfica inicial:** dez questões, com o parecer calculado pelas faixas de desempenho já existentes.
-6. **Parecer e ordem de designação:** registro do resultado, identificação do supervisor e documento de lotação em Grestin.
-7. **Menu do posto:** acesso aos modos livres depois da conclusão da integração.
-
-O nome e o código são armazenados no navegador com `localStorage`. O código é fictício e serve como identificador local de referência para uma possível estrutura futura de placares. Ainda não existe autenticação, sincronização entre dispositivos ou placar online.
-
-### Áudio do arquivo
-
-A abertura e o fechamento do Filer agora usam, respectivamente, `26. Filer Open.mp3` e `25. Filer Close.mp3`. O efeito de virar página permanece reservado às transições de papel, não à gaveta de arquivo.
-
-### Observação de compatibilidade
-
-A campanha expandida utiliza novas chaves de armazenamento (`ppquiz.campaign.v3` e `ppquiz.campaign.result.v2`) para que instalações que já concluíram a versão anterior recebam o novo fluxo de admissão uma vez. O registro pessoal é salvo separadamente em `ppquiz.inspector.profile.v1`.
-
-
-## Divulgação e aviso de fan game
-
-- O menu mantém um aviso de que T.G.I.F. é um projeto independente de fãs, inspirado em *Papers, Please*, sem vínculo oficial com Lucas Pope ou 3909 LLC.
-- O rodapé inclui um direcionamento para a página oficial de *Papers, Please* na Steam.
-- A tela de encerramento da campanha oferece um atalho para conhecer/comprar o jogo original.
-- A ordem de designação também contém o aviso de caráter não oficial do projeto.
-- O projeto não utiliza a marcação de produto oficial nem sugere endosso dos titulares.
-
-
-## Revisão de estabilidade 2.0
-
-- O favicon do navegador utiliza a arte `assets/intro/Intro1.png`, associada à Loteria do Trabalho.
-- O painel de áudio permite ativar/desativar música e efeitos separadamente, ajustar os dois volumes e silenciar o conjunto. As preferências são persistidas no navegador em `ppquiz.audio.settings.v1`.
-- A música e os efeitos da abertura aguardam uma interação do jogador para respeitar as políticas de reprodução automática dos navegadores. Falhas de reprodução passam a ser registradas no console com a identificação do efeito e do arquivo.
-- O comunicado inicial descreve a avaliação como um exame de geografia dos países e cidades da região, compatível com o banco de questões atual.
-- A validação automatizada em Pull Requests executa `npm ci`, `npm test` e `npm run build`. A publicação no GitHub Pages continua restrita à branch `main`.
-
-- Os relatórios dos modos livres recebem protocolo sequencial persistido no navegador, data diegética (04 OUT 1982), número do turno, identificação do inspetor e unidade de serviço.
-
-- Os relatórios de desempenho recebem carimbos de classificação por faixa de acertos e mensagens variáveis da supervisão, selecionadas conforme o resultado.
-
-- O menu apresenta comunicados rotativos do Ministério, com circulares, avisos operacionais e referências discretas a movimentações clandestinas. A seleção evita repetir o comunicado imediatamente anterior durante a mesma sessão.
-
-
-## Menu do posto — revisão editorial
-
-- A orientação do menu apresenta os três regimes de inspeção e informa que os resultados serão acompanhados pela administração.
-- Os modos foram renomeados para **Adaptação**, **Protocolo padrão** e **Inspeção rigorosa**, mantendo os identificadores de treinamento, serviço regular e regime de exceção.
-- A central de comunicados do Ministério conta agora com 20 mensagens rotativas sobre disciplina, procedimentos, propaganda institucional, segurança de fronteira, administração e relações exteriores.
-- O texto do Arquivo pessoal foi mantido nesta revisão para preservar espaço destinado a avisos e orientações futuras.
-
-## Preparação de início de turno
-
-- A campanha obrigatória e os turnos do modo livre apresentam uma sequência institucional curta antes do primeiro documento.
-- A sequência percorre preparação do posto, identificação de Grestin, recebimento do primeiro documento e liberação da estação.
-- A apresentação pode ser pulada a qualquer momento; o cronômetro do modo livre só começa quando a inspeção é liberada.
-- A preferência de movimento reduzido desativa as animações decorativas da apresentação.
-
-
-
-## Pontuação dos regimes livres — MVP 0.6
-
-- Cada acerto concede **100 pontos-base**.
-- O bônus de velocidade concede **+20 pontos** por acerto dentro do alvo: até 5 segundos no Treinamento, 4 segundos no Serviço Regular e 2,5 segundos no Regime de Exceção. No Treinamento, o alvo existe mesmo sem cronômetro de expiração.
-- O bônus de velocidade acumula com o bônus de sequência. Ambos são inteiros e independentes.
-- A sequência concede bônus progressivo no Serviço Regular e no Regime de Exceção: 3º acerto consecutivo = +10; 4º e 5º = +20; 6º e 7º = +30; 8º e 9º = +40; 10º em diante = +50 por acerto. O Treinamento registra a sequência, mas não concede esse bônus.
-- Erros e timeouts quebram a sequência e não concedem bônus de velocidade. As penalidades são: Treinamento 0; Serviço Regular −25 por erro e −50 por timeout; Regime de Exceção −50 por erro e −75 por timeout. A pontuação acumulada tem piso zero: uma penalidade nunca deixa o placar negativo.
-- O Filer discrimina penalidades, bônus de sequência e bônus de velocidade.
-- A campanha de admissão não utiliza nem é afetada por essas regras.
-
-
-## Classificação e feedback de pontuação — atualização
-
-- A precisão percentual permanece no Filer como estatística descritiva. Ela não participa da classificação nem altera qualquer regra ou resultado.
-- A classificação dos turnos livres considera exclusivamente a pontuação final, normalizada internamente pelo máximo teórico do regime: 1.200 pontos no Treinamento e 1.440 no Serviço Regular e no Regime de Exceção. Esse índice interno não é exibido como estatística no Filer.
-- Faixas de classificação: 95–100 Distinção; 80–94 Conforme; 60–79 Ressalvas; abaixo de 60 Insatisfatório.
-- O placar tem piso zero. Penalidades continuam registradas no relatório, mas não podem produzir pontuação negativa.
-- Durante a partida, cada resposta exibe feedback flutuante junto ao placar, discriminando pontos-base por acerto, bônus de velocidade, bônus de sequência ou penalidade por erro/timeout.
-
-
-### Regulamento de pontuação no menu
-
-- O menu apresenta três opções para consultar as regras de cada regime.
-- Ao selecionar uma opção, as informações aparecem em uma janela modal sobreposta, com fundo desfocado e botão de fechamento.
-- O conteúdo resume pontuação por acerto, bônus de velocidade, progressão da sequência, penalidades, limite de tempo e diferenças entre regimes.
-- O regulamento não expõe máximos teóricos nem percentuais usados internamente na classificação.
-- O Arquivo pessoal permanece independente da janela e não muda de altura quando ela é aberta.
-
-
-### Identidade visual nacional
-
-- O brasão de Arstotzka (`assets/intro/Arstotzka.png`) substitui as letras decorativas nos selos da abertura e da apresentação de início de turno.
-- O mesmo símbolo aparece em escala reduzida no cabeçalho, nos comunicados ministeriais e no cabeçalho do Filer, reforçando a identidade institucional sem competir com o conteúdo.
-
-## Perfil funcional, revisão da admissão e backup — atualização
-
-Esta etapa consolida o cadastro do participante e os registros da campanha em um único perfil local, além de permitir consultar ou transportar o progresso entre navegadores.
-
-- **Identidade unificada:** o perfil passa a representar o jogador e seu vínculo funcional, sem manter conceitos separados de “jogador” e “inspetor”. Dados legados do perfil anterior são reconhecidos durante a migração.
-- **Contrato de admissão:** o registro funcional reúne os dados cadastrais e os documentos produzidos durante a admissão.
-- **Revisão sem refazer o processo:** a opção **Rever admissão** reapresenta a abertura, a entrevista original em modo somente leitura, o cadastro e a orientação. A avaliação geográfica e o parecer são consultados a partir do resultado já salvo. A revisão não solicita novas respostas nem cria uma segunda admissão ou substitui os registros originais.
-- **Perfil e histórico:** a área de perfil apresenta identificação, estatísticas e histórico dos turnos realizados, além dos registros funcionais.
-- **Backup local em JSON:** é possível exportar o perfil e o progresso para um arquivo e importar esse arquivo em outra instalação. A importação valida o formato e pede confirmação antes de substituir os dados locais.
-- **Exclusão do progresso:** o perfil oferece uma ação para apagar cadastro, admissão, resultados, estatísticas e histórico do navegador. A operação exige confirmação e retorna à abertura inicial. Um backup é necessário para recuperar dados apagados.
-- **Confirmações dentro da interface:** confirmações importantes, como importação e exclusão, usam janelas do próprio projeto em vez de alertas nativos do navegador.
-- **Comunicado inicial revisado:** a convocação pela Loteria do Trabalho apresenta as etapas admissionais e a formalização posterior da designação, sem antecipar que o candidato já ocupa o posto.
-- **Filer:** o fechamento do arquivo utiliza uma transição própria, preservando o restante da interface.
-
-### Armazenamento e limites
-
-O perfil atual é salvo no navegador em `ppquiz.player.profile.v1`. A chave anterior `ppquiz.inspector.profile.v1` permanece como fonte de migração para instalações existentes. O backup exportado é um arquivo JSON versionado (`tgif-player-backup`, versão 1).
-
-Os dados continuam locais ao navegador e ao dispositivo. O backup permite transporte manual, mas o projeto ainda não oferece autenticação, sincronização automática em nuvem ou recuperação remota. Limpar os dados do navegador sem exportar um backup pode apagar o progresso.
-
+Conheça o jogo original: [Papers, Please na Steam](https://store.steampowered.com/app/239030/Papers_Please/).
