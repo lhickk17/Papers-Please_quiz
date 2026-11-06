@@ -206,3 +206,24 @@ A campanha expandida utiliza novas chaves de armazenamento (`ppquiz.campaign.v3`
 
 - O brasão de Arstotzka (`assets/intro/Arstotzka.png`) substitui as letras decorativas nos selos da abertura e da apresentação de início de turno.
 - O mesmo símbolo aparece em escala reduzida no cabeçalho, nos comunicados ministeriais e no cabeçalho do Filer, reforçando a identidade institucional sem competir com o conteúdo.
+
+## Perfil funcional, revisão da admissão e backup — atualização
+
+Esta etapa consolida o cadastro do participante e os registros da campanha em um único perfil local, além de permitir consultar ou transportar o progresso entre navegadores.
+
+- **Identidade unificada:** o perfil passa a representar o jogador e seu vínculo funcional, sem manter conceitos separados de “jogador” e “inspetor”. Dados legados do perfil anterior são reconhecidos durante a migração.
+- **Contrato de admissão:** o registro funcional reúne os dados cadastrais e os documentos produzidos durante a admissão.
+- **Revisão sem refazer o processo:** a opção **Rever admissão** reapresenta a abertura, a entrevista original em modo somente leitura, o cadastro e a orientação. A avaliação geográfica e o parecer são consultados a partir do resultado já salvo. A revisão não solicita novas respostas nem cria uma segunda admissão ou substitui os registros originais.
+- **Perfil e histórico:** a área de perfil apresenta identificação, estatísticas e histórico dos turnos realizados, além dos registros funcionais.
+- **Backup local em JSON:** é possível exportar o perfil e o progresso para um arquivo e importar esse arquivo em outra instalação. A importação valida o formato e pede confirmação antes de substituir os dados locais.
+- **Exclusão do progresso:** o perfil oferece uma ação para apagar cadastro, admissão, resultados, estatísticas e histórico do navegador. A operação exige confirmação e retorna à abertura inicial. Um backup é necessário para recuperar dados apagados.
+- **Confirmações dentro da interface:** confirmações importantes, como importação e exclusão, usam janelas do próprio projeto em vez de alertas nativos do navegador.
+- **Comunicado inicial revisado:** a convocação pela Loteria do Trabalho apresenta as etapas admissionais e a formalização posterior da designação, sem antecipar que o candidato já ocupa o posto.
+- **Filer:** o fechamento do arquivo utiliza uma transição própria, preservando o restante da interface.
+
+### Armazenamento e limites
+
+O perfil atual é salvo no navegador em `ppquiz.player.profile.v1`. A chave anterior `ppquiz.inspector.profile.v1` permanece como fonte de migração para instalações existentes. O backup exportado é um arquivo JSON versionado (`tgif-player-backup`, versão 1).
+
+Os dados continuam locais ao navegador e ao dispositivo. O backup permite transporte manual, mas o projeto ainda não oferece autenticação, sincronização automática em nuvem ou recuperação remota. Limpar os dados do navegador sem exportar um backup pode apagar o progresso.
+
