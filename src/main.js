@@ -980,8 +980,11 @@ $('#game-menu').addEventListener('click', () => { clearInterval(timerId); naviga
 $('#report-menu').addEventListener('click', () => navigate('menu'));
 $('#report-again').addEventListener('click', () => beginQuiz(game?.difficulty ?? 'facil'));
 $('#filer-open').addEventListener('click', () => {
+  const expanded = $('#filer-expanded');
+  window.clearTimeout(filerCloseTimer);
+  expanded.classList.remove('is-closing');
   $('#filer-open').hidden = true;
-  $('#filer-expanded').hidden = false;
+  expanded.hidden = false;
   play('filerOpen', 0.32);
 });
 $('#filer-close').addEventListener('click', () => {
