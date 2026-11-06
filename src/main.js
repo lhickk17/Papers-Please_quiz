@@ -33,7 +33,6 @@ let keyboardSelection = -1;
 let openingReady = false;
 let reviewingCampaign = false;
 let openingTimer = null;
-let filerCloseTimer = null;
 let typingTimer = null;
 let shiftIntroTimer = null;
 let shiftIntroIndex = 0;
@@ -980,26 +979,14 @@ $('#game-menu').addEventListener('click', () => { clearInterval(timerId); naviga
 $('#report-menu').addEventListener('click', () => navigate('menu'));
 $('#report-again').addEventListener('click', () => beginQuiz(game?.difficulty ?? 'facil'));
 $('#filer-open').addEventListener('click', () => {
-  const expanded = $('#filer-expanded');
-  const content = expanded.querySelector('.filer-content');
-  window.clearTimeout(filerCloseTimer);
-  content.classList.remove('is-closing');
   $('#filer-open').hidden = true;
-  expanded.hidden = false;
+  $('#filer-expanded').hidden = false;
   play('filerOpen', 0.32);
 });
 $('#filer-close').addEventListener('click', () => {
-  const expanded = $('#filer-expanded');
-  const content = expanded.querySelector('.filer-content');
-  if (expanded.hidden || filerCloseTimer !== null) return;
-  content.classList.add('is-closing');
+  $('#filer-expanded').hidden = true;
+  $('#filer-open').hidden = false;
   play('filerClose', 0.32);
-  filerCloseTimer = window.setTimeout(() => {
-    expanded.hidden = true;
-    content.classList.remove('is-closing');
-    $('#filer-open').hidden = false;
-    filerCloseTimer = null;
-  }, 280);
 });
 $('#sound-toggle').addEventListener('click', () => {
   audioSettings.muted = !audioSettings.muted;
