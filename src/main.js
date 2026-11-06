@@ -33,6 +33,7 @@ let keyboardSelection = -1;
 let openingReady = false;
 let reviewingCampaign = false;
 let admissionReviewInProgress = false;
+let admissionReviewSession = false;
 let openingTimer = null;
 let typingTimer = null;
 let shiftIntroTimer = null;
@@ -382,6 +383,8 @@ function renderInterviewQuestion() {
       [...options.children].forEach((entry) => { entry.disabled = true; });
       const feedback = item.feedback[index];
       interviewAnswers.push({ questionId: item.id, question: item.question, selectedOption: index, selectedOptionText: option, feedback });
+      playerProfile.interview = interviewAnswers.map((answer) => ({ ...answer }));
+      persistPlayerProfile();
       $('#interview-feedback').textContent = feedback;
       $('#interview-next').hidden = false;
       $('#interview-next').textContent = interviewIndex === interviewQuestions.length - 1 ? 'Concluir entrevista →' : 'Próxima pergunta →';
@@ -560,7 +563,7 @@ function showCampaignResult(correct, persist = false) {
   const outcome = campaignOutcome(correct);
   $('#result-plaque').hidden = false;
   $('.result-layout').classList.remove('is-legacy');
-  if (persist) {
+  if (persist && !admissionReviewSession) {
     try {
       localStorage.setItem(campaignKey, 'true');
       localStorage.setItem(campaignResultKey, JSON.stringify({ correct, outcome }));
@@ -585,6 +588,7 @@ function showCampaignResult(correct, persist = false) {
   $('#result-interview-assessment').textContent = interviewAssessment;
   $('#result-retry').hidden = true;
   $('#result-menu').textContent = 'Consultar ordem de designação →';
+  admissionReviewSession = false;
   navigate('campaign-result');
 }
 
@@ -1084,6 +1088,7 @@ $('#review-confirm').addEventListener('click', () => {
   closeAdmissionReview();
   reviewingCampaign = true;
   admissionReviewInProgress = true;
+  admissionReviewSession = true;
   navigate('opening');
   document.body.classList.add('is-opening');
   startOpeningSequence();
@@ -1114,6 +1119,7 @@ $('#profile-reset').addEventListener('click', async () => {
   game = null;
   reviewingCampaign = false;
   admissionReviewInProgress = false;
+  admissionReviewSession = false;
   navigate('opening');
   document.body.classList.add('is-opening');
   startOpeningSequence();
