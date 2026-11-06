@@ -960,7 +960,7 @@ $('#profile-back').addEventListener('click', () => navigate('menu'));
 $('#profile-export').addEventListener('click', exportPlayerBackup);
 $('#profile-import-button').addEventListener('click', () => $('#profile-import').click());
 $('#profile-import').addEventListener('change', importPlayerBackup);
-$('#menu-reset')?.remove();
+
 document.querySelectorAll('[data-difficulty]').forEach((button) => button.addEventListener('click', () => beginQuiz(button.dataset.difficulty)));
 document.querySelectorAll('[data-score-regime]').forEach((button) => button.addEventListener('click', () => openScoreRegime(button.dataset.scoreRegime, button)));
 document.querySelectorAll('[data-score-modal-close]').forEach((element) => element.addEventListener('click', closeScoreRegulation));
@@ -1021,6 +1021,8 @@ $('#effects-volume').addEventListener('input', (event) => {
   persistAudioSettings();
   updateAudioSettingsUI();
 });
+inspectorProfile = createInspectorProfile();
+$('#menu-player-name').textContent = inspectorProfile.name || 'CANDIDATO NÃO IDENTIFICADO';
 updateAudioSettingsUI();
 startOpeningSequence();
 
