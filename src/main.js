@@ -2,7 +2,7 @@ import './style.css';
 import { createRound, campaignOutcome, scoreAnswer, classifyScore, applyScoreDelta } from './core.js';
 
 const $ = (selector) => document.querySelector(selector);
-const screenIds = ['opening', 'interview', 'registration', 'orientation', 'campaign', 'campaign-result', 'designation', 'menu', 'quiz', 'report'];
+const screenIds = ['opening', 'interview', 'registration', 'orientation', 'campaign', 'campaign-result', 'designation', 'menu', 'profile', 'quiz', 'report'];
 const campaignKey = 'ppquiz.campaign.v3';
 const campaignResultKey = 'ppquiz.campaign.result.v2';
 const profileKey = 'ppquiz.inspector.profile.v1';
@@ -32,6 +32,7 @@ let keyboardSelection = -1;
 let openingReady = false;
 let reviewingCampaign = false;
 let openingTimer = null;
+let filerCloseTimer = null;
 let typingTimer = null;
 let shiftIntroTimer = null;
 let shiftIntroIndex = 0;
@@ -357,33 +358,75 @@ function renderInterviewQuestion() {
 }
 
 function createInspectorProfile() {
-  try {
-    const saved = JSON.parse(localStorage.getItem(profileKey) || 'null');
-    if (saved?.code) return saved;
-  } catch {}
+  let saved = null;
+  try { saved = JSON.parse(localStorage.getItem(profileKey) || 'null'); } catch {}
   const serial = Math.floor(100000 + Math.random() * 900000);
-  return { name: '', code: `AR-82-${serial}`, createdAt: '1982-10-04', interview: [] };
+  const defaults = {
+    name: '', code: `AR-82-${serial}`, createdAt: '1982-10-04', interview: [],
+    sex: '', nationality: 'Arstotzka', maritalStatus: '', dependents: '0',
+    previousOccupation: '', stats: { rounds: 0, correct: 0, questions: 0, bestScore: 0, bestStreak: 0 },
+    history: []
+  };
+  if (!saved || typeof saved !== 'object' || !saved.code) return defaults;
+  return {
+    ...defaults, ...saved,
+    stats: { ...defaults.stats, ...(saved.stats || {}) },
+    history: Array.isArray(saved.history) ? saved.history : [],
+    interview: Array.isArray(saved.interview) ? saved.interview : []
+  };
+}
+
+function persistInspectorProfile() {
+  try { localStorage.setItem(profileKey, JSON.stringify(inspectorProfile)); } catch {}
 }
 
 function prepareRegistration() {
   inspectorProfile = createInspectorProfile();
   $('#candidate-code').textContent = inspectorProfile.code;
   $('#candidate-name').value = inspectorProfile.name || '';
+  $('#candidate-sex').value = inspectorProfile.sex || '';
+  $('#candidate-nationality').value = inspectorProfile.nationality || 'Arstotzka';
+  $('#candidate-marital-status').value = inspectorProfile.maritalStatus || '';
+  $('#candidate-dependents').value = inspectorProfile.dependents ?? '0';
+  $('#candidate-occupation').value = inspectorProfile.previousOccupation || '';
+  $('#registration-submit').textContent = inspectorProfile.name ? 'Confirmar registro →' : 'Assinar e registrar →';
   $('#registration-feedback').textContent = '';
+  $('#registration-feedback').className = 'feedback-row';
   navigate('registration');
 }
 
 function saveRegistration() {
   const name = $('#candidate-name').value.trim().replace(/\s+/g, ' ');
+  const requiredFields = [
+    ['candidate-sex', 'SELECIONE O SEXO DECLARADO.'],
+    ['candidate-nationality', 'SELECIONE A NACIONALIDADE.'],
+    ['candidate-marital-status', 'INFORME O ESTADO CIVIL.']
+  ];
   if (name.length < 2) {
     $('#registration-feedback').textContent = 'INFORME UM NOME COM PELO MENOS DOIS CARACTERES.';
     $('#registration-feedback').className = 'feedback-row is-error';
     $('#candidate-name').focus();
     return;
   }
-  inspectorProfile = { ...inspectorProfile, name, interview: interviewAnswers };
-  try { localStorage.setItem(profileKey, JSON.stringify(inspectorProfile)); } catch {}
-  $('#registration-feedback').textContent = 'REGISTRO ACEITO. IDENTIFICAÇÃO FUNCIONAL EMITIDA.';
+  for (const [id, message] of requiredFields) {
+    if (!$('#' + id).value) {
+      $('#registration-feedback').textContent = message;
+      $('#registration-feedback').className = 'feedback-row is-error';
+      $('#' + id).focus();
+      return;
+    }
+  }
+  inspectorProfile = {
+    ...createInspectorProfile(), ...inspectorProfile, name,
+    sex: $('#candidate-sex').value,
+    nationality: $('#candidate-nationality').value,
+    maritalStatus: $('#candidate-marital-status').value,
+    dependents: $('#candidate-dependents').value,
+    previousOccupation: $('#candidate-occupation').value,
+    interview: interviewAnswers.length ? interviewAnswers : (inspectorProfile?.interview || [])
+  };
+  persistInspectorProfile();
+  $('#registration-feedback').textContent = 'DECLARAÇÕES REGISTRADAS. O MINISTÉRIO AGRADECE A COLABORAÇÃO.';
   $('#registration-feedback').className = 'feedback-row is-success';
   $('#designation-name').textContent = name;
   $('#designation-code').textContent = inspectorProfile.code;
@@ -593,6 +636,25 @@ function populateReportIdentification() {
 
 function finishQuiz() {
   clearInterval(timerId);
+  if (game && !game.profileRecorded) {
+    inspectorProfile = createInspectorProfile();
+    const stats = inspectorProfile.stats;
+    stats.rounds += 1;
+    stats.correct += game.correct;
+    stats.questions += game.questions.length;
+    stats.bestScore = Math.max(stats.bestScore, game.points);
+    stats.bestStreak = Math.max(stats.bestStreak, game.bestStreak);
+    inspectorProfile.history.unshift({
+      date: new Date().toISOString(),
+      difficulty: game.difficulty,
+      correct: game.correct,
+      score: game.points,
+      bestStreak: game.bestStreak
+    });
+    inspectorProfile.history = inspectorProfile.history.slice(0, 30);
+    game.profileRecorded = true;
+    persistInspectorProfile();
+  }
   populateReportIdentification();
   const elapsedSeconds = Math.max(0, Math.floor((performance.now() - roundStartedAt) / 1000));
   const elapsedMinutes = Math.floor(elapsedSeconds / 60);
@@ -687,6 +749,105 @@ function finishQuiz() {
   navigate('report');
 }
 
+function renderPlayerProfile() {
+  inspectorProfile = createInspectorProfile();
+  const profile = inspectorProfile;
+  $('#profile-name').textContent = profile.name || 'CANDIDATO NÃO IDENTIFICADO';
+  $('#menu-player-name').textContent = profile.name || 'CANDIDATO NÃO IDENTIFICADO';
+  $('#profile-code').textContent = profile.code || 'SEM IDENTIFICAÇÃO';
+  $('#profile-sex').textContent = profile.sex || 'NÃO DECLARADO';
+  $('#profile-nationality').textContent = profile.nationality || 'NÃO REGISTRADA';
+  $('#profile-marital-status').textContent = profile.maritalStatus || 'NÃO REGISTRADO';
+  $('#profile-dependents').textContent = profile.dependents ?? '0';
+  $('#profile-occupation').textContent = profile.previousOccupation || 'NÃO INFORMADA';
+  const stats = profile.stats || {};
+  const accuracy = stats.questions ? Math.round((stats.correct / stats.questions) * 100) : 0;
+  $('#profile-stats').innerHTML = '';
+  [
+    ['Turnos realizados', stats.rounds || 0],
+    ['Precisão acumulada', accuracy + '%'],
+    ['Melhor pontuação', stats.bestScore || 0],
+    ['Melhor sequência', stats.bestStreak || 0]
+  ].forEach(([label, value]) => {
+    const item = document.createElement('div');
+    item.className = 'profile-stat';
+    const name = document.createElement('span');
+    name.textContent = label;
+    const result = document.createElement('strong');
+    result.textContent = String(value);
+    item.append(name, result);
+    $('#profile-stats').append(item);
+  });
+  const history = $('#profile-history');
+  history.replaceChildren();
+  if (!profile.history.length) {
+    const empty = document.createElement('p');
+    empty.className = 'body-copy';
+    empty.textContent = 'Nenhum turno registrado. O histórico será atualizado após suas primeiras inspeções.';
+    history.append(empty);
+  } else {
+    profile.history.forEach((entry) => {
+      const item = document.createElement('div');
+      item.className = 'profile-history-item';
+      const date = document.createElement('span');
+      date.textContent = new Date(entry.date).toLocaleDateString('pt-BR');
+      const mode = document.createElement('span');
+      mode.textContent = String(entry.difficulty || '').toUpperCase();
+      const result = document.createElement('strong');
+      result.textContent = `${entry.correct}/10 · ${entry.score} PTS`;
+      item.append(date, mode, result);
+      history.append(item);
+    });
+  }
+}
+
+function exportPlayerBackup() {
+  inspectorProfile = createInspectorProfile();
+  const backup = {
+    format: 'tgif-player-backup',
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    profile: inspectorProfile,
+    campaignCompleted: localStorage.getItem(campaignKey) === 'true',
+    campaignResult: JSON.parse(localStorage.getItem(campaignResultKey) || 'null'),
+    reportSequence: Number(localStorage.getItem(reportSequenceKey) || 0)
+  };
+  const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `tgif-backup-${new Date().toISOString().slice(0, 10)}.json`;
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+async function importPlayerBackup(event) {
+  const file = event.target.files?.[0];
+  event.target.value = '';
+  if (!file) return;
+  try {
+    const backup = JSON.parse(await file.text());
+    if (backup?.format !== 'tgif-player-backup' || backup.version !== 1 ||
+        !backup.profile || typeof backup.profile !== 'object' ||
+        typeof backup.profile.code !== 'string' || typeof backup.profile.name !== 'string') {
+      throw new Error('Formato de backup inválido.');
+    }
+    if (!window.confirm('A importação substituirá o perfil e o progresso local deste navegador. Deseja continuar?')) return;
+    localStorage.setItem(profileKey, JSON.stringify(backup.profile));
+    localStorage.setItem(campaignKey, backup.campaignCompleted ? 'true' : 'false');
+    if (backup.campaignResult) localStorage.setItem(campaignResultKey, JSON.stringify(backup.campaignResult));
+    else localStorage.removeItem(campaignResultKey);
+    localStorage.setItem(reportSequenceKey, String(Number(backup.reportSequence) || 0));
+    inspectorProfile = createInspectorProfile();
+    renderPlayerProfile();
+    $('#profile-backup-feedback').textContent = 'BACKUP IMPORTADO E VALIDADO.';
+    $('#profile-backup-feedback').className = 'feedback-row is-success';
+  } catch (error) {
+    $('#profile-backup-feedback').textContent = error.message || 'NÃO FOI POSSÍVEL IMPORTAR O BACKUP.';
+    $('#profile-backup-feedback').className = 'feedback-row is-error';
+  }
+}
+
 const openingText = `Ministério da Admissão — Circular Interna Nº 7
 
 Todo inspetor de fronteira deve demonstrar conhecimento geográfico básico antes de assumir o posto.
@@ -738,7 +899,7 @@ function continueFromOpening() {
   play('theme', 0.14);
   if (reviewingCampaign) {
     reviewingCampaign = false;
-    showSavedCampaignResult();
+    beginInterview();
     return;
   }
   let completed = false;
@@ -773,13 +934,33 @@ function showSavedCampaignResult() {
 }
 
 function reviewCampaign() {
+  $('#admission-review-modal').hidden = false;
+  document.body.classList.add('review-modal-open');
+  $('#review-confirm').focus();
+}
+function closeAdmissionReview() {
+  $('#admission-review-modal').hidden = true;
+  document.body.classList.remove('review-modal-open');
+  $('#menu-review').focus();
+}
+$('#menu-review').addEventListener('click', reviewCampaign);
+$('#review-cancel').addEventListener('click', closeAdmissionReview);
+$('#review-confirm').addEventListener('click', () => {
+  closeAdmissionReview();
   reviewingCampaign = true;
   navigate('opening');
   document.body.classList.add('is-opening');
-startOpeningSequence();
-}
-$('#menu-review').addEventListener('click', reviewCampaign);
-$('#menu-reset').addEventListener('click', () => beginQuiz('facil'));
+  startOpeningSequence();
+});
+$('#menu-profile').addEventListener('click', () => {
+  renderPlayerProfile();
+  navigate('profile');
+});
+$('#profile-back').addEventListener('click', () => navigate('menu'));
+$('#profile-export').addEventListener('click', exportPlayerBackup);
+$('#profile-import-button').addEventListener('click', () => $('#profile-import').click());
+$('#profile-import').addEventListener('change', importPlayerBackup);
+$('#menu-reset')?.remove();
 document.querySelectorAll('[data-difficulty]').forEach((button) => button.addEventListener('click', () => beginQuiz(button.dataset.difficulty)));
 document.querySelectorAll('[data-score-regime]').forEach((button) => button.addEventListener('click', () => openScoreRegime(button.dataset.scoreRegime, button)));
 document.querySelectorAll('[data-score-modal-close]').forEach((element) => element.addEventListener('click', closeScoreRegulation));
@@ -797,9 +978,17 @@ $('#filer-open').addEventListener('click', () => {
   play('filerOpen', 0.32);
 });
 $('#filer-close').addEventListener('click', () => {
-  $('#filer-expanded').hidden = true;
-  $('#filer-open').hidden = false;
+  const expanded = $('#filer-expanded');
+  if (expanded.hidden || expanded.classList.contains('is-closing')) return;
+  window.clearTimeout(filerCloseTimer);
+  expanded.classList.add('is-closing');
   play('filerClose', 0.32);
+  filerCloseTimer = window.setTimeout(() => {
+    expanded.hidden = true;
+    expanded.classList.remove('is-closing');
+    $('#filer-open').hidden = false;
+    filerCloseTimer = null;
+  }, 240);
 });
 $('#sound-toggle').addEventListener('click', () => {
   audioSettings.muted = !audioSettings.muted;
