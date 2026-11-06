@@ -238,11 +238,41 @@ A publicação do site pelo GitHub Pages é vinculada à branch `main`.
 
 A aprovação dos testes e do build verifica as regras automatizadas e a compilação. Ela não substitui testes manuais do fluxo completo, especialmente em diferentes navegadores e dispositivos.
 
-## Direção visual e conteúdo
+## Assets originais de *Papers, Please*
 
-A identidade visual procura reproduzir a atmosfera burocrática e opressiva de *Papers, Please*, sem apresentar o projeto como oficial. A interface utiliza tons verdes escuros, papel envelhecido, vermelho de carimbo, tipografia monoespaçada, documentos, brasões e elementos gráficos próprios.
+O repositório contém um conjunto de arquivos visuais, sonoros e de dados identificáveis com o jogo original *Papers, Please*. Eles não são todos criações próprias do T.G.I.F. e devem ser diferenciados dos elementos implementados especificamente para este fan game.
 
-O banco geográfico fica em `dados.json` e alimenta a geração de questões em `src/core.js`. Os assets existentes são preservados mesmo quando não utilizados diretamente pela versão atual, pois podem servir a futuras expansões.
+### Organização dos arquivos
+
+| Caminho | Conteúdo identificado |
+|---|---|
+| `assets/` | Sprites de interface, botões, carimbos, emblemas e elementos gráficos do jogo original, como `Filer.png`, `News.png`, `DetainButton.png` e `EmblemsMOA.png`. |
+| `assets/intro/` | Imagens relacionadas à introdução e à apresentação de personagens, incluindo `Intro1.png`, `Arstotzka.png`, `MVonel.png` e `Shutter.png`. |
+| `assets/vonel/` | Retrato de M. Vonel em `m-vonel.png`. |
+| `assets/papers/` | Imagens de documentos, passaportes, autorizações, boletins, regras, fotografias e outros papéis do jogo original. |
+| `assets/papersplease-map.webp` | Mapa associado ao universo e à geografia de *Papers, Please*. |
+| `assets-sounds/` | Trilha sonora e efeitos sonoros, como `01. Glory to Arstotzka (Main Theme).mp3`, `09. Border Foghorn.mp3`, sons do Filer, inspeção, páginas e carimbos. |
+| `assets/data/` | Arquivos de dados do jogo original, incluindo `Loc.csv`, `Text.xml`, `LocVersion.txt` e `UsedChars.txt`. |
+
+A pasta `assets/data/` é distinta do banco geográfico `dados.json` usado pela lógica atual do T.G.I.F. Não confunda esses arquivos: o primeiro conjunto acompanha os recursos do jogo original; o segundo alimenta as perguntas deste projeto.
+
+### Uso na versão atual
+
+A aplicação atual utiliza diretamente apenas parte do acervo. Entre as referências encontradas no código estão a imagem `assets/intro/Intro1.png`, usada no fundo da abertura; placas de resultado em `assets/papers/`; a música principal; e efeitos de inspeção, páginas, carimbos e abertura/fechamento do Filer. Outros arquivos permanecem no repositório como recursos preservados e não necessariamente aparecem na interface atual.
+
+Os arquivos de `assets/`, `assets/papers/`, `assets/intro/`, `assets/vonel/`, `assets/data/` e `assets-sounds/` não devem ser descritos como produção original do T.G.I.F. quando forem recursos do jogo de referência. Os elementos próprios do projeto incluem a implementação web, os fluxos de admissão, a lógica de avaliação, os relatórios, o perfil funcional e a interface criada ou adaptada para essas funcionalidades.
+
+### Direitos autorais e redistribuição
+
+*Papers, Please* foi criado por Lucas Pope e publicado pela 3909 LLC. Os direitos dos recursos originais, incluindo imagens, personagens, documentos, música, efeitos sonoros, marcas e demais elementos do jogo, pertencem aos respectivos titulares. A presença desses arquivos neste repositório público **não significa que eles estejam em domínio público ou licenciados para reutilização**.
+
+O T.G.I.F. é um projeto de fã independente e não oficial, sem vínculo ou endosso de Lucas Pope ou da 3909 LLC. A atribuição e o aviso de que se trata de um fan game não substituem uma autorização de uso ou redistribuição quando ela for necessária. Antes de distribuir publicamente o projeto ou reutilizar esses recursos em outro contexto, é importante verificar as condições aplicáveis e considerar manter apenas os arquivos para os quais exista permissão de distribuição.
+
+Referências oficiais:
+- [Site oficial de *Papers, Please*](https://www.papersplea.se/)
+- [Press kit oficial e informações sobre o jogo](https://www.papersplea.se/presskit/)
+
+O banco geográfico próprio do projeto fica em `dados.json` e alimenta a geração de questões em `src/core.js`. A existência de assets preservados no repositório não significa que todos sejam necessários para executar a versão atual.
 
 ## Ideias para expansão
 
