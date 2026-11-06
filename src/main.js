@@ -5,11 +5,12 @@ import {
   createInspectorDraft,
   getActiveInspector,
   normalizeIdentityStore,
+  recordInspectorPerformance,
   registerNewInspector
 } from './profile-store.js';
 
 const $ = (selector) => document.querySelector(selector);
-const screenIds = ['opening', 'interview', 'registration', 'orientation', 'campaign', 'campaign-result', 'designation', 'menu', 'quiz', 'report'];
+const screenIds = ['opening', 'interview', 'registration', 'orientation', 'campaign', 'campaign-result', 'designation', 'menu', 'profile', 'quiz', 'report'];
 const campaignKey = 'ppquiz.campaign.v3';
 const campaignResultKey = 'ppquiz.campaign.result.v2';
 const identityStoreKey = 'ppquiz.identity.store.v1';
@@ -52,12 +53,8 @@ let audioSettings = (() => {
 let keyboardOptions = null;
 let keyboardSelection = -1;
 let openingReady = false;
-let reviewingCampaign = false;
 let openingTimer = null;
 let typingTimer = null;
-let shiftIntroTimer = null;
-let shiftIntroIndex = 0;
-let shiftIntroCallback = null;
 const audio = {};
 
 const ministryBulletins = [
@@ -171,7 +168,10 @@ function closeScoreRegulation() {
 function navigate(id) {
   const target = document.getElementById(id);
   if (!target) return;
-  if (id === 'menu') showMinistryBulletin();
+  if (id === 'menu') {
+    showMinistryBulletin();
+    renderMenuProfileSummary();
+  }
 
   document.body.classList.toggle('is-opening', id === 'opening');
 
@@ -184,74 +184,6 @@ function navigate(id) {
   });
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-const shiftIntroStages = [
-  { status: 'ETAPA 01 / 04', title: 'Preparação do posto', detail: 'Verificando equipamentos, iluminação e canais de comunicação.', duration: 2000 },
-  { status: 'ETAPA 02 / 04', title: 'Identificação confirmada', detail: 'Posto fronteiriço de Grestin · República de Arstotzka · 04 OUT 1982.', duration: 2000 },
-  { status: 'ETAPA 03 / 04', title: 'Primeiro documento recebido', detail: 'Um novo registro foi encaminhado à mesa de inspeção.', duration: 2000 },
-  { status: 'ETAPA 04 / 04', title: 'Posto em operação', detail: 'Estação pronta. A inspeção será iniciada.', duration: 2000 }
-];
-
-function renderShiftIntroStage() {
-  const stage = shiftIntroStages[shiftIntroIndex];
-  const intro = $('#shift-intro');
-  intro.dataset.step = String(shiftIntroIndex + 1);
-  $('#shift-intro-status').textContent = stage.status;
-  $('#shift-intro-title').textContent = stage.title;
-  $('#shift-intro-detail').textContent = stage.detail;
-  [...$('#shift-intro-progress').children].forEach((item, index) => {
-    item.classList.toggle('is-complete', index < shiftIntroIndex);
-    item.classList.toggle('is-current', index === shiftIntroIndex);
-  });
-}
-
-function finishShiftIntro() {
-  window.clearTimeout(shiftIntroTimer);
-  const intro = $('#shift-intro');
-  if (intro.hidden || intro.classList.contains('is-closing')) return;
-  intro.classList.add('is-closing');
-  shiftIntroTimer = window.setTimeout(() => {
-    shiftIntroTimer = null;
-    intro.hidden = true;
-    intro.classList.remove('is-closing');
-    intro.removeAttribute('data-step');
-    document.body.classList.remove('is-shift-intro');
-    $('main').inert = false;
-    $('header').inert = false;
-    $('footer').inert = false;
-    const callback = shiftIntroCallback;
-    shiftIntroCallback = null;
-    if (callback) callback();
-  }, 320);
-}
-
-function scheduleShiftIntroStage() {
-  const stage = shiftIntroStages[shiftIntroIndex];
-  shiftIntroTimer = window.setTimeout(() => {
-    if (shiftIntroIndex >= shiftIntroStages.length - 1) {
-      finishShiftIntro();
-      return;
-    }
-    shiftIntroIndex += 1;
-    renderShiftIntroStage();
-    scheduleShiftIntroStage();
-  }, stage.duration);
-}
-
-function startShiftIntro(onComplete) {
-  window.clearTimeout(shiftIntroTimer);
-  shiftIntroCallback = onComplete;
-  shiftIntroIndex = 0;
-  $('main').inert = true;
-  $('header').inert = true;
-  $('footer').inert = true;
-  document.body.classList.add('is-shift-intro');
-  $('#shift-intro').classList.remove('is-closing');
-  $('#shift-intro').hidden = false;
-  renderShiftIntroStage();
-  $('#shift-intro-skip').focus();
-  scheduleShiftIntroStage();
 }
 
 function persistAudioSettings() {
@@ -382,13 +314,18 @@ function prepareRegistration() {
   identityStore = loadIdentityStore();
   isInitialRegistration = !identityStore.player;
   registrationDraft = createInspectorDraft({ interviewAnswers });
+  const previousNames = new Set(identityStore.inspectors.map((inspector) => inspector.name.toLocaleLowerCase()));
+  for (let attempt = 0; previousNames.has(registrationDraft.name.toLocaleLowerCase()) && attempt < 30; attempt += 1) {
+    registrationDraft = createInspectorDraft({ interviewAnswers });
+  }
   inspectorProfile = registrationDraft;
 
   $('#candidate-code').textContent = registrationDraft.code;
-  $('#candidate-name').value = '';
+  $('#candidate-name').readOnly = !isInitialRegistration;
+  $('#candidate-name').value = isInitialRegistration ? '' : registrationDraft.name;
   $('#candidate-name-label').textContent = isInitialRegistration
     ? 'Nome do responsável pelo registro'
-    : 'Nome completo do novo inspetor';
+    : 'Inspetor designado automaticamente';
   $('#candidate-name').placeholder = isInitialRegistration ? 'Nome do jogador' : 'Nome do inspetor';
   $('#candidate-inspector-preview').hidden = !isInitialRegistration;
   $('#candidate-player-preview').hidden = isInitialRegistration;
@@ -400,7 +337,9 @@ function prepareRegistration() {
 }
 
 function saveRegistration() {
-  const name = $('#candidate-name').value.trim().replace(/\s+/g, ' ');
+  const name = isInitialRegistration
+    ? $('#candidate-name').value.trim().replace(/\s+/g, ' ')
+    : registrationDraft.name;
   if (name.length < 2) {
     $('#registration-feedback').textContent = 'INFORME UM NOME COM PELO MENOS DOIS CARACTERES.';
     $('#registration-feedback').className = 'feedback-row is-error';
@@ -436,17 +375,12 @@ function showDesignation() {
   navigate('designation');
 }
 
-function beginNewInspectorAdmission() {
-  identityStore = loadIdentityStore();
-  beginInterview();
-}
-
 function beginCampaign() {
   campaign = createRound(10);
   campaignIndex = 0;
   campaignCorrect = 0;
   navigate('campaign');
-  startShiftIntro(() => renderCampaignQuestion());
+  renderCampaignQuestion();
 }
 
 function renderCampaignQuestion() {
@@ -483,6 +417,13 @@ function showCampaignResult(correct, persist = false) {
   $('#result-plaque').hidden = false;
   $('.result-layout').classList.remove('is-legacy');
   if (persist) {
+    identityStore = recordInspectorPerformance(loadIdentityStore(), {
+      type: 'campaign',
+      correct,
+      questions: 10
+    });
+    persistIdentityStore(identityStore);
+    inspectorProfile = getActiveInspector(identityStore);
     try {
       localStorage.setItem(campaignKey, 'true');
       localStorage.setItem(campaignResultKey, JSON.stringify({ correct, outcome }));
@@ -517,10 +458,8 @@ function beginQuiz(difficulty) {
     answered: false
   };
   navigate('quiz');
-  startShiftIntro(() => {
-    roundStartedAt = performance.now();
-    renderGameQuestion();
-  });
+  roundStartedAt = performance.now();
+  renderGameQuestion();
 }
 
 function renderGameQuestion() {
@@ -637,6 +576,15 @@ function populateReportIdentification() {
 
 function finishQuiz() {
   clearInterval(timerId);
+  identityStore = recordInspectorPerformance(loadIdentityStore(), {
+    type: 'turn',
+    correct: game.correct,
+    questions: game.questions.length,
+    points: game.points,
+    bestStreak: game.bestStreak
+  });
+  persistIdentityStore(identityStore);
+  inspectorProfile = getActiveInspector(identityStore);
   populateReportIdentification();
   const elapsedSeconds = Math.max(0, Math.floor((performance.now() - roundStartedAt) / 1000));
   const elapsedMinutes = Math.floor(elapsedSeconds / 60);
@@ -731,6 +679,92 @@ function finishQuiz() {
   navigate('report');
 }
 
+function renderMenuProfileSummary() {
+  identityStore = loadIdentityStore();
+  inspectorProfile = getActiveInspector(identityStore);
+  const playerName = identityStore.player?.name || 'Perfil não registrado';
+  const inspectorName = inspectorProfile?.name || 'Nenhum inspetor ativo';
+  $('#menu-profile-summary').textContent = playerName + ' · Inspetor ativo: ' + inspectorName + ' · ' + identityStore.inspectors.length + ' inspetor(es) no histórico.';
+}
+
+function renderProfile() {
+  identityStore = loadIdentityStore();
+  inspectorProfile = getActiveInspector(identityStore);
+  const player = identityStore.player;
+  $('#profile-player-name').textContent = player?.name || 'Não registrado';
+  $('#profile-player-id').textContent = player?.id || '—';
+  $('#profile-player-date').textContent = player?.createdAt || '—';
+  const inspectors = identityStore.inspectors;
+  const totals = inspectors.reduce((sum, inspector) => {
+    const stats = inspector.statistics || {};
+    sum.campaigns += stats.campaignsCompleted || 0;
+    sum.turns += stats.turnsCompleted || 0;
+    sum.correct += stats.correctAnswers || 0;
+    sum.questions += stats.questionsAnswered || 0;
+    sum.points += stats.totalPoints || 0;
+    return sum;
+  }, { campaigns: 0, turns: 0, correct: 0, questions: 0, points: 0 });
+  $('#profile-inspector-count').textContent = String(inspectors.length);
+  $('#profile-campaign-count').textContent = String(totals.campaigns);
+  $('#profile-turn-count').textContent = String(totals.turns);
+  $('#profile-total-points').textContent = String(totals.points);
+  $('#profile-accuracy').textContent = totals.questions
+    ? Math.round((totals.correct / totals.questions) * 100) + '% · ' + totals.correct + '/' + totals.questions
+    : 'Sem avaliações registradas';
+  const list = $('#profile-inspectors');
+  list.replaceChildren();
+  [...inspectors].reverse().forEach((inspector) => {
+    const stats = inspector.statistics || {};
+    const accuracy = stats.questionsAnswered
+      ? Math.round((stats.correctAnswers / stats.questionsAnswered) * 100) + '% (' + stats.correctAnswers + '/' + stats.questionsAnswered + ')'
+      : 'Sem avaliações';
+    const card = document.createElement('article');
+    card.className = 'profile-inspector-card';
+    const heading = document.createElement('div');
+    heading.className = 'profile-inspector-heading';
+    const identity = document.createElement('div');
+    const name = document.createElement('h3');
+    name.textContent = inspector.name;
+    const code = document.createElement('p');
+    code.className = 'eyebrow';
+    code.textContent = inspector.code;
+    identity.append(name, code);
+    const status = document.createElement('span');
+    status.className = inspector.id === identityStore.activeInspectorId ? 'status-stamp is-success' : 'status-stamp';
+    status.textContent = inspector.id === identityStore.activeInspectorId ? 'ATIVO' : 'ARQUIVADO';
+    heading.append(identity, status);
+    const details = document.createElement('dl');
+    details.className = 'profile-inspector-stats';
+    const entries = [
+      ['Admissão', inspector.createdAt || '—'],
+      ['Respostas da entrevista', String(inspector.interviewAnswers?.length || 0)],
+      ['Campanhas concluídas', String(stats.campaignsCompleted || 0)],
+      ['Turnos individuais', String(stats.turnsCompleted || 0)],
+      ['Precisão acumulada', accuracy],
+      ['Pontuação acumulada', (stats.totalPoints || 0) + ' pts'],
+      ['Melhor pontuação', (stats.bestScore || 0) + ' pts'],
+      ['Melhor sequência', String(stats.bestStreak || 0)],
+      ['Última atividade', stats.lastPlayedAt ? new Date(stats.lastPlayedAt).toLocaleString('pt-BR') : 'Nenhuma']
+    ];
+    entries.forEach(([label, value]) => {
+      const wrapper = document.createElement('div');
+      const term = document.createElement('dt');
+      term.textContent = label;
+      const description = document.createElement('dd');
+      description.textContent = value;
+      wrapper.append(term, description);
+      details.append(wrapper);
+    });
+    card.append(heading, details);
+    list.append(card);
+  });
+  if (!inspectors.length) {
+    const empty = document.createElement('p');
+    empty.className = 'body-copy';
+    empty.textContent = 'Nenhum inspetor foi registrado neste navegador.';
+    list.append(empty);
+  }
+}
 const openingText = `Ministério da Admissão — Circular Interna Nº 7
 
 Todo inspetor de fronteira deve demonstrar conhecimento geográfico básico antes de assumir o posto.
@@ -780,11 +814,6 @@ function continueFromOpening() {
   play('foghorn', 0.3);
   play('page', 0.24);
   play('theme', 0.14);
-  if (reviewingCampaign) {
-    reviewingCampaign = false;
-    showSavedCampaignResult();
-    return;
-  }
   let completed = false;
   try { completed = localStorage.getItem(campaignKey) === 'true'; } catch {}
   completed && identityStore.player ? navigate('menu') : beginInterview();
@@ -795,36 +824,33 @@ $('#interview-next').addEventListener('click', () => { interviewIndex += 1; if (
 $('#registration-submit').addEventListener('click', saveRegistration);
 $('#menu-new-inspector').addEventListener('click', beginNewInspectorAdmission);
 $('#candidate-name').addEventListener('keydown', (event) => { if (event.key === 'Enter') saveRegistration(); });
-$('#shift-intro-skip').addEventListener('click', finishShiftIntro);
 $('#orientation-start').addEventListener('click', beginCampaign);
 $('#designation-enter').addEventListener('click', () => navigate('menu'));
 $('#campaign-next').addEventListener('click', () => { campaignIndex += 1; renderCampaignQuestion(); });
 $('#result-menu').addEventListener('click', () => showDesignation());
 $('#result-retry').addEventListener('click', beginCampaign);
-function showSavedCampaignResult() {
-  let saved = null;
-  try { saved = JSON.parse(localStorage.getItem(campaignResultKey) || 'null'); } catch {}
-  if (saved && Number.isInteger(saved.correct)) {
-    showCampaignResult(saved.correct, false);
-    return;
-  }
-  $('#result-plaque').hidden = true;
-  $('.result-layout').classList.add('is-legacy');
-  $('#result-score').textContent = 'RESULTADO ANTERIOR NÃO DISPONÍVEL';
-  $('#result-heading').textContent = 'CAMPANHA CONCLUÍDA';
-  $('#result-message').textContent = 'Esta instalação registra que a campanha foi concluída, mas a versão anterior não salvava a pontuação. O histórico detalhado não pode ser recuperado.';
-  $('#result-retry').hidden = true;
-  navigate('campaign-result');
-}
-
 function reviewCampaign() {
-  reviewingCampaign = true;
+  const confirmed = window.confirm(
+    'Reiniciar a campanha encerrará o progresso do inspetor atual e iniciará uma nova admissão com outro inspetor. O perfil do jogador e o histórico dos inspetores serão preservados. Deseja continuar?'
+  );
+  if (!confirmed) return;
+
+  try {
+    localStorage.removeItem(campaignKey);
+    localStorage.removeItem(campaignResultKey);
+  } catch {}
+
   navigate('opening');
   document.body.classList.add('is-opening');
-startOpeningSequence();
+  startOpeningSequence();
 }
+
 $('#menu-review').addEventListener('click', reviewCampaign);
-$('#menu-reset').addEventListener('click', () => beginQuiz('facil'));
+$('#menu-profile').addEventListener('click', () => {
+  renderProfile();
+  navigate('profile');
+});
+$('#profile-back').addEventListener('click', () => navigate('menu'));
 document.querySelectorAll('[data-difficulty]').forEach((button) => button.addEventListener('click', () => beginQuiz(button.dataset.difficulty)));
 document.querySelectorAll('[data-score-regime]').forEach((button) => button.addEventListener('click', () => openScoreRegime(button.dataset.scoreRegime, button)));
 document.querySelectorAll('[data-score-modal-close]').forEach((element) => element.addEventListener('click', closeScoreRegulation));
@@ -837,14 +863,24 @@ $('#game-menu').addEventListener('click', () => { clearInterval(timerId); naviga
 $('#report-menu').addEventListener('click', () => navigate('menu'));
 $('#report-again').addEventListener('click', () => beginQuiz(game?.difficulty ?? 'facil'));
 $('#filer-open').addEventListener('click', () => {
+  const expanded = $('#filer-expanded');
+  expanded.classList.remove('is-closing');
   $('#filer-open').hidden = true;
-  $('#filer-expanded').hidden = false;
+  expanded.hidden = false;
   play('filerOpen', 0.32);
 });
 $('#filer-close').addEventListener('click', () => {
-  $('#filer-expanded').hidden = true;
-  $('#filer-open').hidden = false;
+  const expanded = $('#filer-expanded');
+  if (expanded.classList.contains('is-closing')) return;
+  expanded.classList.add('is-closing');
+  $('#filer-close').disabled = true;
   play('filerClose', 0.32);
+  window.setTimeout(() => {
+    expanded.hidden = true;
+    expanded.classList.remove('is-closing');
+    $('#filer-close').disabled = false;
+    $('#filer-open').hidden = false;
+  }, 260);
 });
 $('#sound-toggle').addEventListener('click', () => {
   audioSettings.muted = !audioSettings.muted;
