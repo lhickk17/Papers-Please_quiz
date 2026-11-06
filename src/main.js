@@ -995,7 +995,7 @@ $('#filer-close').addEventListener('click', () => {
     expanded.classList.remove('is-closing');
     $('#filer-open').hidden = false;
     filerCloseTimer = null;
-  }, 240);
+  }, 280);
 });
 $('#sound-toggle').addEventListener('click', () => {
   audioSettings.muted = !audioSettings.muted;
