@@ -125,12 +125,18 @@ body.is-opening .opening-screen{display:flex;align-items:stretch;justify-content
   box-shadow:0 22px 60px rgba(0,0,0,.24);
 }
 .vonel-portrait{
-  min-height:190px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.7rem;
-  color:#292418;background:linear-gradient(145deg,#c4a97d,#8d7955);
-  border:5px double rgba(50,39,23,.55);box-shadow:inset 0 0 0 5px rgba(255,255,255,.08);
+  display:grid;grid-template-rows:auto auto;align-content:start;gap:0;margin:0;min-width:0;
+  padding:.45rem;background:#171713;border:1px solid rgba(196,169,125,.42);
+  box-shadow:0 8px 22px rgba(0,0,0,.32),inset 0 0 0 3px rgba(255,255,255,.035);
 }
-.vonel-portrait span{font-size:3.2rem;letter-spacing:-.12em;font-weight:bold}
-.vonel-portrait small{font-size:.55rem;letter-spacing:.18em;border-top:1px solid rgba(41,36,24,.4);padding-top:.55rem}
+.vonel-portrait img{
+  display:block;width:100%;height:auto;aspect-ratio:640/468;object-fit:cover;
+  image-rendering:pixelated;background:#000;filter:saturate(.82) contrast(1.04);
+}
+.vonel-portrait figcaption{
+  padding:.65rem .25rem .25rem;text-align:center;font-size:.52rem;line-height:1.5;
+  letter-spacing:.16em;color:#c4a97d;border-top:1px solid rgba(196,169,125,.25);
+}
 .interview-content h2{font-size:clamp(1.15rem,2.5vw,1.65rem);font-weight:400;line-height:1.5;color:var(--ink)}
 .interview-options{display:grid;gap:.65rem;margin:1.4rem 0}
 .interview-option{
