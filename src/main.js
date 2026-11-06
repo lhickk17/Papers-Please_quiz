@@ -397,6 +397,7 @@ function renderInterviewQuestion() {
 function completeInterview() {
   if (interviewReviewMode) {
     interviewReviewMode = false;
+    reviewingCampaign = false;
     prepareRegistration();
     return;
   }
