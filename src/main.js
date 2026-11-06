@@ -981,20 +981,22 @@ $('#report-menu').addEventListener('click', () => navigate('menu'));
 $('#report-again').addEventListener('click', () => beginQuiz(game?.difficulty ?? 'facil'));
 $('#filer-open').addEventListener('click', () => {
   const expanded = $('#filer-expanded');
+  const content = expanded.querySelector('.filer-content');
   window.clearTimeout(filerCloseTimer);
-  expanded.classList.remove('is-closing');
+  content.classList.remove('is-closing');
   $('#filer-open').hidden = true;
   expanded.hidden = false;
   play('filerOpen', 0.32);
 });
 $('#filer-close').addEventListener('click', () => {
   const expanded = $('#filer-expanded');
+  const content = expanded.querySelector('.filer-content');
   if (expanded.hidden || filerCloseTimer !== null) return;
-  expanded.classList.add('is-closing');
+  content.classList.add('is-closing');
   play('filerClose', 0.32);
   filerCloseTimer = window.setTimeout(() => {
     expanded.hidden = true;
-    expanded.classList.remove('is-closing');
+    content.classList.remove('is-closing');
     $('#filer-open').hidden = false;
     filerCloseTimer = null;
   }, 280);
