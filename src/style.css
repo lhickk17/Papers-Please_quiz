@@ -163,8 +163,8 @@ body.is-opening .opening-screen{display:flex;align-items:stretch;justify-content
 
 .contract-choices{display:flex;flex-wrap:wrap;gap:.35rem .8rem;padding-top:.2rem}
 .contract-choice{display:inline-flex;align-items:center;gap:.38rem;font-size:.7rem;line-height:1.5;color:#292418;cursor:pointer}
-.contract-choice input{appearance:none;width:14px;height:14px;flex:0 0 14px;margin:0;border:1px solid #665334;background:rgba(255,255,255,.2);display:grid;place-items:center;cursor:pointer}
-.contract-choice input:checked::after{content:"X";font-family:Georgia,serif;font-size:12px;font-weight:700;line-height:1;color:#211e17}
+.contract-choice input{appearance:none;position:relative;width:14px;height:16px;flex:0 0 14px;margin:0;border:0;background:transparent;cursor:pointer}
+.contract-choice input:checked::after{content:"";position:absolute;inset:2px;background:linear-gradient(45deg,transparent 44%,#211e17 45%,#211e17 54%,transparent 55%),linear-gradient(-45deg,transparent 44%,#211e17 45%,#211e17 54%,transparent 55%)}
 .contract-choice input:disabled{opacity:1;cursor:default}
 .contract-choice:has(input:disabled){cursor:default}
 .contract-field input:read-only{background:transparent;border-bottom-style:dotted;color:#292418}
@@ -482,9 +482,6 @@ body.is-shift-intro{overflow:hidden}
   background:rgba(255,255,255,.2);color:#211e17;font:inherit;font-size:.76rem;
 }
 .contract-field select:focus,.contract-field input:focus{outline:2px solid #8b6c3e;outline-offset:2px}
-.contract-notice{margin:1rem 0;padding:1rem 1.1rem;border:1px solid rgba(53,39,20,.3);background:rgba(70,52,25,.08);color:#4b3b24}
-.contract-notice strong{font-size:.66rem;letter-spacing:.13em}
-.contract-notice p{font-size:.68rem;line-height:1.8;margin:.6rem 0 0}
 .player-record-panel{margin-top:1.5rem;padding:1.3rem;border:1px solid var(--line);background:rgba(0,0,0,.14);max-width:520px}
 .player-record-panel h2{font-size:1.2rem;font-weight:400;letter-spacing:.1em;margin:.6rem 0}
 .player-record-name{font-size:1.05rem;color:var(--ink);letter-spacing:.08em;margin:1rem 0}
