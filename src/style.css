@@ -484,7 +484,7 @@ body.is-shift-intro{overflow:hidden}
   background:rgba(255,255,255,.2);color:#211e17;font:inherit;font-size:.76rem;
 }
 .contract-field select:focus,.contract-field input:focus{outline:2px solid #8b6c3e;outline-offset:2px}
-.player-record-panel{margin-top:1.5rem;padding:1.3rem;border:1px solid var(--line);background:rgba(0,0,0,.14);max-width:520px}
+.player-record-panel{margin-top:0;padding:1.3rem;border:1px solid var(--line);background:rgba(0,0,0,.14);max-width:520px;align-self:stretch}
 .player-record-panel h2{font-size:1.2rem;font-weight:400;letter-spacing:.1em;margin:.6rem 0}
 .player-record-name{font-size:1.05rem;color:var(--ink);letter-spacing:.08em;margin:1rem 0}
 .player-record-actions{display:flex;flex-wrap:wrap;gap:.65rem}
