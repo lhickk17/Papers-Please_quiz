@@ -463,7 +463,7 @@ function buildAdmissionRecord(profile, result) {
 function ensureAdmissionRecord() {
   playerProfile = createPlayerProfile();
   if (!Array.isArray(playerProfile.functionalRecords)) playerProfile.functionalRecords = [];
-  if (playerProfile.functionalRecords.some((record) => record?.type === 'admission') || !playerProfile.name || !playerProfile.interview?.length) return playerProfile;
+  if (playerProfile.functionalRecords.some((record) => record?.type === 'admission') || !playerProfile.name) return playerProfile;
   let result = null;
   try { result = JSON.parse(localStorage.getItem(campaignResultKey) || 'null'); } catch {}
   if (!result || !Number.isInteger(result.correct)) return playerProfile;
@@ -939,32 +939,6 @@ function finishQuiz() {
   $('#filer-open').hidden = false;
   $('#filer-expanded').hidden = true;
   navigate('report');
-}
-
-function renderInterviewProfile(profile) {
-  const container = $('#profile-interview');
-  if (!container) return;
-  container.replaceChildren();
-  const answers = Array.isArray(profile.interview) ? profile.interview : [];
-  if (!answers.length || typeof answers[0] !== 'object') {
-    const empty = document.createElement('p');
-    empty.className = 'body-copy';
-    empty.textContent = 'Nenhuma transcrição de entrevista disponível neste arquivo.';
-    container.append(empty);
-    return;
-  }
-  answers.forEach((answer, index) => {
-    const item = document.createElement('article');
-    item.className = 'profile-interview-item';
-    const question = document.createElement('strong');
-    question.textContent = answer.question || interviewQuestions[index]?.question || 'Pergunta não identificada';
-    const response = document.createElement('p');
-    response.textContent = answer.selectedOptionText || 'Resposta não registrada';
-    const feedback = document.createElement('small');
-    feedback.textContent = answer.feedback || '';
-    item.append(question, response, feedback);
-    container.append(item);
-  });
 }
 
 function renderPlayerProfile() {
