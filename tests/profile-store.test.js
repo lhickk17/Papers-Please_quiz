@@ -6,6 +6,7 @@ import {
   createInspectorDraft,
   getActiveInspector,
   normalizeIdentityStore,
+  recordInspectorPerformance,
   registerNewInspector
 } from '../src/profile-store.js';
 
@@ -78,4 +79,35 @@ test('registration rejects missing player identity and invalid names', () => {
   assert.throws(() => registerNewInspector(createEmptyIdentityStore(), { name: 'Novo' }), /perfil de jogador/);
   const store = createInitialIdentityStore({ playerName: 'Henrique' });
   assert.throws(() => registerNewInspector(store, { name: ' ' }), /dois caracteres/);
+});
+
+
+test('performance statistics remain attached to the inspector that earned them', () => {
+  const first = createInitialIdentityStore({ playerName: 'Henrique' });
+  const firstId = getActiveInspector(first).id;
+  const withCampaign = recordInspectorPerformance(first, {
+    type: 'campaign',
+    correct: 8,
+    questions: 10,
+    recordedAt: '1982-10-05T10:00:00.000Z'
+  });
+  const withTurn = recordInspectorPerformance(withCampaign, {
+    type: 'turn',
+    correct: 7,
+    questions: 10,
+    points: 740,
+    bestStreak: 5,
+    recordedAt: '1982-10-05T11:00:00.000Z'
+  });
+  const next = registerNewInspector(withTurn, { name: 'Marek Varga' });
+  const archived = next.inspectors.find((item) => item.id === firstId);
+
+  assert.equal(archived.statistics.campaignsCompleted, 1);
+  assert.equal(archived.statistics.turnsCompleted, 1);
+  assert.equal(archived.statistics.correctAnswers, 15);
+  assert.equal(archived.statistics.questionsAnswered, 20);
+  assert.equal(archived.statistics.totalPoints, 740);
+  assert.equal(archived.statistics.bestScore, 740);
+  assert.equal(archived.statistics.bestStreak, 5);
+  assert.equal(getActiveInspector(next).statistics.turnsCompleted, 0);
 });
