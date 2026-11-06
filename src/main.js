@@ -822,7 +822,7 @@ function continueFromOpening() {
 $('#opening').addEventListener('click', continueFromOpening);
 $('#interview-next').addEventListener('click', () => { interviewIndex += 1; if (interviewIndex < interviewQuestions.length) renderInterviewQuestion(); else prepareRegistration(); });
 $('#registration-submit').addEventListener('click', saveRegistration);
-$('#menu-new-inspector').addEventListener('click', beginNewInspectorAdmission);
+
 $('#candidate-name').addEventListener('keydown', (event) => { if (event.key === 'Enter') saveRegistration(); });
 $('#orientation-start').addEventListener('click', beginCampaign);
 $('#designation-enter').addEventListener('click', () => navigate('menu'));
