@@ -989,13 +989,18 @@ $('#filer-open').addEventListener('click', () => {
 });
 $('#filer-close').addEventListener('click', () => {
   const expanded = $('#filer-expanded');
-  if (expanded.hidden || expanded.classList.contains('is-closing')) return;
-  window.clearTimeout(filerCloseTimer);
-  expanded.classList.add('is-closing');
+  if (expanded.hidden || filerCloseTimer !== null) return;
+  const closeAnimation = expanded.animate(
+    [
+      { opacity: 1, transform: 'translateY(0)' },
+      { opacity: 0, transform: 'translateY(8px)' }
+    ],
+    { duration: 280, easing: 'cubic-bezier(.2,.75,.25,1)', fill: 'forwards' }
+  );
   play('filerClose', 0.32);
   filerCloseTimer = window.setTimeout(() => {
+    closeAnimation.cancel();
     expanded.hidden = true;
-    expanded.classList.remove('is-closing');
     $('#filer-open').hidden = false;
     filerCloseTimer = null;
   }, 280);
